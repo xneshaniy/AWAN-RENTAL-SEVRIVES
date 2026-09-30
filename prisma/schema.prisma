@@ -1,0 +1,523 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  password      String?
+  image         String?
+  role          Role      @default(CUSTOMER)
+  phone         String?
+  address       String?
+  city          String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  accounts      Account[]
+  sessions      Session[]
+  bookings      Booking[]
+  reviews       Review[]
+  inquiries     Inquiry[]
+
+  @@map("users")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verification_tokens")
+}
+
+enum Role {
+  ADMIN
+  STAFF
+  CUSTOMER
+}
+
+model Vehicle {
+  id              String       @id @default(cuid())
+  name            String
+  slug            String       @unique
+  brand           String
+  model           String
+  year            Int
+  category        VehicleCategory
+  transmission    Transmission
+  fuelType        FuelType
+  seats           Int
+  doors           Int
+  luggageCapacity Int
+  dailyRate       Decimal      @db.Decimal(10, 2)
+  weeklyRate      Decimal?     @db.Decimal(10, 2)
+  monthlyRate     Decimal?     @db.Decimal(10, 2)
+  description     String       @db.Text
+  features        String[]
+  images          String[]
+  thumbnail       String?
+  isAvailable     Boolean      @default(true)
+  isFeatured      Boolean      @default(false)
+  isDemo          Boolean      @default(false)
+  // Soft-delete: archived vehicles stay in PostgreSQL but disappear from all
+  // public queries; admins can restore them at any time.
+  archivedAt      DateTime?
+
+  // Rental options & specifications (shown on the public vehicle pages)
+  ac                   Boolean   @default(true)
+  selfDriveAvailable   Boolean   @default(true)
+  chauffeurAvailable   Boolean   @default(true)
+  unlimitedKilometers  Boolean   @default(false)
+  kilometerLimit       Int?
+  rentalRequirements   String[]  @default([])
+
+  location        String       @default("Islamabad")
+  mileage         Int          @default(0)
+  licensePlate    String       @unique
+  insuranceExpiry DateTime?
+  inspectionExpiry DateTime?
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+  bookings        Booking[]
+  availability    Availability[]
+  reviews         Review[]
+
+  @@index([category])
+  @@index([isAvailable])
+  @@index([isFeatured])
+  @@index([location])
+  @@map("vehicles")
+}
+
+enum VehicleCategory {
+  ECONOMY
+  SEDAN
+  SUV
+  LUXURY
+  VAN
+  MINIBUS
+  COASTER
+  HIGHLACE
+  PICKUP
+}
+
+enum Transmission {
+  MANUAL
+  AUTOMATIC
+}
+
+enum FuelType {
+  PETROL
+  DIESEL
+  HYBRID
+  ELECTRIC
+  CNG
+}
+
+model Availability {
+  id        String   @id @default(cuid())
+  vehicleId String
+  vehicle   Vehicle  @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  startDate DateTime
+  endDate   DateTime
+  reason    String?
+  isBlocked Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([vehicleId])
+  @@index([startDate, endDate])
+  @@map("availabilities")
+}
+
+model Booking {
+  id              String        @id @default(cuid())
+  bookingNumber   String        @unique
+  userId          String
+  user            User          @relation(fields: [userId], references: [id], onDelete: Restrict)
+  vehicleId       String
+  vehicle         Vehicle       @relation(fields: [vehicleId], references: [id], onDelete: Restrict)
+  status          BookingStatus @default(PENDING)
+  startDate       DateTime
+  endDate         DateTime
+  pickupLocation  String
+  dropoffLocation String
+  pickupTime      String
+  dropoffTime     String
+  dailyRate       Decimal       @db.Decimal(10, 2)
+  totalDays       Int
+  subtotal        Decimal       @db.Decimal(10, 2)
+  discount        Decimal       @default(0) @db.Decimal(10, 2)
+  tax             Decimal       @default(0) @db.Decimal(10, 2)
+  totalAmount     Decimal       @db.Decimal(10, 2)
+  paidAmount      Decimal       @default(0) @db.Decimal(10, 2)
+  paymentStatus   PaymentStatus @default(UNPAID)
+  paymentMethod   PaymentMethod?
+  transactionId   String?
+  specialRequests String?       @db.Text
+  driverRequired  Boolean       @default(false)
+  driverRate      Decimal?      @db.Decimal(10, 2)
+  cancellationReason String?    @db.Text
+  adminNotes      String?       @db.Text
+  cancelledAt     DateTime?
+  confirmedAt     DateTime?
+  completedAt     DateTime?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  payments        Payment[]
+  documents       BookingDocument[]
+
+  // Customer info (for guest bookings)
+  customerName    String?
+  customerEmail   String?
+  customerPhone   String?
+  customerWhatsApp String?
+  flightNumber    String?
+  passengers      Int?
+  luggage         Int?
+
+  rentalType      RentalType
+  // Idempotency key sent by the booking form: protects against duplicate
+  // submissions (double-click, network retries) - a repeat submission with the
+  // same id returns the existing booking instead of creating a second one.
+  submissionId    String?      @unique
+
+  @@index([userId])
+  @@index([vehicleId])
+  @@index([status])
+  @@index([startDate, endDate])
+  @@index([bookingNumber])
+  @@map("bookings")
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  ACTIVE
+  COMPLETED
+  CANCELLED
+  NO_SHOW
+}
+
+enum RentalType {
+  SELF_DRIVE
+  CHAUFFEUR
+  AIRPORT_TRANSFER
+  CORPORATE
+  OTHER
+}
+
+enum PaymentStatus {
+  UNPAID
+  PARTIAL
+  PAID
+  REFUNDED
+  FAILED
+}
+
+enum PaymentMethod {
+  CASH
+  BANK_TRANSFER
+  JAZZCASH
+  EASYPAISA
+  STRIPE
+  PAYPAL
+}
+
+model Payment {
+  id           String   @id @default(cuid())
+  bookingId    String
+  booking      Booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  amount       Decimal  @db.Decimal(10, 2)
+  method       PaymentMethod
+  status       PaymentStatus @default(PAID)
+  transactionId String?
+  reference    String?
+  notes        String?  @db.Text
+  paidAt       DateTime @default(now())
+  createdAt    DateTime @default(now())
+
+  @@index([bookingId])
+  @@map("payments")
+}
+
+model BookingDocument {
+  id        String   @id @default(cuid())
+  bookingId String
+  booking   Booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  type      DocumentType
+  url       String
+  name      String
+  createdAt DateTime @default(now())
+
+  @@index([bookingId])
+  @@map("booking_documents")
+}
+
+enum DocumentType {
+  CNIC
+  LICENSE
+  PASSPORT
+  CONTRACT
+  INSURANCE
+  OTHER
+}
+
+model Review {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  vehicleId String
+  vehicle   Vehicle  @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  bookingId String?  @unique
+  rating    Int
+  title     String?
+  comment   String   @db.Text
+  isVerified Boolean @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([vehicleId])
+  @@index([userId])
+  @@map("reviews")
+}
+
+model Inquiry {
+  id        String       @id @default(cuid())
+  userId    String?
+  user      User?        @relation(fields: [userId], references: [id], onDelete: SetNull)
+  name      String
+  email     String
+  phone     String
+  subject   String
+  message   String       @db.Text
+  status    InquiryStatus @default(NEW)
+  priority  Priority     @default(MEDIUM)
+  assignedTo String?
+  response  String?      @db.Text
+  respondedAt DateTime?
+  respondedBy String?
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+
+  @@index([status])
+  @@index([email])
+  @@map("inquiries")
+}
+
+enum InquiryStatus {
+  NEW
+  IN_PROGRESS
+  RESOLVED
+  CLOSED
+}
+
+/// Messages sent through the public contact form (and other public inquiry
+/// forms). Read/unread + open/resolved/archived lifecycle for the admin inbox.
+model ContactMessage {
+  id        String               @id @default(cuid())
+  name      String
+  email     String
+  phone     String
+  subject   String
+  message   String               @db.Text
+  isRead    Boolean              @default(false)
+  status    ContactMessageStatus @default(OPEN)
+  createdAt DateTime             @default(now())
+  updatedAt DateTime             @updatedAt
+
+  @@index([status])
+  @@index([isRead])
+  @@index([email])
+  @@map("contact_messages")
+}
+
+enum ContactMessageStatus {
+  OPEN
+  RESOLVED
+  ARCHIVED
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+model Setting {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     String   @db.Text
+  type      SettingType @default(STRING)
+  group     String
+  label     String
+  description String?
+  isPublic  Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("settings")
+}
+
+enum SettingType {
+  STRING
+  NUMBER
+  BOOLEAN
+  JSON
+  TEXT
+}
+
+model SiteContent {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  title     String
+  content   String   @db.Text
+  locale    String   @default("en")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("site_contents")
+}
+
+model BlogPost {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  title       String
+  excerpt     String   @db.Text
+  content     String   @db.Text
+  featuredImage String?
+  category    String
+  tags        String[]
+  isPublished Boolean  @default(false)
+  publishedAt DateTime?
+  seoTitle    String?
+  seoDescription String?
+  seoKeywords String[]
+  authorId    String
+  archivedAt  DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([slug])
+  @@index([isPublished])
+  @@index([category])
+  @@map("blog_posts")
+}
+
+model FAQ {
+  id        String   @id @default(cuid())
+  question  String
+  answer    String   @db.Text
+  category  String
+  order     Int      @default(0)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([category])
+  @@index([isActive])
+  @@map("faqs")
+}
+
+model Testimonial {
+  id          String   @id @default(cuid())
+  name        String
+  role        String?
+  company     String?
+  avatar      String?
+  content     String   @db.Text
+  rating      Int      @default(5)
+  isVerified  Boolean  @default(false)
+  isActive    Boolean  @default(true)
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([isActive])
+  @@map("testimonials")
+}
+
+model Location {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique
+  city        String
+  address     String
+  phone       String?
+  email       String?
+  latitude    Float?
+  longitude   Float?
+  isActive    Boolean  @default(true)
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("locations")
+}
+
+model Promotion {
+  id          String   @id @default(cuid())
+  code        String   @unique
+  title       String
+  description String   @db.Text
+  discountType DiscountType
+  discountValue Decimal @db.Decimal(5, 2)
+  minAmount   Decimal? @db.Decimal(10, 2)
+  maxDiscount Decimal? @db.Decimal(10, 2)
+  startDate   DateTime
+  endDate     DateTime
+  usageLimit  Int?
+  usedCount   Int      @default(0)
+  isActive    Boolean  @default(true)
+  applicableCategories VehicleCategory[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([code])
+  @@index([isActive, startDate, endDate])
+  @@map("promotions")
+}
+
+enum DiscountType {
+  PERCENTAGE
+  FIXED_AMOUNT
+}
