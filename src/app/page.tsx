@@ -6,6 +6,7 @@ import { getFeaturedVehicles } from '@/actions/vehicle';
 import { Hero } from '@/components/common/Hero';
 import { VehicleCarousel } from '@/components/vehicles/VehicleCard';
 import { WhatsAppFloat } from '@/components/common/WhatsAppFloat';
+import { GoogleReviews } from '@/components/common/GoogleReviews';
 import { Layout } from '@/components/layout/Layout';
 import { SectionTrust, SectionServices, SectionHowItWorks, SectionPakistanVisitor, SectionCTA } from './_components/HomeSections';
 
@@ -78,7 +79,10 @@ export default async function HomePage() {
       {/* 5. How it works */}
       <SectionHowItWorks />
 
-      {/* 6. Final CTA */}
+      {/* 6. Live Google reviews (server-fetched; hides itself when unconfigured) */}
+      <GoogleReviews fallbackMapsUrl={businessInfo.googleMapsUrl} />
+
+      {/* 7. Final CTA */}
       <SectionCTA businessInfo={businessInfo} />
 
       <WhatsAppFloat />

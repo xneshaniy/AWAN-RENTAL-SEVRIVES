@@ -12,8 +12,9 @@
     "db:migrate": "prisma migrate dev",
     "db:studio": "prisma studio",
     "db:seed": "tsx prisma/seed.ts",
-    "test": "npm run test:whatsapp && npm run test:availability && npm run test:availability:db",
+    "test": "npm run test:whatsapp && npm run test:google-reviews && npm run test:availability && npm run test:availability:db",
     "test:whatsapp": "node --env-file-if-exists=.env --import tsx tests/whatsapp.test.ts",
+    "test:google-reviews": "node --env-file-if-exists=.env --import tsx tests/google-reviews.test.ts",
     "test:availability": "node --env-file-if-exists=.env --import tsx tests/availability.test.ts",
     "test:availability:db": "node --env-file-if-exists=.env --import tsx tests/availability.db.test.ts",
     "postinstall": "prisma generate"
