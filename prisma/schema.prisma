@@ -90,9 +90,18 @@ model Vehicle {
   dailyRate       Decimal      @db.Decimal(10, 2)
   weeklyRate      Decimal?     @db.Decimal(10, 2)
   monthlyRate     Decimal?     @db.Decimal(10, 2)
+  // Refundable security deposit taken at pickup. NULL means "no deposit
+  // required", which is how every vehicle seeded before this column existed
+  // behaves, so existing rows and demo prices are untouched.
+  deposit         Decimal?     @db.Decimal(10, 2)
   description     String       @db.Text
   features        String[]
   images          String[]
+  // Gallery grouping for `images`, index-aligned: photo i belongs to
+  // imageCategories[i]. Entries may be shorter than `images`, in which case
+  // the public gallery treats the remaining photos as EXTERIOR, so a vehicle
+  // created before this column existed still renders unchanged.
+  imageCategories String[]     @default([])
   thumbnail       String?
   isAvailable     Boolean      @default(true)
   isFeatured      Boolean      @default(false)
@@ -520,4 +529,24 @@ model Promotion {
 enum DiscountType {
   PERCENTAGE
   FIXED_AMOUNT
+}
+
+// Durable rate-limit buckets. An in-memory Map resets on every cold start and
+// is scoped to a single serverless instance, so on Vercel the limit is only
+// ever enforced against whatever lambda happened to receive the request.
+// Persisting one row per bucket key makes the counter survive deploys and
+// shared across instances. The key embeds the window start (e.g.
+// "login:1.2.3.4:1770000000") so an expired bucket is simply ignored and then
+// cleaned up opportunistically - there is no background job to forget.
+model RateLimit {
+  // Bucket key: "<scope>:<identifier>:<windowEpochSeconds>".
+  key       String   @id
+  // When this bucket's window closes. Rows past this are dead weight.
+  resetAt   DateTime
+  // Number of attempts counted inside the current window.
+  count     Int      @default(0)
+  updatedAt DateTime @updatedAt
+
+  @@index([resetAt])
+  @@map("rate_limits")
 }

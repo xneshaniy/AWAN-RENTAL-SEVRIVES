@@ -30,7 +30,10 @@ const getPublishedPost = cache(async (slug: string) => {
 export async function generateMetadata({ params }: BlogPostPageProps): Promise<Metadata> {
   const post = await getPublishedPost(params.slug);
   if (!post) {
-    return { title: 'Post Not Found' };
+    // This segment has no loading boundary so `notFound()` below still yields a
+    // real 404; the noindex is belt-and-braces so an unpublished/archived slug
+    // can never be indexed even if that changes.
+    return { title: 'Post Not Found', robots: { index: false, follow: false } };
   }
 
   const title = post.seoTitle || post.title;

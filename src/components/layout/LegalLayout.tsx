@@ -132,7 +132,7 @@ export async function LegalLayout({
           >
             All legal pages
           </h2>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
             {LEGAL_LINKS.map((link) => (
               <Link
                 key={link.href}

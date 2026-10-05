@@ -6,7 +6,8 @@ import { prisma } from '@/lib/prisma';
 import { contactSchema, inquirySchema, ContactInput, InquiryInput } from '@/lib/validations';
 import { sendEmail, generateContactEmailHtml, generateContactAcknowledgementHtml } from '@/lib/email';
 import { getSetting } from '@/lib/settings';
-import { rateLimit, clientIpFromHeaders } from '@/lib/rate-limit';
+import { clientIpFromHeaders } from '@/lib/rate-limit';
+import { rateLimitShared } from '@/lib/rate-limit-db';
 import { headers } from 'next/headers';
 import { SITE_NAME } from '@/config/site';
 
@@ -44,7 +45,10 @@ export async function submitContactForm(data: ContactInput): Promise<ContactActi
     ip = 'unknown';
   }
   if (
-    !rateLimit(`contact:${ip}:${contactData.email.toLowerCase()}`, { limit: 5, windowMs: 10 * 60 * 1000 })
+    !(await rateLimitShared(`contact:${ip}:${contactData.email.toLowerCase()}`, {
+      limit: 5,
+      windowMs: 10 * 60 * 1000,
+    }))
   ) {
     return {
       success: false,
@@ -124,7 +128,7 @@ export async function submitInquiry(data: InquiryInput): Promise<ContactActionRe
   } catch {
     ip = 'unknown';
   }
-  if (!rateLimit(`inquiry:${ip}:${inquiryData.email.toLowerCase()}`, { limit: 5, windowMs: 10 * 60 * 1000 })) {
+  if (!(await rateLimitShared(`inquiry:${ip}:${inquiryData.email.toLowerCase()}`, { limit: 5, windowMs: 10 * 60 * 1000 }))) {
     return {
       success: false,
       error: 'Too many messages sent in a short time. Please wait a few minutes and try again.',

@@ -26,10 +26,12 @@ export interface VehicleWithRelations extends Vehicle {
  * Vehicle serialised for client components: Prisma Decimal rates are converted
  * to plain numbers so they survive the server -> client boundary intact.
  */
-export type VehicleDTO = Omit<Vehicle, 'dailyRate' | 'weeklyRate' | 'monthlyRate'> & {
+export type VehicleDTO = Omit<Vehicle, 'dailyRate' | 'weeklyRate' | 'monthlyRate' | 'deposit'> & {
   dailyRate: number;
   weeklyRate: number | null;
   monthlyRate: number | null;
+  /** Refundable security deposit as a number; null/0 means none required. */
+  deposit: number | null;
 };
 
 export interface VehicleAvailabilityWindow {
@@ -244,6 +246,25 @@ export interface SEOConfig {
   ogImage: string;
 }
 
+/**
+ * Gallery groupings a vehicle photo can be filed under. The public gallery
+ * only shows the filter tabs for categories a vehicle actually uses, so
+ * vehicles whose photos are all unlabelled keep rendering as a single list.
+ *
+ * Stored index-aligned with `Vehicle.images` (see schema.prisma) so no extra
+ * table or join is needed.
+ */
+export const GALLERY_CATEGORIES = ['EXTERIOR', 'INTERIOR', 'DASHBOARD', 'LUGGAGE'] as const;
+
+export type GalleryCategory = (typeof GALLERY_CATEGORIES)[number];
+
+export const GALLERY_CATEGORY_LABELS: Record<GalleryCategory, string> = {
+  EXTERIOR: 'Exterior',
+  INTERIOR: 'Interior',
+  DASHBOARD: 'Dashboard',
+  LUGGAGE: 'Luggage',
+};
+
 export interface VehicleCategoryInfo {
   value: VehicleCategory;
   label: string;
@@ -308,6 +329,7 @@ export const ADMIN_NAV = [
   { label: 'Vehicles', href: '/admin/vehicles', icon: 'car' },
   { label: 'Services', href: '/admin/services', icon: 'list' },
   { label: 'Blog', href: '/admin/blog', icon: 'file-text' },
+  { label: 'FAQ', href: '/admin/faq', icon: 'help-circle' },
   { label: 'Customers', href: '/admin/customers', icon: 'users' },
   { label: 'Messages', href: '/admin/messages', icon: 'mail' },
   { label: 'Site Settings', href: '/admin/settings', icon: 'settings' },

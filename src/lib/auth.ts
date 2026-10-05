@@ -2,7 +2,10 @@ import { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import GoogleProvider from 'next-auth/providers/google';
 import bcrypt from 'bcryptjs';
+import { headers } from 'next/headers';
 import { prisma } from '@/lib/prisma';
+import { clientIpFromHeaders } from '@/lib/rate-limit';
+import { rateLimitShared } from '@/lib/rate-limit-db';
 import { Role } from '@prisma/client';
 
 declare module 'next-auth' {
@@ -46,6 +49,39 @@ export const authOptions: NextAuthOptions = {
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
           throw new Error('Email and password are required');
+        }
+
+        // Durable counterpart to the in-memory limiter in middleware.ts.
+        // Middleware runs on the edge runtime, where Prisma is unavailable, so
+        // its counter is process-local: it resets on a cold start and only ever
+        // counts the attempts that happened to land on one serverless instance.
+        // A brute-force run is therefore throttled at roughly limit x number of
+        // instances. Counting the same traffic against the shared table here
+        // closes that gap.
+        //
+        // The bucket key deliberately differs from middleware's `login:<ip>`:
+        // this code runs *after* middleware has already recorded the attempt,
+        // and reusing the key would count every attempt twice, halving the
+        // effective limit.
+        //
+        // If there is no request scope (headers() throws) or no proxy IP, the
+        // check is skipped rather than falling back to one shared `unknown`
+        // bucket - that fallback would lock every sign-in out globally after a
+        // handful of attempts.
+        let ip: string | null = null;
+        try {
+          ip = clientIpFromHeaders(headers());
+        } catch {
+          ip = null;
+        }
+        if (ip && ip !== 'unknown') {
+          const allowed = await rateLimitShared(`login-attempt:${ip}`, {
+            limit: 10,
+            windowMs: 15 * 60 * 1000,
+          });
+          if (!allowed) {
+            throw new Error('Too many sign-in attempts. Please wait a few minutes and try again.');
+          }
         }
 
         const user = await prisma.user.findUnique({

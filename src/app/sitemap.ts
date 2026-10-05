@@ -23,6 +23,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     '/commercial-vehicle-rental',
     '/about',
     '/contact',
+    '/faq',
     '/booking',
     '/blog',
   ].map((path) => ({

@@ -17,7 +17,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const vehicle = await getVehicleBySlug(params.slug);
 
   if (!vehicle) {
-    return { title: 'Vehicle Not Found' };
+    // The segment streams a loading shell before `notFound()` fires below, so
+    // the response status is already committed as 200 by the time Next renders
+    // the not-found boundary. Marking the URL noindex keeps those empty shells
+    // out of the search index - otherwise Google would index an unbounded
+    // number of "Vehicle Not Found" pages for every junk link.
+    return { title: 'Vehicle Not Found', robots: { index: false, follow: false } };
   }
 
   const description = vehicle.description.slice(0, 160);

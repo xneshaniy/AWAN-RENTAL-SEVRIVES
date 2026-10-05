@@ -1,3 +1,4 @@
+import { Metadata } from 'next';
 import { getBusinessInfo } from '@/lib/settings';
 import { Layout } from '@/components/layout/Layout';
 import { WhatsAppFloat } from '@/components/common/WhatsAppFloat';
@@ -8,6 +9,20 @@ import { SERVICE_TYPES } from '@/config/corporate';
 import { Building2, User, Plane, MapPin, Clock, Shield, CheckCircle, Users, Briefcase, FileText, Calendar } from 'lucide-react';
 import Link from 'next/link';
 import { WhatsAppButton } from '@/components/common/WhatsAppButton';
+
+export const metadata: Metadata = {
+  title: 'Corporate Car Rental Pakistan',
+  description:
+    'Corporate car rental and employee transportation across Pakistan. Sedans, SUVs, vans and coasters for executive travel, events and airport transfers.',
+  alternates: { canonical: '/corporate-travel' },
+  openGraph: {
+    title: 'Corporate Car Rental Pakistan',
+    description:
+      'Dedicated corporate transportation: executive travel, employee transport, events and airport transfers across Pakistan.',
+    url: '/corporate-travel',
+    type: 'website',
+  },
+};
 
 /** Service name used for WhatsApp enquiry messages on this page. */
 const SERVICE_NAME = 'Corporate Transportation';

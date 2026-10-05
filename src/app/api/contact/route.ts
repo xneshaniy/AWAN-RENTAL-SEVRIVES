@@ -3,7 +3,8 @@ import { prisma } from '@/lib/prisma';
 import { contactSchema } from '@/lib/validations';
 import { sendEmail, generateContactEmailHtml, generateContactAcknowledgementHtml } from '@/lib/email';
 import { getSetting } from '@/lib/settings';
-import { rateLimit, clientIpFromHeaders } from '@/lib/rate-limit';
+import { clientIpFromHeaders } from '@/lib/rate-limit';
+import { rateLimitShared } from '@/lib/rate-limit-db';
 import { SITE_NAME } from '@/config/site';
 
 /** Exact success text shown by the contact form and returned by this route. */
@@ -25,10 +26,10 @@ export async function POST(request: NextRequest) {
     const { honeypot, ...contactData } = validated.data;
     const ip = clientIpFromHeaders(request.headers);
     if (
-      !rateLimit(`contact:${ip}:${contactData.email.toLowerCase()}`, {
+      !(await rateLimitShared(`contact:${ip}:${contactData.email.toLowerCase()}`, {
         limit: 5,
         windowMs: 10 * 60 * 1000,
-      })
+      }))
     ) {
       return NextResponse.json(
         { error: 'Too many messages sent in a short time. Please wait a few minutes and try again.' },

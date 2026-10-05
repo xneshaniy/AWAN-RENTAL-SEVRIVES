@@ -195,8 +195,8 @@ export const SETTINGS_SECTIONS: SectionDef[] = [
       {
         key: 'og_image',
         input: 'text',
-        placeholder: 'e.g. /hero.jpg',
-        hint: 'Image used when links are shared on social media. Use a path inside /public.',
+        placeholder: 'e.g. /og-image.jpg',
+        hint: 'Image shown when links are shared. Use a 1200x630 file inside /public - /og-image.jpg is pre-sized for this.',
       },
     ],
   },

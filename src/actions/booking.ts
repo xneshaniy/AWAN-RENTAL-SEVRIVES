@@ -7,7 +7,8 @@ import type { BookingInput } from '@/lib/validations';
 import { processBookingRequest } from '@/lib/booking';
 import { canTransition } from '@/lib/booking-status';
 import { pickSortBy, pickSortOrder } from '@/lib/utils';
-import { rateLimit, clientIpFromHeaders } from '@/lib/rate-limit';
+import { clientIpFromHeaders } from '@/lib/rate-limit';
+import { rateLimitShared } from '@/lib/rate-limit-db';
 import { headers } from 'next/headers';
 import { BookingStatus, PaymentStatus } from '@prisma/client';
 
@@ -32,7 +33,7 @@ export async function createBooking(data: BookingInput): Promise<BookingActionRe
   // than a genuine customer submits. Everything else (Zod, honeypot,
   // vehicle checks) lives in the shared core.
   const ip = clientIpFromHeaders(headers());
-  if (!rateLimit(`booking:${ip}`, { limit: 10, windowMs: 60 * 60 * 1000 })) {
+  if (!(await rateLimitShared(`booking:${ip}`, { limit: 10, windowMs: 60 * 60 * 1000 }))) {
     return {
       success: false,
       error: 'Too many booking attempts from your network. Please try again later.',

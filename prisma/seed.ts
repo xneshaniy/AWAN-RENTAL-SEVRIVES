@@ -503,6 +503,10 @@ async function main() {
     { question: 'What is your cancellation policy?', answer: 'Free cancellation up to 24 hours before pickup. Cancellations within 24 hours may incur a fee. Please check your booking confirmation for details.', category: 'Booking', order: 6 },
     { question: 'Do you deliver vehicles to hotels or homes?', answer: 'Yes, we offer vehicle delivery and pickup service within Islamabad, Rawalpindi, and Lahore for an additional fee. Please request this at the time of booking.', category: 'Services', order: 7 },
     { question: 'Is there a mileage limit?', answer: 'Most rentals include generous daily mileage limits. Unlimited mileage options are available for select vehicles and rental plans. Please check the specific vehicle details.', category: 'Pricing', order: 8 },
+    // Added for the professional-site FAQ checklist: no deposit is ever taken
+    // through the site (see /cancellation-policy), and coverage is nationwide.
+    { question: 'Do I need a deposit?', answer: 'No deposit is taken through this website. There is no checkout and no card form here - payment terms, including any deposit, are agreed directly with you once we have contacted you about your request.', category: 'Pricing', order: 9 },
+    { question: 'Can I rent nationwide?', answer: 'Yes. We arrange car rental and transportation across Pakistan. Islamabad, Rawalpindi and Lahore also have vehicle delivery and pickup. Send us your city, dates and preferred vehicle and we will confirm availability.', category: 'Services', order: 10 },
   ];
 
   for (const faq of faqs) {

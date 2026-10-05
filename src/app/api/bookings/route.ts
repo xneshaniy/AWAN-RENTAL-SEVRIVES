@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { processBookingRequest } from '@/lib/booking';
 import { pickSortBy, pickSortOrder } from '@/lib/utils';
-import { rateLimit, clientIpFromHeaders } from '@/lib/rate-limit';
+import { clientIpFromHeaders } from '@/lib/rate-limit';
+import { rateLimitShared } from '@/lib/rate-limit-db';
 import { BookingStatus } from '@prisma/client';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
@@ -91,7 +92,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   // Same per-IP spam guard as the server action (10 attempts per hour).
   const ip = clientIpFromHeaders(request.headers);
-  if (!rateLimit(`booking:${ip}`, { limit: 10, windowMs: 60 * 60 * 1000 })) {
+  if (!(await rateLimitShared(`booking:${ip}`, { limit: 10, windowMs: 60 * 60 * 1000 }))) {
     return NextResponse.json(
       { error: 'Too many booking attempts from your network. Please try again later.' },
       { status: 429 }

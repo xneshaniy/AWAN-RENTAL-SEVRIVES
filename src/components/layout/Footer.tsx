@@ -38,6 +38,7 @@ export function Footer({ businessInfo }: FooterProps) {
       { label: 'Corporate Travel', href: '/corporate-travel' },
       { label: 'About Us', href: '/about' },
       { label: 'Contact', href: '/contact' },
+      { label: 'FAQ', href: '/faq' },
     ],
     services: [
       { label: 'Self Drive Rental', href: '/self-drive' },

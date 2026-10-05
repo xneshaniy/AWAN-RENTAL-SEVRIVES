@@ -37,7 +37,13 @@ import {
   formatVehicleDateRange,
   humanizeEnum,
 } from '@/lib/vehicles';
-import type { VehicleDTO, VehicleDetailDTO } from '@/types';
+import {
+  GALLERY_CATEGORIES,
+  GALLERY_CATEGORY_LABELS,
+  type GalleryCategory,
+  type VehicleDTO,
+  type VehicleDetailDTO,
+} from '@/types';
 
 interface VehicleDetailProps {
   vehicle: VehicleDetailDTO;
@@ -77,11 +83,34 @@ function ModalShell({ title, onClose, children }: ModalShellProps) {
 
 export function VehicleDetail({ vehicle, similarVehicles }: VehicleDetailProps) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [activeSection, setActiveSection] = useState<GalleryCategory | null>(null);
   const [showBooking, setShowBooking] = useState(false);
   const [showQuote, setShowQuote] = useState(false);
 
-  const images = vehicle.images.length > 0 ? vehicle.images : ['/placeholder-vehicle.svg'];
-  const currentImage = images[currentImageIndex] ?? images[0];
+  // Every photo paired with its gallery section. Photos saved before the
+  // categories column existed fall back to EXTERIOR, and because only one
+  // section is then present the tabs stay hidden and the gallery renders as
+  // the single flat list it always did.
+  const photos = (
+    vehicle.images.length > 0 ? vehicle.images : ['/placeholder-vehicle.svg']
+  ).map((url, index) => ({
+    url,
+    category: (vehicle.imageCategories?.[index] as GalleryCategory) ?? 'EXTERIOR',
+  }));
+
+  const sections = GALLERY_CATEGORIES.filter((category) =>
+    photos.some((photo) => photo.category === category)
+  );
+  const showSectionTabs = sections.length > 1;
+  const visiblePhotos =
+    showSectionTabs && activeSection
+      ? photos.filter((photo) => photo.category === activeSection)
+      : photos;
+
+  // Clamp instead of resetting so switching sections never leaves the
+  // carousel pointing past the end of the filtered list.
+  const currentIndex = Math.max(0, Math.min(currentImageIndex, visiblePhotos.length - 1));
+  const currentImage = visiblePhotos[currentIndex]?.url ?? visiblePhotos[0]?.url;
 
   const hasPrice = hasConfiguredPrice(vehicle);
   const canBook = hasPrice && vehicle.isAvailable;
@@ -108,8 +137,11 @@ export function VehicleDetail({ vehicle, similarVehicles }: VehicleDetailProps) 
   }, []);
 
   const previousImage = () =>
-    setCurrentImageIndex((index) => (index - 1 + images.length) % images.length);
-  const nextImage = () => setCurrentImageIndex((index) => (index + 1) % images.length);
+    setCurrentImageIndex(
+      (index) => (index - 1 + visiblePhotos.length) % visiblePhotos.length
+    );
+  const nextImage = () =>
+    setCurrentImageIndex((index) => (index + 1) % visiblePhotos.length);
 
   const specifications = [
     { icon: Users, label: 'Seating', value: `${vehicle.seats} passengers` },
@@ -139,17 +171,62 @@ export function VehicleDetail({ vehicle, similarVehicles }: VehicleDetailProps) 
           <div className="grid lg:grid-cols-3 gap-8">
             {/* Gallery + detail cards */}
             <div className="lg:col-span-2 space-y-6">
-              <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-gray-100 dark:bg-gray-800">
-                <Image
-                  src={currentImage}
-                  alt={`${vehicle.name} - photo ${currentImageIndex + 1} of ${images.length}`}
-                  fill
-                  className="object-cover"
-                  priority
-                  sizes="(max-width: 1024px) 100vw, 66vw"
-                />
+              <div className="space-y-4">
+                {showSectionTabs && (
+                  <div
+                    className="flex flex-wrap gap-2"
+                    role="group"
+                    aria-label="Filter photos by section"
+                  >
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setActiveSection(null);
+                        setCurrentImageIndex(0);
+                      }}
+                      aria-pressed={activeSection === null}
+                      className={cn(
+                        'rounded-full px-4 py-1.5 text-sm font-medium transition-colors',
+                        activeSection === null
+                          ? 'bg-primary-600 text-white'
+                          : 'bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
+                      )}
+                    >
+                      All
+                    </button>
+                    {sections.map((category) => (
+                      <button
+                        key={category}
+                        type="button"
+                        onClick={() => {
+                          setActiveSection(category);
+                          setCurrentImageIndex(0);
+                        }}
+                        aria-pressed={activeSection === category}
+                        className={cn(
+                          'rounded-full px-4 py-1.5 text-sm font-medium transition-colors',
+                          activeSection === category
+                            ? 'bg-primary-600 text-white'
+                            : 'bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
+                        )}
+                      >
+                        {GALLERY_CATEGORY_LABELS[category]}
+                      </button>
+                    ))}
+                  </div>
+                )}
 
-                {images.length > 1 && (
+                <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-gray-100 dark:bg-gray-800">
+                  <Image
+                    src={currentImage}
+                    alt={`${vehicle.name} - photo ${currentIndex + 1} of ${visiblePhotos.length}`}
+                    fill
+                    className="object-cover"
+                    priority
+                    sizes="(max-width: 1024px) 100vw, 66vw"
+                  />
+
+                  {visiblePhotos.length > 1 && (
                   <>
                     <button
                       type="button"
@@ -172,7 +249,7 @@ export function VehicleDetail({ vehicle, similarVehicles }: VehicleDetailProps) 
 
                 <div className="absolute bottom-4 left-4 flex items-center gap-3">
                   <span className="px-2.5 py-1 rounded-full bg-black/60 text-white text-xs font-medium">
-                    {currentImageIndex + 1} / {images.length}
+                    {currentIndex + 1} / {visiblePhotos.length}
                   </span>
                   <WhatsAppButton
                     vehicleName={vehicle.name}
@@ -194,27 +271,28 @@ export function VehicleDetail({ vehicle, similarVehicles }: VehicleDetailProps) 
                 </div>
               </div>
 
-              {images.length > 1 && (
-                <div className="flex gap-3 overflow-x-auto pb-2" role="list" aria-label="Vehicle photos">
-                  {images.map((img, index) => (
-                    <button
-                      key={img + index}
-                      type="button"
-                      onClick={() => setCurrentImageIndex(index)}
-                      className={cn(
-                        'relative w-24 h-16 flex-shrink-0 rounded-xl overflow-hidden border-2 transition-all',
-                        index === currentImageIndex
-                          ? 'border-primary-500'
-                          : 'border-transparent hover:border-gray-300 dark:hover:border-gray-600'
-                      )}
-                      aria-label={`View photo ${index + 1}`}
-                      aria-current={index === currentImageIndex ? 'true' : 'false'}
-                    >
-                      <Image src={img} alt="" fill className="object-cover" sizes="96px" />
-                    </button>
-                  ))}
-                </div>
-              )}
+                {visiblePhotos.length > 1 && (
+                  <div className="flex gap-3 overflow-x-auto pb-2" role="list" aria-label="Vehicle photos">
+                    {visiblePhotos.map((photo, index) => (
+                      <button
+                        key={photo.url + index}
+                        type="button"
+                        onClick={() => setCurrentImageIndex(index)}
+                        className={cn(
+                          'relative w-24 h-16 flex-shrink-0 rounded-xl overflow-hidden border-2 transition-all',
+                          index === currentIndex
+                            ? 'border-primary-500'
+                            : 'border-transparent hover:border-gray-300 dark:hover:border-gray-600'
+                        )}
+                        aria-label={`View photo ${index + 1}`}
+                        aria-current={index === currentIndex ? 'true' : 'false'}
+                      >
+                        <Image src={photo.url} alt="" fill className="object-cover" sizes="96px" />
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {/* Rental options */}
@@ -279,6 +357,19 @@ export function VehicleDetail({ vehicle, similarVehicles }: VehicleDetailProps) 
                             <span className="text-gray-600 dark:text-gray-400">Monthly Rate</span>
                             <span className="font-heading font-bold text-lg text-green-600 dark:text-green-400">
                               {formatCurrency(vehicle.monthlyRate)}
+                            </span>
+                          </div>
+                        )}
+                        {vehicle.deposit !== null && vehicle.deposit > 0 && (
+                          <div className="flex items-center justify-between gap-2 border-t border-gray-100 pt-3 dark:border-gray-700">
+                            <span className="text-gray-600 dark:text-gray-400">
+                              Security Deposit
+                              <span className="block text-xs text-gray-400 dark:text-gray-500">
+                                Refundable at pickup
+                              </span>
+                            </span>
+                            <span className="font-heading font-bold text-base text-gray-900 dark:text-white">
+                              {formatCurrency(vehicle.deposit)}
                             </span>
                           </div>
                         )}
@@ -443,6 +534,11 @@ export function VehicleDetail({ vehicle, similarVehicles }: VehicleDetailProps) 
                         )}
                         {vehicle.monthlyRate !== null && vehicle.monthlyRate > 0 && (
                           <div>{formatCurrency(vehicle.monthlyRate)} / month</div>
+                        )}
+                        {vehicle.deposit !== null && vehicle.deposit > 0 && (
+                          <div className="text-gray-400 dark:text-gray-500">
+                            {formatCurrency(vehicle.deposit)} deposit (refundable)
+                          </div>
                         )}
                       </div>
                     </div>

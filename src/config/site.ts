@@ -55,6 +55,7 @@ export function getWhatsAppLink(message?: string): string | null {
 export const LEGAL_LINKS = [
   { label: 'Privacy Policy', href: '/privacy-policy' },
   { label: 'Terms & Conditions', href: '/terms-and-conditions' },
+  { label: 'Rental Terms', href: '/rental-terms' },
   { label: 'Cancellation & Refunds', href: '/cancellation-policy' },
   { label: 'Cookie Policy', href: '/cookie-policy' },
 ] as const;

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import type { FieldPath } from 'react-hook-form';
@@ -10,10 +10,11 @@ import { toast } from 'react-hot-toast';
 import Link from 'next/link';
 import { vehicleSchema } from '@/lib/validations';
 import { createVehicle, updateVehicle } from '@/actions/vehicle';
+import { GALLERY_CATEGORIES, GALLERY_CATEGORY_LABELS, type GalleryCategory } from '@/types';
 import { Button } from '@/components/ui/Button';
 import { Input, Textarea, Select } from '@/components/ui/Input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
-import { ArrowLeft, ImagePlus, Trash2 } from 'lucide-react';
+import { ArrowLeft, ImagePlus, Trash2, Upload } from 'lucide-react';
 
 type VehicleFormValues = z.infer<typeof vehicleSchema>;
 
@@ -32,9 +33,13 @@ export interface VehicleFormInitial {
   dailyRate: number;
   weeklyRate?: number | null;
   monthlyRate?: number | null;
+  /** Refundable security deposit; absent/null means no deposit required. */
+  deposit?: number | null;
   description: string;
   features: string[];
   images: string[];
+  /** Index-aligned with `images`; absent on vehicles saved before this field existed. */
+  imageCategories?: string[];
   thumbnail?: string | null;
   isAvailable: boolean;
   isFeatured: boolean;
@@ -73,6 +78,17 @@ const FUEL_OPTIONS = [
   { value: 'CNG', label: 'CNG' },
 ];
 
+const GALLERY_CATEGORY_OPTIONS = GALLERY_CATEGORIES.map((value) => ({
+  value,
+  label: GALLERY_CATEGORY_LABELS[value],
+}));
+
+/** One gallery row: the photo URL and the group it is filed under. */
+interface ImageRow {
+  url: string;
+  category: GalleryCategory;
+}
+
 function CheckboxRow({
   id,
   label,
@@ -110,8 +126,24 @@ interface VehicleFormProps {
 export function VehicleForm({ mode, vehicleId, initial }: VehicleFormProps) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [images, setImages] = useState<string[]>(initial?.images?.length ? initial.images : ['']);
+  const [images, setImages] = useState<ImageRow[]>(() => {
+    const urls = initial?.images ?? [];
+    if (urls.length === 0) return [{ url: '', category: 'EXTERIOR' }];
+    return urls.map((url, index) => ({
+      url,
+      // Legacy rows have no category yet - they keep rendering as one list.
+      category: (initial?.imageCategories?.[index] as GalleryCategory) ?? 'EXTERIOR',
+    }));
+  });
   const [imagesError, setImagesError] = useState<string | null>(null);
+
+  // Cloudinary upload. The button only appears once the API confirms the three
+  // CLOUDINARY_* variables are present, so on an unconfigured deployment the
+  // form never offers an action that would fail with a 503.
+  const [uploadConfigured, setUploadConfigured] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [featuresText, setFeaturesText] = useState((initial?.features ?? []).join('\n'));
 
   const {
@@ -136,6 +168,7 @@ export function VehicleForm({ mode, vehicleId, initial }: VehicleFormProps) {
       dailyRate: initial?.dailyRate ?? 0,
       weeklyRate: initial?.weeklyRate ?? undefined,
       monthlyRate: initial?.monthlyRate ?? undefined,
+      deposit: initial?.deposit ?? undefined,
       description: initial?.description ?? '',
       isAvailable: initial?.isAvailable ?? true,
       isFeatured: initial?.isFeatured ?? false,
@@ -174,7 +207,9 @@ export function VehicleForm({ mode, vehicleId, initial }: VehicleFormProps) {
     setImagesError(null);
     setIsSubmitting(true);
     try {
-      const cleanedImages = images.map((url) => url.trim()).filter(Boolean);
+      const cleanedRows = images.filter((row) => row.url.trim());
+      const cleanedImages = cleanedRows.map((row) => row.url.trim());
+      const cleanedCategories = cleanedRows.map((row) => row.category);
       const features = featuresText
         .split('\n')
         .map((line) => line.trim())
@@ -183,6 +218,7 @@ export function VehicleForm({ mode, vehicleId, initial }: VehicleFormProps) {
       const payload: VehicleFormValues = {
         ...data,
         images: cleanedImages,
+        imageCategories: cleanedCategories,
         features,
         weeklyRate: data.weeklyRate || null,
         monthlyRate: data.monthlyRate || null,
@@ -209,13 +245,65 @@ export function VehicleForm({ mode, vehicleId, initial }: VehicleFormProps) {
     }
   };
 
-  const setImageAt = (index: number, value: string) => {
-    setImages((current) => current.map((url, i) => (i === index ? value : url)));
+  const setImageAt = (index: number, url: string) => {
+    setImages((current) => current.map((row, i) => (i === index ? { ...row, url } : row)));
   };
 
-  const addImage = () => setImages((current) => [...current, '']);
+  const setImageCategoryAt = (index: number, category: GalleryCategory) => {
+    setImages((current) => current.map((row, i) => (i === index ? { ...row, category } : row)));
+  };
+
+  const addImage = () => setImages((current) => [...current, { url: '', category: 'EXTERIOR' }]);
   const removeImage = (index: number) =>
     setImages((current) => current.filter((_, i) => i !== index));
+
+  // Ask once whether uploads are available. A failed/unauthorised probe simply
+  // keeps the button hidden - it must never block the rest of the form.
+  useEffect(() => {
+    let cancelled = false;
+    fetch('/api/admin/upload')
+      .then((res) => (res.ok ? res.json() : { configured: false }))
+      .then((data) => {
+        if (!cancelled) setUploadConfigured(Boolean(data?.configured));
+      })
+      .catch(() => {
+        if (!cancelled) setUploadConfigured(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const uploadFile = async (file: File) => {
+    if (uploading) return;
+    setUploading(true);
+    setUploadError(null);
+
+    try {
+      const body = new FormData();
+      body.append('file', file);
+
+      const res = await fetch('/api/admin/upload', { method: 'POST', body });
+      const data = (await res.json().catch(() => ({}))) as {
+        url?: string;
+        error?: string;
+      };
+
+      if (!res.ok || !data.url) {
+        setUploadError(data?.error || 'Upload failed. Please try again, or paste an image URL.');
+        return;
+      }
+
+      setImages((current) => [...current, { url: data.url!, category: 'EXTERIOR' }]);
+      toast.success('Photo uploaded - remember to save the vehicle.');
+    } catch {
+      setUploadError('Upload failed. Check your connection and try again.');
+    } finally {
+      setUploading(false);
+      // Clear the value so choosing the same file twice still fires onChange.
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
+  };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6" aria-busy={isSubmitting}>
@@ -307,7 +395,7 @@ export function VehicleForm({ mode, vehicleId, initial }: VehicleFormProps) {
           <CardHeader>
             <CardTitle>Pricing (PKR)</CardTitle>
           </CardHeader>
-          <CardContent className="grid grid-cols-1 gap-4 md:grid-cols-3">
+          <CardContent className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <Input
               {...register('dailyRate')}
               type="number"
@@ -334,6 +422,15 @@ export function VehicleForm({ mode, vehicleId, initial }: VehicleFormProps) {
               step={100}
               helperText="Optional - for 30+ day rentals"
               error={errors.monthlyRate?.message}
+            />
+            <Input
+              {...register('deposit')}
+              type="number"
+              label="Security Deposit"
+              min={0}
+              step={100}
+              helperText="Refundable, taken at pickup. Leave empty for no deposit."
+              error={errors.deposit?.message}
             />
           </CardContent>
         </Card>
@@ -422,13 +519,46 @@ export function VehicleForm({ mode, vehicleId, initial }: VehicleFormProps) {
           <CardHeader>
             <CardTitle className="flex items-center justify-between">
               <span>Images</span>
-              <Button type="button" variant="outline" size="sm" onClick={addImage}>
-                <ImagePlus className="mr-1.5 h-4 w-4" aria-hidden="true" />
-                Add Image
-              </Button>
+              <div className="flex items-center gap-2">
+                {uploadConfigured && (
+                  <>
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/jpeg,image/png,image/webp,image/avif,image/gif"
+                      className="hidden"
+                      tabIndex={-1}
+                      aria-hidden="true"
+                      onChange={(event) => {
+                        const file = event.target.files?.[0];
+                        if (file) void uploadFile(file);
+                      }}
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => fileInputRef.current?.click()}
+                      disabled={uploading}
+                    >
+                      <Upload className="mr-1.5 h-4 w-4" aria-hidden="true" />
+                      {uploading ? 'Uploading...' : 'Upload Photo'}
+                    </Button>
+                  </>
+                )}
+                <Button type="button" variant="outline" size="sm" onClick={addImage}>
+                  <ImagePlus className="mr-1.5 h-4 w-4" aria-hidden="true" />
+                  Add Image
+                </Button>
+              </div>
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
+            {uploadError && (
+              <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+                {uploadError}
+              </p>
+            )}
             {imagesError && (
               <p role="alert" className="text-sm text-red-600 dark:text-red-400">
                 {imagesError}
@@ -439,15 +569,26 @@ export function VehicleForm({ mode, vehicleId, initial }: VehicleFormProps) {
                 No images yet. Add at least one image URL so the vehicle looks good on the public site.
               </p>
             )}
-            {images.map((url, index) => (
-              <div key={index} className="flex items-center gap-2">
-                <Input
-                  type="text"
-                  value={url}
-                  onChange={(event) => setImageAt(index, event.target.value)}
-                  placeholder="/vehicles/image.jpg or https://..."
-                  aria-label={`Image URL ${index + 1}`}
-                  fullWidth
+            {images.map((row, index) => (
+              <div key={index} className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                <div className="min-w-0 flex-1">
+                  <Input
+                    type="text"
+                    value={row.url}
+                    onChange={(event) => setImageAt(index, event.target.value)}
+                    placeholder="/vehicles/image.jpg or https://..."
+                    aria-label={`Image URL ${index + 1}`}
+                    fullWidth
+                  />
+                </div>
+                <Select
+                  value={row.category}
+                  onChange={(event) =>
+                    setImageCategoryAt(index, event.target.value as GalleryCategory)
+                  }
+                  options={GALLERY_CATEGORY_OPTIONS}
+                  aria-label={`Gallery section for image ${index + 1}`}
+                  className="sm:w-40"
                 />
                 <button
                   type="button"
@@ -459,6 +600,11 @@ export function VehicleForm({ mode, vehicleId, initial }: VehicleFormProps) {
                 </button>
               </div>
             ))}
+            <p className="text-xs text-gray-500 dark:text-gray-400">
+              Pick a gallery section for each photo. The public vehicle page shows filter
+              tabs for the sections you use; every photo left as Exterior simply joins the
+              main gallery.
+            </p>
           </CardContent>
         </Card>
 

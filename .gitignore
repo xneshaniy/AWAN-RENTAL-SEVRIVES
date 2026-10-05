@@ -40,7 +40,9 @@ yarn-error.log*
 next-env.d.ts
 
 # Prisma
-prisma/migrations/
+# Migrations MUST be version-controlled - they are the only reproducible
+# description of the production schema. Only generated client output is ignored.
+# prisma/migrations/
 
 # IDE
 .idea/

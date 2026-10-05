@@ -5,6 +5,7 @@ import {
   OTHER_AIRPORT_ID,
   VEHICLE_PREFERENCE_VALUES,
 } from '@/config/airports';
+import { GALLERY_CATEGORIES } from '@/types';
 
 export const bookingSchema = z.object({
   customerName: z.string().min(2, 'Name must be at least 2 characters').max(100),
@@ -200,9 +201,15 @@ export const vehicleSchema = z.object({
   dailyRate: z.coerce.number().min(0),
   weeklyRate: z.coerce.number().min(0).optional().nullable(),
   monthlyRate: z.coerce.number().min(0).optional().nullable(),
+  // Refundable security deposit. An empty input normalises to null, meaning
+  // "no deposit required" - how every vehicle seeded before this field behaved.
+  deposit: z.coerce.number().min(0).optional().nullable(),
   description: z.string().min(10, 'Description must be at least 10 characters').max(5000),
   features: z.array(z.string()).default([]),
   images: z.array(imageSource).default([]),
+  // Index-aligned with `images`; may be empty (legacy vehicles), in which case
+  // every photo is treated as EXTERIOR by the public gallery.
+  imageCategories: z.array(z.enum(GALLERY_CATEGORIES)).default([]),
   thumbnail: optionalImageSource,
   isAvailable: z.boolean().default(true),
   isFeatured: z.boolean().default(false),

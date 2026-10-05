@@ -1,249 +1,271 @@
-# Awan Rental Service - Complete Car Rental Platform
+# Awan Rental Service
 
 A production-ready, full-stack car rental and ground transportation website for Awan Rental Service, serving Pakistan (Islamabad, Rawalpindi, Lahore, and nationwide).
 
-## 🚀 Tech Stack
+- **Live site**: https://awanrentalservice.org/
+- **Repository**: `xneshaniy/AWAN-RENTAL-SEVRIVES`
 
-- **Framework**: Next.js 14 (App Router)
-- **Language**: TypeScript
-- **Styling**: Tailwind CSS
-- **Database**: PostgreSQL with Prisma ORM
-- **Authentication**: NextAuth.js (Credentials + Google OAuth)
-- **Forms**: React Hook Form + Zod validation
-- **Email**: Nodemailer (SMTP)
-- **Icons**: Lucide React
-- **State Management**: TanStack Query (React Query)
-- **Notifications**: React Hot Toast
+---
 
-## ✨ Features
+## Tech stack
 
-### Public Website
-- **Homepage** - Hero with booking widget, trust section, featured vehicles, how it works, Pakistan visitor section
-- **Vehicle Listing** - Filterable, paginated vehicle grid with categories
-- **Vehicle Details** - Image gallery, specifications, pricing, booking CTA, WhatsApp inquiry
-- **Service Pages** - Self-drive, Chauffeur, Airport Transfers, Corporate Travel
-- **Booking System** - Complete form with validation, WhatsApp integration, email notifications
-- **Contact Page** - Form with honeypot spam protection, office locations
-- **About Page** - Company story, values, service coverage
-- **SEO Optimized** - Meta tags, Open Graph, JSON-LD schema, sitemap, robots.txt
+| Layer | Choice |
+| --- | --- |
+| Framework | Next.js 14 (App Router, Server Components + Server Actions) |
+| Language | TypeScript |
+| Styling | Tailwind CSS |
+| Database | PostgreSQL (Prisma ORM) |
+| Auth | NextAuth.js — Credentials + optional Google OAuth |
+| Forms | React Hook Form + Zod |
+| Email | Nodemailer (SMTP) |
+| Icons | Lucide React |
+| Data fetching | TanStack Query |
+| Notifications | React Hot Toast |
 
-### Admin Dashboard
-- **Authentication** - Secure login with role-based access (Admin/Manager)
-- **Dashboard** - Statistics, recent bookings, quick actions
-- **Vehicle Management** - CRUD operations, image management, availability toggles
-- **Booking Management** - List, filter, status updates, customer contact
-- **Settings** - Business info, WhatsApp, SEO, booking config
-- **Messages** - Contact inquiries management
+There is **no `vercel.json`** and no framework-specific config beyond `next.config.js`, so the app runs unchanged on Vercel, a Hostinger Node.js app, or any plain `npm run build && npm run start` host.
 
-### Integrations
-- **WhatsApp** - Dynamic message generation for bookings, inquiries, vehicle inquiries
-- **Email** - Booking confirmations, admin notifications, contact form receipts
-- **Database** - PostgreSQL with proper relations, indexes, constraints
+---
 
-## 📋 Prerequisites
+## Features
 
-- Node.js 18+
-- PostgreSQL 14+
-- npm or yarn
+### Public website
 
-## 🛠 Installation
+- **Home** — hero with booking widget, trust section, featured vehicles, how it works, visitor section
+- **Vehicle listing** — search, category / transmission / seats / price filters, sorting, pagination
+- **Vehicle detail** — gallery with category grouping, specifications, pricing, availability, booking CTA, WhatsApp enquiry
+- **Service pages** — Self Drive, Chauffeur, Airport Transfers, Corporate Travel
+- **Booking flow** — validated form with server-side availability enforcement, WhatsApp hand-off, email notifications
+- **Contact** — honeypot spam protection, server-side rate limiting
+- **Blog** — published posts with slugs and metadata
+- **`/faq`** — FAQ page, published as `FAQPage` JSON-LD
+- **`/rental-terms`** — rental terms page, linked from the footer legal group
+- **SEO** — per-page metadata, canonical URLs, Open Graph / Twitter cards, JSON-LD (`LocalBusiness`), `sitemap.xml`, `robots.txt`
+
+> `src/lib/seo.ts` deliberately never emits `aggregateRating` / `review` JSON-LD. The homepage shows a Google reviews **link** only, and a rating appears only when Google itself returned one through the Places API.
+
+### Admin dashboard (`/admin`)
+
+Requires an `ADMIN` or `STAFF` session. Eleven sections:
+
+Dashboard · Bookings · Vehicles · Services · **FAQ** · Blog · Customers · Messages · Site Settings · SEO Settings · Admin Users
+
+- **Vehicles** — full CRUD, archive/restore, feature toggles, per-vehicle gallery categories, security deposit
+- **Photo upload** — signed Cloudinary upload from the vehicle form (JPEG/PNG/WebP/AVIF/GIF, 8 MB); the button appears only when the three `CLOUDINARY_*` variables are set, otherwise URL pasting remains the path
+- **Bookings** — list, filter, status workflow transitions
+- **FAQ** — create / edit / hide / delete questions (`src/components/admin/FaqManager.tsx`); edits go live on `/faq` and `/self-drive` immediately
+- **Settings** — business info, WhatsApp, social links, SEO, booking config
+
+---
+
+## Getting started
 
 ```bash
-# Clone and navigate
-cd awan-rental-service
-
-# Install dependencies
+# Install (also runs `prisma generate` via postinstall)
 npm install
 
-# Set up environment variables
-cp .env.example .env
-# Edit .env with your values
+# Configure
+copy .env.example .env        # Windows
+cp .env.example .env          # macOS / Linux
+# then edit .env with real values
 
-# Generate Prisma client
-npm run db:generate
-
-# Run database migrations
+# Apply migrations, then seed
 npm run db:migrate
-
-# Seed database with demo data
 npm run db:seed
 
-# Start development server
+# Dev server
 npm run dev
 ```
 
-## 🔧 Environment Variables
+### Prerequisites
 
-Create `.env` file from `.env.example`:
+- Node.js 18+ (22 recommended)
+- PostgreSQL 14+
 
-```env
-# Database (Required)
-DATABASE_URL="postgresql://user:password@localhost:5432/awan_rental?schema=public"
+---
 
-# Site URL (Required - used for canonical URLs, sitemap.xml, robots.txt, Open Graph)
-NEXT_PUBLIC_SITE_URL="https://awanrentalservice.org"
+## Environment variables
 
-# NextAuth (Required)
-# Local dev: NEXTAUTH_URL="http://localhost:3000"
-# Production: NEXTAUTH_URL="https://awanrentalservice.org"
-NEXTAUTH_SECRET="your-super-secret-key-min-32-chars"
-NEXTAUTH_URL="http://localhost:3000"
+Copy `.env.example` — it is the authoritative list. Summary:
 
-# WhatsApp (Required for booking flow)
-NEXT_PUBLIC_WHATSAPP_NUMBER="+923056846811"
+| Variable | Required | Purpose |
+| --- | --- | --- |
+| `DATABASE_URL` | ✅ | PostgreSQL connection string |
+| `NEXT_PUBLIC_SITE_URL` | ✅ | Canonical URLs, sitemap, `robots.txt`, OG — must match the real domain |
+| `NEXTAUTH_SECRET` | ✅ | JWT signing key |
+| `NEXTAUTH_URL` | ✅ | Exact origin of the deployment |
+| `NEXT_PUBLIC_WHATSAPP_NUMBER` | ✅ | `wa.me` deep links |
+| `ADMIN_EMAIL` | ✅ | Admin notification recipient |
+| `SMTP_HOST` / `SMTP_PORT` | 🟡 | Without these **no mail is sent at all** |
+| `SMTP_USER` / `SMTP_PASSWORD` | 🟡 | Mailbox credentials — required for `isEmailConfigured()` to pass |
+| `GOOGLE_PLACES_API_KEY` | ⬜ | Live Google reviews (server-only) |
+| `GOOGLE_PLACE_ID` | ⬜ | Required alongside the key; otherwise reviews render as a link |
+| `NEXT_PUBLIC_GA_ID` | ⬜ | Google Analytics 4 — component renders nothing when unset |
+| `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION` | ⬜ | Google Search Console meta tag |
+| `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | ⬜ | Google sign-in (only if both are set) |
+| `STRIPE_*` (3) | ⬜ | Reserved — no Stripe code exists yet |
+| `CLOUDINARY_*` (3) | ⬜ | Reserved — no upload code exists yet |
 
-# Email (Optional - for notifications)
-# Hostinger business mailbox, SSL on port 465 (Gmail: smtp.gmail.com / 587)
-SMTP_HOST="smtp.hostinger.com"
-SMTP_PORT="465"
-SMTP_USER="info@awanrentalservice.org"
-SMTP_PASSWORD="your-mailbox-password"
-ADMIN_EMAIL="info@awanrentalservice.org"
+**Never commit `.env`.** Never paste secrets into chat or issues.
 
-# Optional: Google OAuth
-GOOGLE_CLIENT_ID=""
-GOOGLE_CLIENT_SECRET=""
+> Email status: `isEmailConfigured()` in `src/lib/email.ts` requires `SMTP_HOST` **and** `SMTP_USER` **and** `SMTP_PASSWORD`. If any is missing the contact/booking routes still succeed (they use `Promise.allSettled`) but **no email leaves the server**.
 
-# Optional: Stripe Payments
-STRIPE_SECRET_KEY=""
-NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=""
-STRIPE_WEBHOOK_SECRET=""
+---
+
+## Database
+
+### Migrations
+
+`prisma/migrations/` **is committed to git** (it is the only reproducible description of the production schema — `.gitignore` deliberately does not exclude it).
+
+```bash
+npm run db:migrate      # development — creates + applies
+npx prisma migrate deploy   # production / CI — applies pending only
+npx prisma generate     # regenerate the typed client after a schema change
 ```
 
-Business contact details (phone, WhatsApp, email, address, hours, social links) are
-stored in **SiteSettings** and can be edited in the admin panel under *Settings* —
-they are not hardcoded in components. Verified defaults live in `src/config/site.ts`
-and `prisma/seed.ts`.
+`prisma db push` is **banned** in this project: it skips the migration history and drifts from production.
 
-## 🗄 Database Schema
+### Models
 
-Key models:
-- **User** - Admins, managers, customers with roles
-- **Vehicle** - Fleet with categories, pricing, availability
-- **Booking** - Reservations with status workflow
-- **Inquiry** - Contact messages
-- **Setting** - Editable site configuration
-- **Location** - Office/branch locations
-- **Promotion** - Discount codes
+19 models, 14 enums — including `User`, `Vehicle`, `Booking`, `Payment`, `Review`, `Inquiry`, `ContactMessage`, `Setting`, `SiteContent`, `BlogPost`, `FAQ`, `Testimonial`, `Location`, `Promotion`, `Availability`, `RateLimit`.
 
-## 🚀 Deployment
+### Booking overlap protection (two layers)
 
-Production site: **https://awanrentalservice.org/** (Hostinger)
+1. **Application level** — `src/lib/availability.ts` decides overlap with inclusive ranges, then `src/lib/booking.ts` re-checks inside a transaction with `SELECT … FOR UPDATE`.
+2. **Database level** — `bookings_no_overlap`, a `btree_gist` exclusion constraint covering the always-blocking statuses (`CONFIRMED`, `ACTIVE`, `COMPLETED`, `NO_SHOW`). `PENDING` is intentionally excluded because it only holds dates while the configurable hold window is live, and `CANCELLED` frees the vehicle.
 
-Set these environment variables in Hostinger's control panel before building:
-`NEXT_PUBLIC_SITE_URL`, `NEXTAUTH_URL`, `NEXTAUTH_SECRET` (a fresh random value),
-`NEXT_PUBLIC_WHATSAPP_NUMBER`, `ADMIN_EMAIL`, `DATABASE_URL`, and optionally the
-`SMTP_*` keys for email notifications.
+---
 
-### Vercel (Recommended)
+## Testing
+
+```bash
+npm run test:whatsapp         # WhatsApp message builders
+npm run test:google-reviews   # reviews fallback + link-only mode
+npm run test:availability     # pure date-overlap logic
+npm run test:cloudinary       # upload signing + file validation (no network)
+npm run test:availability:db  # ⚠️ writes fixture rows, then deletes them
+npm run test                  # all five
+```
+
+> ⚠️ `test:availability:db` performs real inserts and deletes against `DATABASE_URL`. Point it at a development database, never production.
+
+### Quality gate
+
+After **any** code change, run all four before committing:
+
+```bash
+npx tsc --noEmit
+npm run lint
+npm run build
+npm test
+```
+
+---
+
+## Deployment
+
+Production: **https://awanrentalservice.org/**
+
+Two supported paths — Vercel remains the rollback target for a Hostinger move.
+
+### Vercel
+
 1. Push to GitHub
-2. Import in Vercel
-3. Add environment variables
+2. Import the repo
+3. Add the **required** environment variables above (mark `DATABASE_URL` sensitive)
 4. Deploy
 
-### Docker
-```bash
-docker build -t awan-rental .
-docker run -p 3000:3000 --env-file .env awan-rental
-```
+### Hostinger Node.js app
 
-### VPS/Server
-```bash
-npm run build
-npm run start
-# Use PM2 or systemd for process management
-```
+Build settings: framework `next` · Node `22` · build `npm run build` · output `.next` · install `npm ci` · entry *(empty)* · domain `awanrentalservice.org`.
 
-## 📁 Project Structure
+Enter the same 19 environment variables as Vercel. The DNS for the domain already points at Hostinger.
+
+### CI note
+
+> ⚠️ Pushes to `main` trigger a **production** Vercel deployment. Always confirm with the project owner before pushing to `main`.
+
+---
+
+## Project structure
 
 ```
 src/
-├── app/                    # Next.js App Router pages
-│   ├── api/               # API routes
-│   ├── admin/             # Admin dashboard
-│   ├── vehicles/          # Vehicle pages
-│   └── ...                # Public pages
+├── app/                  # App Router pages and API routes
+│   ├── api/              # REST handlers (bookings, contact, vehicles, auth, admin)
+│   ├── admin/            # Login + dashboard (11 sections)
+│   ├── vehicles/         # Listing and [slug] detail
+│   ├── blog/             # Index and [slug] posts
+│   ├── faq/              # Public FAQ page
+│   ├── rental-terms/     # Rental terms page
+│   └── ...
 ├── components/
-│   ├── ui/                # Reusable UI components
-│   ├── layout/            # Header, Footer, Layout
-│   ├── vehicles/          # Vehicle-specific components
-│   ├── booking/           # Booking components
-│   └── common/            # Shared components
-├── lib/
-│   ├── prisma.ts          # Prisma client
-│   ├── auth.ts            # NextAuth config
-│   ├── email.ts           # Email utilities
-│   ├── whatsapp.ts        # WhatsApp utilities
-│   ├── utils.ts           # Helper functions
-│   ├── settings.ts        # Settings management
-│   └── validations.ts     # Zod schemas
-├── actions/               # Server actions
-├── types/                 # TypeScript types
-└── hooks/                 # Custom React hooks
+│   ├── ui/               # Button, Input, Card, Badge, ...
+│   ├── layout/           # Header, Footer
+│   ├── admin/            # AdminShell, FaqManager, VehicleForm, ...
+│   ├── vehicles/         # VehicleCard, gallery
+│   ├── booking/          # BookingForm
+│   └── common/           # GoogleAnalytics, ...
+├── lib/                  # prisma, auth, email, seo, availability, rate-limit, ...
+├── actions/              # Server actions
+├── config/               # site.ts — SITE_URL, nav, legal links
+└── types/                # Shared types (incl. ADMIN_NAV, DTOs)
+prisma/
+├── schema.prisma         # 19 models
+└── migrations/           # committed — apply with `prisma migrate deploy`
+tests/                    # node:test suites
 ```
 
-## 🎨 Customization
+---
 
-### Branding
-- Update colors in `tailwind.config.ts`
-- Replace logo in `Header.tsx`
-- Modify company info in admin settings
+## Customization
 
-### Vehicle Categories
-Edit `VehicleCategory` enum in `prisma/schema.prisma` and run migration.
+- **Branding** — colours in `tailwind.config.ts`, logo in `Header.tsx`
+- **Business info / socials / SEO** — Admin → *Site Settings* and *SEO Settings* (stored in `Setting`, not hardcoded)
+- **Vehicle categories** — edit the `VehicleCategory` enum, then create a migration
+- **Email templates** — `src/lib/email.ts`
+- **WhatsApp messages** — `src/lib/whatsapp.ts`
+- **FAQ copy** — Admin → *FAQ*
 
-### Email Templates
-Modify templates in `lib/email.ts`.
+---
 
-### WhatsApp Messages
-Customize in `lib/whatsapp.ts`.
+## Security
 
-## 🔐 Security
+- Server-side Zod validation on every mutation
+- bcryptjs password hashing
+- CSRF protection and secure cookies via NextAuth
+- Role-based access control (`ADMIN` / `STAFF`) enforced in `requireStaffAccess` / `requireAdminAccess`
+- Honeypot spam protection on the contact form
+- Rate limiting on login, booking, contact and enquiry
+  - `src/lib/rate-limit.ts` — in-process, also the only gate available on the edge runtime (`middleware.ts`)
+  - `src/lib/rate-limit-db.ts` — durable, cross-instance counter in the `rate_limits` table; **fails open** so a limiter fault never blocks a real customer
+- `src/lib/seo.ts` never fabricates ratings or review counts
 
-- Server-side validation with Zod
-- Password hashing with bcryptjs
-- CSRF protection via NextAuth
-- Rate limiting on forms
-- Honeypot spam protection
-- Secure cookies and sessions
-- Role-based access control
+---
 
-## 📱 Responsive Design
+## Accessibility
 
-- Mobile-first approach
-- Breakpoints: sm (640px), md (768px), lg (1024px), xl (1280px)
-- Touch-friendly interfaces
-- Optimized images with Next.js Image
+Semantic HTML, ARIA labels and roles, keyboard navigation, focus management, WCAG contrast, alt text on every image.
 
-## ♿ Accessibility
+---
 
-- Semantic HTML
-- ARIA labels and roles
-- Keyboard navigation
-- Focus management
-- Color contrast compliance
-- Alt text for images
+## Known gaps
 
-## 🧪 Development Commands
+Tracked openly so nothing is mistaken for finished work:
 
-```bash
-npm run dev          # Start dev server
-npm run build        # Production build
-npm run start        # Start production server
-npm run lint         # Run ESLint
-npm run type-check   # Run TypeScript check
-npm run db:studio    # Open Prisma Studio
-npm run db:seed      # Seed database
-npm run db:migrate   # Run migrations
-```
+- The canonical domain currently serves a Hostinger placeholder until the app is deployed there (all canonicals, the sitemap and `og:image` already point at `https://awanrentalservice.org`).
+- Stripe payment code and Cloudinary image upload are **not implemented** — only their environment variables exist.
+- No admin UI for editing the root JSON-LD graph beyond the SEO settings form.
 
-## 📝 License
+---
 
-MIT License - feel free to use for your own projects.
+## License
 
-## 🤝 Support
+MIT — see [LICENSE](./LICENSE).
 
-For issues or questions, please open a GitHub issue or contact the development team.
+## Support
+
+For issues or questions, open a GitHub issue.
 
 ---
 

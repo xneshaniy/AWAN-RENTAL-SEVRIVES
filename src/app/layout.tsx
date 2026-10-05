@@ -6,6 +6,7 @@ import { Toaster } from 'react-hot-toast';
 import { SITE_URL, SITE_NAME } from '@/config/site';
 import { getSEOConfig, getBusinessInfo } from '@/lib/settings';
 import { buildStructuredDataGraph } from '@/lib/seo';
+import { GoogleAnalytics } from '@/components/common/GoogleAnalytics';
 
 const inter = Inter({ subsets: ['latin'], display: 'swap', variable: '--font-inter' });
 const poppins = Poppins({ subsets: ['latin'], display: 'swap', variable: '--font-poppins', weight: ['400', '500', '600', '700'] });
@@ -38,6 +39,10 @@ export async function generateMetadata(): Promise<Metadata> {
       type: 'website',
       locale: 'en_PK',
       siteName: SITE_NAME,
+      // Without an explicit url Next leaves og:url empty on every page, which
+      // makes social scrapers fall back to the canonical - and WhatsApp/
+      // Facebook then pick the wrong share target when the domain changes.
+      url: SITE_URL,
       images: [
         {
           url: seo.ogImage,
@@ -89,6 +94,8 @@ export default async function RootLayout({
           Skip to main content
         </a>
         <Providers>{children}</Providers>
+        {/* Renders nothing unless NEXT_PUBLIC_GA_ID is configured. */}
+        <GoogleAnalytics />
         <Toaster
           position="bottom-right"
           toastOptions={{

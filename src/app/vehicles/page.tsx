@@ -1,6 +1,8 @@
+import { Suspense } from 'react';
 import { Metadata } from 'next';
 import { getVehicles, getVehicleFacets } from '@/actions/vehicle';
 import { VehicleList } from './_components/VehicleList';
+import { VehiclesListSkeleton } from './_components/VehiclesListSkeleton';
 import { Layout } from '@/components/layout/Layout';
 import { WhatsAppFloat } from '@/components/common/WhatsAppFloat';
 import { getBusinessInfo } from '@/lib/settings';
@@ -37,7 +39,26 @@ function first(value: string | string[] | undefined): string {
   return value ?? '';
 }
 
+/**
+ * The list page owns its own Suspense boundary instead of using a route-level
+ * `loading.tsx`. See `_components/VehiclesListSkeleton.tsx` for why: a segment
+ * loading boundary would also wrap `/vehicles/[slug]` and turn a missing
+ * vehicle into a soft-404 (HTTP 200) instead of a real 404.
+ */
 export default async function VehiclesPage({ searchParams }: { searchParams: SearchParams }) {
+  const businessInfo = await getBusinessInfo();
+
+  return (
+    <Layout businessInfo={businessInfo}>
+      <Suspense fallback={<VehiclesListSkeleton />}>
+        <VehiclesResults searchParams={searchParams} />
+      </Suspense>
+      <WhatsAppFloat />
+    </Layout>
+  );
+}
+
+async function VehiclesResults({ searchParams }: { searchParams: SearchParams }) {
   const q = first(searchParams.q).slice(0, 100);
 
   const categoryParam = first(searchParams.category);
@@ -61,8 +82,7 @@ export default async function VehiclesPage({ searchParams }: { searchParams: Sea
   const filters = { q, category, availability, featured, sort, page };
   const { sortBy, sortOrder } = SORT_OPTIONS[sort];
 
-  const [businessInfo, vehiclesData, facets] = await Promise.all([
-    getBusinessInfo(),
+  const [vehiclesData, facets] = await Promise.all([
     getVehicles({
       search: q || undefined,
       category: category ? (category as VehicleCategory) : undefined,
@@ -78,31 +98,28 @@ export default async function VehiclesPage({ searchParams }: { searchParams: Sea
   ]);
 
   return (
-    <Layout businessInfo={businessInfo}>
-      <section className="py-16 sm:py-24 bg-gray-50 dark:bg-gray-900/50" aria-labelledby="vehicles-title">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-3xl mx-auto mb-12">
-            <h1
-              id="vehicles-title"
-              className="font-heading font-bold text-3xl sm:text-4xl lg:text-5xl text-gray-900 dark:text-white mb-4"
-            >
-              Explore Our Vehicles
-            </h1>
-            <p className="text-lg text-gray-600 dark:text-gray-400">
-              Choose the vehicle that fits your journey. Search the fleet, filter by category and
-              availability, and book online - every vehicle is available for self-drive or chauffeur
-              service.
-            </p>
-          </div>
-          <VehicleList
-            vehicles={vehiclesData.data}
-            pagination={vehiclesData.pagination}
-            facets={facets}
-            filters={filters}
-          />
+    <section className="py-16 sm:py-24 bg-gray-50 dark:bg-gray-900/50" aria-labelledby="vehicles-title">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center max-w-3xl mx-auto mb-12">
+          <h1
+            id="vehicles-title"
+            className="font-heading font-bold text-3xl sm:text-4xl lg:text-5xl text-gray-900 dark:text-white mb-4"
+          >
+            Explore Our Vehicles
+          </h1>
+          <p className="text-lg text-gray-600 dark:text-gray-400">
+            Choose the vehicle that fits your journey. Search the fleet, filter by category and
+            availability, and book online - every vehicle is available for self-drive or chauffeur
+            service.
+          </p>
         </div>
-      </section>
-      <WhatsAppFloat />
-    </Layout>
+        <VehicleList
+          vehicles={vehiclesData.data}
+          pagination={vehiclesData.pagination}
+          facets={facets}
+          filters={filters}
+        />
+      </div>
+    </section>
   );
 }

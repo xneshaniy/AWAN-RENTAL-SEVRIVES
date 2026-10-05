@@ -1,3 +1,4 @@
+import { Metadata } from 'next';
 import { getBusinessInfo } from '@/lib/settings';
 import { Layout } from '@/components/layout/Layout';
 import { WhatsAppFloat } from '@/components/common/WhatsAppFloat';
@@ -8,6 +9,20 @@ import { Phone, Mail, Clock, MessageCircle, MapPin as MapPinIcon, Globe, Externa
 import Link from 'next/link';
 import { WhatsAppButton } from '@/components/common/WhatsAppButton';
 import { CONTACT_PHONE, CONTACT_EMAIL, WHATSAPP_NUMBER, SITE_NAME } from '@/config/site';
+
+export const metadata: Metadata = {
+  title: 'Contact Us',
+  description:
+    'Reach Awan Rental Service in Lahore by phone, WhatsApp or email, or send an enquiry through the contact form. We reply during business hours across Pakistan.',
+  alternates: { canonical: '/contact' },
+  openGraph: {
+    title: 'Contact Awan Rental Service',
+    description:
+      'Phone, WhatsApp, email and a contact form for bookings and enquiries with Awan Rental Service.',
+    url: '/contact',
+    type: 'website',
+  },
+};
 
 export default async function ContactPage() {
   const businessInfo = await getBusinessInfo();

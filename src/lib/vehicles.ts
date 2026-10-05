@@ -18,6 +18,7 @@ export function toVehicleDTO(vehicle: Vehicle): VehicleDTO {
     dailyRate: Number(vehicle.dailyRate),
     weeklyRate: vehicle.weeklyRate === null || vehicle.weeklyRate === undefined ? null : Number(vehicle.weeklyRate),
     monthlyRate: vehicle.monthlyRate === null || vehicle.monthlyRate === undefined ? null : Number(vehicle.monthlyRate),
+    deposit: vehicle.deposit === null || vehicle.deposit === undefined ? null : Number(vehicle.deposit),
   };
 }
 

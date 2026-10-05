@@ -253,6 +253,18 @@ export async function getServiceBySlug(slug: string): Promise<ServiceDTO | null>
   return toServiceDTO({ slug, title: row.title, content });
 }
 
+/**
+ * FAQ records are rendered on the dedicated /faq page, inside the FAQ block on
+ * /self-drive, and as FAQPage JSON-LD on both. Every mutation refreshes all of
+ * them plus the admin list, so an edit is never still stale on a public page.
+ */
+function revalidateFaq() {
+  revalidatePath('/admin/faq');
+  revalidatePath('/admin/settings');
+  revalidatePath('/faq');
+  revalidatePath('/self-drive');
+}
+
 export async function createFAQ(data: FAQInput): Promise<SettingsActionResult> {
   await requireStaffAccess();
   const validated = faqSchema.safeParse(data);
@@ -268,7 +280,7 @@ export async function createFAQ(data: FAQInput): Promise<SettingsActionResult> {
 
   try {
     await prisma.fAQ.create({ data: validated.data });
-    revalidatePath('/admin/settings');
+    revalidateFaq();
     return { success: true };
   } catch (error) {
     console.error('Create FAQ error:', error);
@@ -291,7 +303,7 @@ export async function updateFAQ(id: string, data: Partial<FAQInput>): Promise<Se
 
   try {
     await prisma.fAQ.update({ where: { id }, data: validated.data });
-    revalidatePath('/admin/settings');
+    revalidateFaq();
     return { success: true };
   } catch (error) {
     console.error('Update FAQ error:', error);
@@ -303,7 +315,7 @@ export async function deleteFAQ(id: string): Promise<SettingsActionResult> {
   await requireStaffAccess();
   try {
     await prisma.fAQ.delete({ where: { id } });
-    revalidatePath('/admin/settings');
+    revalidateFaq();
     return { success: true };
   } catch (error) {
     console.error('Delete FAQ error:', error);
