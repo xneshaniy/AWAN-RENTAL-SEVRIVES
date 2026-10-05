@@ -23,12 +23,19 @@ const config: Config = {
           200: '#bae6fd',
           300: '#7dd3fc',
           400: '#38bdf8',
-          500: '#0ea5e9',
-          600: '#0284c7',
-          700: '#0369a1',
-          800: '#075985',
-          900: '#0c4a6e',
-          950: '#082f49',
+          500: '#0284c7',
+          600: '#0369a1',
+          700: '#075985',
+          800: '#0c4a6e',
+          900: '#082f49',
+          950: '#051f31',
+        },
+        // WhatsApp green. Darkened one step from Tailwind's stock green so
+        // white button labels clear the 4.5:1 contrast minimum (stock
+        // green-600 #16a34a only reaches 3.29:1).
+        green: {
+          600: '#15803d',
+          700: '#166534',
         },
         secondary: {
           DEFAULT: 'hsl(var(--secondary))',
@@ -39,8 +46,8 @@ const config: Config = {
           300: '#f0b88a',
           400: '#e89156',
           500: '#e07431',
-          600: '#d55d1e',
-          700: '#b84418',
+          600: '#b84418',
+          700: '#943519',
           800: '#943519',
           900: '#792e17',
           950: '#41140b',

@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
+import Image from 'next/image';
 import { getBusinessInfo } from '@/lib/settings';
 import { getVehicles } from '@/actions/vehicle';
 import { Layout } from '@/components/layout/Layout';
@@ -126,11 +127,12 @@ export default async function BookingPage() {
             {featuredVehicles.map((vehicle) => (
               <Card key={vehicle.id} variant="default" padding="md" hover>
                 <div className="relative aspect-video rounded-xl overflow-hidden mb-4">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={vehicle.thumbnail || vehicle.images[0] || '/placeholder-vehicle.jpg'}
+                  <Image
+                    src={vehicle.thumbnail || vehicle.images[0] || '/placeholder-vehicle.png'}
                     alt={`${vehicle.brand} ${vehicle.model}`}
-                    className="w-full h-full object-cover"
+                    fill
+                    sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+                    className="object-cover"
                   />
                 </div>
                 <div className="flex items-center justify-between mb-2">

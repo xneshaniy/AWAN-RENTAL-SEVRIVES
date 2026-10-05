@@ -84,6 +84,7 @@ export function SectionServices() {
                 <Button variant="outline" fullWidth asChild className="group">
                   <Link href={`/${service.slug}`}>
                     Learn More
+                    <span className="sr-only"> about {service.title}</span>
                     <ArrowRight className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" aria-hidden="true" />
                   </Link>
                 </Button>
@@ -244,7 +245,7 @@ export function SectionCTA({ businessInfo }: { businessInfo?: { companyWhatsApp?
           </Link>
         </div>
         {businessInfo?.companyPhone && (
-          <p className="mt-6 text-primary-200 text-sm">
+          <p className="mt-6 text-primary-100 text-sm">
             Or call us at{' '}
             <a href={`tel:${businessInfo.companyPhone}`} className="font-medium underline hover:text-white">
               {businessInfo.companyPhone}

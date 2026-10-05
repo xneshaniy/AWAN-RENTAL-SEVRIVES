@@ -1,5 +1,6 @@
 import Link from 'next/link';
-import { Car, Phone, Mail, MapPin, Facebook, Instagram, Linkedin, MessageCircle } from 'lucide-react';
+import { Phone, Mail, MapPin, Clock, Facebook, Instagram, Linkedin, MessageCircle } from 'lucide-react';
+import { BrandMark } from '@/components/common/BrandMark';
 import { cn } from '@/lib/utils';
 import { WhatsAppButton } from '@/components/common/WhatsAppButton';
 import { WHATSAPP_CONFIG_HINT, getWhatsAppUrl, generateGeneralWhatsAppMessage } from '@/lib/whatsapp';
@@ -15,6 +16,7 @@ export function Footer({ businessInfo }: FooterProps) {
   const phone = businessInfo?.companyPhone || '';
   const email = businessInfo?.companyEmail || '';
   const address = businessInfo?.companyAddress || '';
+  const businessHours = businessInfo?.businessHours || '';
   const social = businessInfo?.social || {
     facebook: '',
     instagram: '',
@@ -64,12 +66,14 @@ export function Footer({ businessInfo }: FooterProps) {
   ].filter((item) => item.url);
 
   return (
-    <footer className="bg-gray-900 text-gray-300" role="contentinfo">
+    // pb on mobile only: the fixed booking bar overlays the bottom of the
+    // viewport, so the copyright row needs room to clear it.
+    <footer className="bg-gray-900 text-gray-300 pb-24 sm:pb-0" role="contentinfo">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
           <div className="lg:col-span-1">
             <Link href="/" className="flex items-center gap-2 mb-4" aria-label={`${companyName} Home`}>
-              <Car className="w-8 h-8 text-primary-400" aria-hidden="true" />
+              <BrandMark className="w-8 h-8" />
               <span className="font-heading font-bold text-xl text-white">{companyName}</span>
             </Link>
             <p className="text-gray-400 text-sm leading-relaxed mb-6">
@@ -143,7 +147,7 @@ export function Footer({ businessInfo }: FooterProps) {
                     </a>
                   ) : (
                     <span
-                      className="flex items-center gap-3 text-gray-500 cursor-not-allowed text-sm"
+                      className="flex items-center gap-3 text-gray-400 cursor-not-allowed text-sm"
                       title={WHATSAPP_CONFIG_HINT}
                     >
                       <link.icon className="w-5 h-5 flex-shrink-0 text-primary-400" aria-hidden="true" />
@@ -153,6 +157,15 @@ export function Footer({ businessInfo }: FooterProps) {
                 </li>
               ))}
             </ul>
+            {businessHours && (
+              <div className="mt-6 border-t border-gray-800 pt-4">
+                <p className="mb-1.5 flex items-center gap-2 text-xs font-medium uppercase tracking-wider text-gray-400">
+                  <Clock className="h-3.5 w-3.5" aria-hidden="true" />
+                  Opening Hours
+                </p>
+                <p className="whitespace-pre-line text-sm text-gray-400">{businessHours}</p>
+              </div>
+            )}
           </div>
         </div>
 
@@ -172,7 +185,7 @@ export function Footer({ businessInfo }: FooterProps) {
             ))}
           </nav>
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-            <p className="text-gray-500 text-sm">
+            <p className="text-gray-400 text-sm">
               &copy; {currentYear} {companyName}. All rights reserved.
             </p>
             <div className="flex items-center gap-4">

@@ -13,6 +13,7 @@ import {
   Building2,
 } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export const metadata: Metadata = {
   title: 'About Us',
@@ -116,12 +117,14 @@ export default async function AboutPage() {
               </div>
             </div>
             <div className="relative">
-              <div className="aspect-[4/3] rounded-2xl overflow-hidden bg-gray-800">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
+              <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-gray-800">
+                <Image
                   src="/hero.jpg"
                   alt="Awan Rental Service vehicle ready for a journey in Pakistan"
-                  className="w-full h-full object-cover opacity-90"
+                  fill
+                  priority
+                  sizes="(min-width: 1024px) 50vw, 100vw"
+                  className="object-cover opacity-90"
                 />
               </div>
             </div>

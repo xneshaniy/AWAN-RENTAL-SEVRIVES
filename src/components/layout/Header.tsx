@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Menu, X, Car, Phone } from 'lucide-react';
+import { Menu, X, Phone } from 'lucide-react';
+import { BrandMark } from '@/components/common/BrandMark';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/Button';
 import { WhatsAppButton } from '@/components/common/WhatsAppButton';
@@ -39,7 +40,7 @@ export function Header({ businessInfo }: HeaderProps) {
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" aria-label="Main navigation">
         <div className="flex items-center justify-between h-16 lg:h-20">
           <Link href="/" className="flex items-center gap-2" aria-label="Awan Rental Service Home">
-            <Car className="w-8 h-8 text-primary-600" aria-hidden="true" />
+            <BrandMark className="w-8 h-8" />
             <span className="font-heading font-bold text-xl text-gray-900 dark:text-white">
               Awan Rental Service
             </span>
@@ -131,7 +132,15 @@ export function Header({ businessInfo }: HeaderProps) {
               ariaLabel="Chat with Awan Rental Service on WhatsApp"
               className="p-2 text-green-600"
             />
-            <Button variant="ghost" size="sm" onClick={() => setIsMobileMenuOpen(true)} className="p-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setIsMobileMenuOpen(true)}
+              className="p-2"
+              aria-label="Open navigation menu"
+              aria-expanded={isMobileMenuOpen}
+              aria-haspopup="dialog"
+            >
               <Menu className="w-6 h-6 text-gray-700 dark:text-gray-300" aria-hidden="true" />
             </Button>
           </div>
@@ -142,14 +151,19 @@ export function Header({ businessInfo }: HeaderProps) {
         <div className="lg:hidden fixed inset-0 z-50 bg-white dark:bg-gray-900 animate-slide-down">
           <div className="flex flex-col h-full">
             <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
-              <Link href="/" className="flex items-center gap-2">
-                <Car className="w-8 h-8 text-primary-600" />
+              <Link href="/" className="flex items-center gap-2" aria-label="Awan Rental Service Home">
+                <BrandMark className="w-8 h-8" />
                 <span className="font-heading font-bold text-xl text-gray-900 dark:text-white">
                   Awan Rental Service
                 </span>
               </Link>
-              <Button variant="ghost" size="sm" onClick={() => setIsMobileMenuOpen(false)}>
-                <X className="w-6 h-6 text-gray-700 dark:text-gray-300" />
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setIsMobileMenuOpen(false)}
+                aria-label="Close navigation menu"
+              >
+                <X className="w-6 h-6 text-gray-700 dark:text-gray-300" aria-hidden="true" />
               </Button>
             </div>
 

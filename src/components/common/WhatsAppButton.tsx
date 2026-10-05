@@ -82,7 +82,6 @@ export function WhatsAppButton({
         className={className}
         disabled
         title={WHATSAPP_CONFIG_HINT}
-        aria-label="WhatsApp is not configured"
       >
         <MessageCircle className="w-5 h-5" aria-hidden="true" />
         <span className={iconOnly ? 'sr-only' : undefined}>WhatsApp Not Configured</span>
@@ -93,6 +92,26 @@ export function WhatsAppButton({
   const iconNode =
     icon === null ? null : (icon ?? <MessageCircle className="w-5 h-5" aria-hidden="true" />);
 
+  /**
+   * WCAG 2.5.3: the accessible name must contain the visible label. A custom
+   * `ariaLabel` replaces the visible text outright, so when it does not repeat
+   * that wording the label is appended - otherwise assistive tech announces a
+   * name that shares nothing with what sighted users read (axe
+   * `label-content-name-mismatch`).
+   */
+  const visibleText = iconOnly
+    ? ''
+    : label === undefined
+      ? 'Chat on WhatsApp'
+      : typeof label === 'string'
+        ? label
+        : null;
+
+  const composedAriaLabel =
+    ariaLabel && visibleText && !ariaLabel.includes(visibleText)
+      ? `${ariaLabel} - ${visibleText}`
+      : ariaLabel;
+
   return (
     <Button variant={variant} size={size} fullWidth={fullWidth} className={className} asChild>
       <a
@@ -100,7 +119,7 @@ export function WhatsAppButton({
         target="_blank"
         rel="noopener noreferrer"
         onClick={onClick}
-        aria-label={ariaLabel}
+        aria-label={composedAriaLabel}
       >
         {iconNode}
         {!iconOnly && (label ?? 'Chat on WhatsApp')}

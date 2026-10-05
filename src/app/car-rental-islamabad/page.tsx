@@ -102,7 +102,7 @@ export default async function IslamabadCarRentalPage() {
               </CardHeader>
               <CardContent>
                 <p className="text-gray-600 dark:text-gray-400 mb-4">Economy to luxury cars for daily, weekly, monthly rental. Pickup or delivery available.</p>
-                <Button variant="outline" size="sm" asChild><Link href="/self-drive">Learn More</Link></Button>
+                <Button variant="outline" size="sm" asChild><Link href="/self-drive">Learn More<span className="sr-only"> about self-drive rentals</span></Link></Button>
               </CardContent>
             </Card>
             <Card variant="default" padding="lg" hover className="h-full text-center">
@@ -114,7 +114,7 @@ export default async function IslamabadCarRentalPage() {
               </CardHeader>
               <CardContent>
                 <p className="text-gray-600 dark:text-gray-400 mb-4">Professional drivers for business meetings, airport transfers, and city tours.</p>
-                <Button variant="outline" size="sm" asChild><Link href="/chauffeur-service">Learn More</Link></Button>
+                <Button variant="outline" size="sm" asChild><Link href="/chauffeur-service">Learn More<span className="sr-only"> about chauffeur service</span></Link></Button>
               </CardContent>
             </Card>
             <Card variant="default" padding="lg" hover className="h-full text-center">
@@ -126,7 +126,7 @@ export default async function IslamabadCarRentalPage() {
               </CardHeader>
               <CardContent>
                 <p className="text-gray-600 dark:text-gray-400 mb-4">Islamabad International Airport pick-up and drop-off for arriving and departing flights.</p>
-                <Button variant="outline" size="sm" asChild><Link href="/airport-transfers">Learn More</Link></Button>
+                <Button variant="outline" size="sm" asChild><Link href="/airport-transfers">Learn More<span className="sr-only"> about airport transfers</span></Link></Button>
               </CardContent>
             </Card>
             <Card variant="default" padding="lg" hover className="h-full text-center">
@@ -138,7 +138,7 @@ export default async function IslamabadCarRentalPage() {
               </CardHeader>
               <CardContent>
                 <p className="text-gray-600 dark:text-gray-400 mb-4">Employee transport, executive travel, event transportation for Islamabad businesses.</p>
-                <Button variant="outline" size="sm" asChild><Link href="/corporate-travel">Learn More</Link></Button>
+                <Button variant="outline" size="sm" asChild><Link href="/corporate-travel">Learn More<span className="sr-only"> about corporate travel</span></Link></Button>
               </CardContent>
             </Card>
           </div>

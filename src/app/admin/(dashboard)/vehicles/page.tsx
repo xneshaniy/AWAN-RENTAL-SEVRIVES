@@ -233,7 +233,7 @@ export default async function AdminVehiclesPage({ searchParams }: VehiclesPagePr
                       <td className="py-4">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
-                          src={vehicle.thumbnail || vehicle.images[0] || '/placeholder-vehicle.jpg'}
+                          src={vehicle.thumbnail || vehicle.images[0] || '/placeholder-vehicle.png'}
                           alt={vehicle.name}
                           className="h-14 w-20 rounded-lg object-cover"
                         />

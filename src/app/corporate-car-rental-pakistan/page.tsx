@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Briefcase, CalendarDays, Users, Building2, ChevronRight, CheckCircle } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { WhatsAppButton } from '@/components/common/WhatsAppButton';
 
 export const metadata: Metadata = {
@@ -113,12 +114,14 @@ export default async function CorporateCarRentalPakistanPage() {
               </div>
             </div>
             <div className="relative">
-              <div className="aspect-[4/3] rounded-2xl overflow-hidden bg-gray-800">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
+              <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-gray-800">
+                <Image
                   src="/hero.jpg"
                   alt="Corporate rental vehicle for business travel in Pakistan"
-                  className="w-full h-full object-cover opacity-90"
+                  fill
+                  priority
+                  sizes="(min-width: 1024px) 50vw, 100vw"
+                  className="object-cover opacity-90"
                 />
               </div>
             </div>

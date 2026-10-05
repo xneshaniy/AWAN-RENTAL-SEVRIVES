@@ -134,7 +134,10 @@ export default async function RawalpindiCarRentalPage() {
                 <CardContent>
                   <p className="text-gray-600 dark:text-gray-400 mb-4">{service.description}</p>
                   <Button variant="outline" size="sm" asChild>
-                    <Link href={service.href}>Learn More</Link>
+                    <Link href={service.href}>
+                      Learn More
+                      <span className="sr-only"> about {service.title}</span>
+                    </Link>
                   </Button>
                 </CardContent>
               </Card>

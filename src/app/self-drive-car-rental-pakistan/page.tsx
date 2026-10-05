@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { MapPin, CalendarCheck, Key, RotateCcw, ChevronRight, CheckCircle } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { WhatsAppButton } from '@/components/common/WhatsAppButton';
 
 export const metadata: Metadata = {
@@ -103,12 +104,14 @@ export default async function SelfDriveCarRentalPakistanPage() {
               </div>
             </div>
             <div className="relative">
-              <div className="aspect-[4/3] rounded-2xl overflow-hidden bg-gray-800">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
+              <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-gray-800">
+                <Image
                   src="/hero.jpg"
                   alt="Rental vehicle ready for a self-drive trip in Pakistan"
-                  className="w-full h-full object-cover opacity-90"
+                  fill
+                  priority
+                  sizes="(min-width: 1024px) 50vw, 100vw"
+                  className="object-cover opacity-90"
                 />
               </div>
             </div>

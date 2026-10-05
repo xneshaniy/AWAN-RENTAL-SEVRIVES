@@ -91,18 +91,30 @@ async function Receipt({ booking }: { booking: BookingReceipt }) {
   return (
     <section className="py-12 sm:py-20" aria-labelledby="receipt-title">
       <div className="mx-auto max-w-2xl px-4 sm:px-6">
-        <Card variant="elevated" padding="lg" className="text-center">
-          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/30">
-            <CheckCircle className="h-8 w-8 text-green-600 dark:text-green-400" aria-hidden="true" />
+        <Card variant="elevated" padding="lg" className="text-center animate-fade-in">
+          {/* One-shot expanding ring behind a checkmark that pops into place. */}
+          <div className="relative mx-auto mb-4 flex h-16 w-16 items-center justify-center">
+            <span
+              aria-hidden="true"
+              className="absolute inset-0 rounded-full bg-green-400/40 animate-success-ring"
+            />
+            <div className="relative flex h-16 w-16 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/30 animate-success-pop">
+              <CheckCircle className="h-8 w-8 text-green-600 dark:text-green-400" aria-hidden="true" />
+            </div>
           </div>
           <h1
             id="receipt-title"
-            className="mb-3 font-heading text-2xl font-bold text-gray-900 dark:text-white sm:text-3xl"
+            className="mb-3 animate-slide-up font-heading text-2xl font-bold text-gray-900 dark:text-white sm:text-3xl"
           >
             Booking Request Received
           </h1>
-          <p className="mb-8 text-gray-600 dark:text-gray-400">
+          <p className="mb-2 animate-slide-up animation-delay-200 text-gray-600 dark:text-gray-400">
             Thank you for contacting Awan Rental Service. We have received your booking request.
+          </p>
+          <p className="mb-8 animate-slide-up animation-delay-400 text-gray-600 dark:text-gray-400">
+            We will contact you on the details you provided to confirm the vehicle,
+            availability and price. Nothing has been charged - no payment is taken
+            through this website.
           </p>
 
           <dl className="mb-8 divide-y divide-gray-100 px-1 text-left dark:divide-gray-700">

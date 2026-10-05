@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { User, Plane, Briefcase, Users, MapPin, ChevronRight, CheckCircle } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { WhatsAppButton } from '@/components/common/WhatsAppButton';
 
 export const metadata: Metadata = {
@@ -111,12 +112,14 @@ export default async function ChauffeurServicePakistanPage() {
               </div>
             </div>
             <div className="relative">
-              <div className="aspect-[4/3] rounded-2xl overflow-hidden bg-gray-800">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
+              <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-gray-800">
+                <Image
                   src="/hero.jpg"
                   alt="Chauffeur-driven rental vehicle for hire in Pakistan"
-                  className="w-full h-full object-cover opacity-90"
+                  fill
+                  priority
+                  sizes="(min-width: 1024px) 50vw, 100vw"
+                  className="object-cover opacity-90"
                 />
               </div>
             </div>
@@ -153,7 +156,10 @@ export default async function ChauffeurServicePakistanPage() {
                 <CardContent>
                   <p className="text-gray-600 dark:text-gray-400 mb-4">{item.description}</p>
                   <Button variant="outline" size="sm" asChild>
-                    <Link href={item.href}>Learn More</Link>
+                    <Link href={item.href}>
+                      Learn More
+                      <span className="sr-only"> about {item.title}</span>
+                    </Link>
                   </Button>
                 </CardContent>
               </Card>

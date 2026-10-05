@@ -18,7 +18,7 @@ interface VehicleCardProps {
 }
 
 export function VehicleCard({ vehicle, variant = 'default', showBookingCTA = true }: VehicleCardProps) {
-  const thumbnail = vehicle.thumbnail || vehicle.images[0] || '/placeholder-vehicle.svg';
+  const thumbnail = vehicle.thumbnail || vehicle.images[0] || '/placeholder-vehicle.png';
   const hasPrice = hasConfiguredPrice(vehicle);
   const weeklyRate = vehicle.weeklyRate ?? null;
   const monthlyRate = vehicle.monthlyRate ?? null;
@@ -79,7 +79,7 @@ export function VehicleCard({ vehicle, variant = 'default', showBookingCTA = tru
         vehicleName={vehicle.name}
         size="md"
         fullWidth
-        ariaLabel={`Ask about ${vehicle.name} on WhatsApp`}
+        ariaLabel={`Ask on WhatsApp about ${vehicle.name}`}
         label="Ask on WhatsApp"
       />
     </div>
@@ -133,7 +133,7 @@ export function VehicleCard({ vehicle, variant = 'default', showBookingCTA = tru
 
           <div className="flex flex-wrap gap-3 mb-4" role="list" aria-label="Vehicle features">
             {features.map((feature, index) => (
-              <div key={index} className="flex items-center gap-1.5 text-sm text-gray-600 dark:text-gray-400">
+              <div key={index} role="listitem" className="flex items-center gap-1.5 text-sm text-gray-600 dark:text-gray-400">
                 <feature.icon className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
                 <span className="font-medium">{feature.value}</span>
               </div>
@@ -172,7 +172,7 @@ export function VehicleCard({ vehicle, variant = 'default', showBookingCTA = tru
 
           <div className="flex flex-wrap gap-x-3 gap-y-1 my-2" role="list" aria-label="Vehicle features">
             {features.map((feature, index) => (
-              <div key={index} className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
+              <div key={index} role="listitem" className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
                 <feature.icon className="w-3 h-3 flex-shrink-0" aria-hidden="true" />
                 <span className="font-medium truncate">{feature.value}</span>
               </div>
