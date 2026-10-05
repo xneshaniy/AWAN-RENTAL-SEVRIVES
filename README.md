@@ -93,10 +93,11 @@ NEXTAUTH_URL="http://localhost:3000"
 NEXT_PUBLIC_WHATSAPP_NUMBER="+923056846811"
 
 # Email (Optional - for notifications)
-SMTP_HOST="smtp.gmail.com"
-SMTP_PORT="587"
-SMTP_USER="your-email@gmail.com"
-SMTP_PASSWORD="your-app-password"
+# Hostinger business mailbox, SSL on port 465 (Gmail: smtp.gmail.com / 587)
+SMTP_HOST="smtp.hostinger.com"
+SMTP_PORT="465"
+SMTP_USER="info@awanrentalservice.org"
+SMTP_PASSWORD="your-mailbox-password"
 ADMIN_EMAIL="info@awanrentalservice.org"
 
 # Optional: Google OAuth
