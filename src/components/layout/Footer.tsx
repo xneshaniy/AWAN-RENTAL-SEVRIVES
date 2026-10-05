@@ -3,6 +3,7 @@ import { Car, Phone, Mail, MapPin, Facebook, Instagram, Linkedin, MessageCircle 
 import { cn } from '@/lib/utils';
 import { WhatsAppButton } from '@/components/common/WhatsAppButton';
 import { WHATSAPP_CONFIG_HINT, getWhatsAppUrl, generateGeneralWhatsAppMessage } from '@/lib/whatsapp';
+import { LEGAL_LINKS } from '@/config/site';
 import type { getBusinessInfo } from '@/lib/settings';
 
 interface FooterProps {
@@ -156,6 +157,20 @@ export function Footer({ businessInfo }: FooterProps) {
         </div>
 
         <div className="mt-12 pt-8 border-t border-gray-800">
+          <nav
+            aria-label="Legal"
+            className="mb-6 flex flex-wrap justify-center gap-x-6 gap-y-2 md:justify-start"
+          >
+            {LEGAL_LINKS.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="text-gray-400 hover:text-white text-sm transition-colors"
+              >
+                {link.label}
+              </Link>
+            ))}
+          </nav>
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <p className="text-gray-500 text-sm">
               &copy; {currentYear} {companyName}. All rights reserved.

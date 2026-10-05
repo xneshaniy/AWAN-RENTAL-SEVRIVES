@@ -1,6 +1,6 @@
 import { MetadataRoute } from 'next';
 import { prisma } from '@/lib/prisma';
-import { SITE_URL } from '@/config/site';
+import { LEGAL_LINKS, SITE_URL } from '@/config/site';
 
 // Served per-request so publishing or archiving a post is reflected in the
 // sitemap immediately (a build-time snapshot never sees later publishes).
@@ -59,6 +59,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.6,
   }));
 
+  // Legal documents: reachable and indexable, but deliberately low priority -
+  // they are reference pages, not entry points.
+  const legalPages = LEGAL_LINKS.map((link) => ({
+    url: `${baseUrl}${link.href}`,
+    lastModified: new Date(),
+    changeFrequency: 'yearly' as const,
+    priority: 0.3,
+  }));
+
   // Published blog posts only - drafts and archived posts are never listed.
   const blogPosts = await prisma.blogPost.findMany({
     where: { isPublished: true, archivedAt: null, publishedAt: { not: null } },
@@ -72,5 +81,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.6,
   }));
 
-  return [...staticPages, ...vehiclePages, ...seoPages, ...blogPages];
+  return [...staticPages, ...vehiclePages, ...seoPages, ...legalPages, ...blogPages];
 }

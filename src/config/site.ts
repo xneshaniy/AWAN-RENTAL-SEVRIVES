@@ -46,3 +46,18 @@ export function getWhatsAppLink(message?: string): string | null {
   const base = `https://wa.me/${WHATSAPP_NUMBER}`;
   return message ? `${base}?text=${encodeURIComponent(message)}` : base;
 }
+
+/**
+ * Legal documents. ONE source of truth: the footer, the sitemap and the
+ * cross-links on each legal page all read from here, so a page can never be
+ * linked from one place and missing from another.
+ */
+export const LEGAL_LINKS = [
+  { label: 'Privacy Policy', href: '/privacy-policy' },
+  { label: 'Terms & Conditions', href: '/terms-and-conditions' },
+  { label: 'Cancellation & Refunds', href: '/cancellation-policy' },
+  { label: 'Cookie Policy', href: '/cookie-policy' },
+] as const;
+
+/** Date every legal page displays as its "last updated" stamp. */
+export const LEGAL_LAST_UPDATED = '5 October 2026';
