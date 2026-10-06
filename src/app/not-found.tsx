@@ -24,6 +24,7 @@ export default async function NotFound() {
           <Logo
             className="mx-auto mb-6 block h-36 w-auto animate-fade-in"
             title="Awan Rental Service"
+            priority
           />
 
           <p

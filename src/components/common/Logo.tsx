@@ -22,14 +22,26 @@ interface LogoProps {
    * carries an aria-label, so screen readers do not hear the name twice.
    */
   title?: string;
+  /**
+   * Load eagerly with a preload hint. Set it when the logo is above the
+   * fold (the 404 page); leave it off for the footer, which sits below the
+   * fold and should not block first paint.
+   */
+  priority?: boolean;
 }
 
 const LOCKUP = { src: '/brand-logo.png', width: 578, height: 437 } as const;
 
-export function Logo({ className = 'h-32 w-auto', title }: LogoProps) {
+export function Logo({
+  className = 'h-32 w-auto',
+  title,
+  priority = false,
+}: LogoProps) {
   if (title) {
-    return <Image {...LOCKUP} alt={title} className={className} />;
+    return <Image {...LOCKUP} alt={title} className={className} priority={priority} />;
   }
 
-  return <Image {...LOCKUP} alt="" aria-hidden="true" className={className} />;
+  return (
+    <Image {...LOCKUP} alt="" aria-hidden="true" className={className} priority={priority} />
+  );
 }
