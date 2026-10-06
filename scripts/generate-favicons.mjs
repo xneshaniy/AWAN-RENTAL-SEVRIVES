@@ -31,8 +31,8 @@ const SRC_APP = path.join(ROOT, 'src', 'app');
 const SOURCE_EXTS = ['.svg', '.png', '.jpg', '.jpeg', '.webp'];
 const COVER = 0.86; // logo occupies 86% of the square, so it never touches the edge
 
-/** Brand colour from globals.css `--primary: 201 96% 32%` (HSL) → #0369A1 */
-const THEME_COLOR = '#0369a1';
+/** Brand colour from globals.css `--primary: 0 100% 42.4%` (HSL) -> #D80000 */
+const THEME_COLOR = '#d80000';
 
 async function findSource() {
   const arg = process.argv[2];

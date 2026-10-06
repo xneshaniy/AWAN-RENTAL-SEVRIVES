@@ -18,17 +18,22 @@ const config: Config = {
         primary: {
           DEFAULT: 'hsl(var(--primary))',
           foreground: 'hsl(var(--primary-foreground))',
-          50: '#f0f9ff',
-          100: '#e0f2fe',
-          200: '#bae6fd',
-          300: '#7dd3fc',
-          400: '#38bdf8',
-          500: '#0284c7',
-          600: '#0369a1',
-          700: '#075985',
-          800: '#0c4a6e',
-          900: '#082f49',
-          950: '#051f31',
+          // Brand scale sampled from Logo/logo.png. 600 is the logo red
+          // #d80000 (hsl 0 100% 42.4%); the ramp keeps the same lightness
+          // steps as the old sky scale so gradients and tints still read the
+          // same way, just in red. 100 stays pale (#ffebeb) so text-primary-700
+          // on it, and text-primary-100 on primary-600, both clear 4.5:1.
+          50: '#fff5f5',
+          100: '#ffebeb',
+          200: '#ffcccc',
+          300: '#ffadad',
+          400: '#ff7a7a',
+          500: '#ff4242',
+          600: '#d80000',
+          700: '#b80000',
+          800: '#990000',
+          900: '#7d0000',
+          950: '#470000',
         },
         // WhatsApp green. Darkened one step from Tailwind's stock green so
         // white button labels clear the 4.5:1 contrast minimum (stock

@@ -5,8 +5,9 @@
  * logo is identical in the header, the footer and anywhere else, and can be
  * recoloured or resized without shipping an image file.
  *
- * The same artwork is exported to src/app/icon.svg (favicon) and
- * public/favicon.ico by scripts/generate-icons.mjs — keep the shapes in sync.
+ * The favicon set (public/favicon.ico, public/site.webmanifest) is generated
+ * from Logo/logo.png by scripts/generate-favicons.mjs — keep the brand red
+ * in sync when either changes.
  */
 interface BrandMarkProps {
   /** Tailwind size classes, e.g. "w-8 h-8". */
@@ -33,16 +34,16 @@ export function BrandMark({ className = 'w-8 h-8', title }: BrandMarkProps) {
     >
       {title && <title>{label}</title>}
       {/* Plate */}
-      <rect width="64" height="64" rx="14" fill="#0369a1" />
+      <rect width="64" height="64" rx="14" fill="#d80000" />
       {/* Cabin / windows */}
-      <path d="M21 31 L26 22 H38 L43 31 Z" fill="#e0f2fe" />
+      <path d="M21 31 L26 22 H38 L43 31 Z" fill="#ffebeb" />
       {/* Body */}
       <rect x="12" y="31" width="40" height="12" rx="5" fill="#ffffff" />
       {/* Wheels */}
-      <circle cx="21" cy="45" r="5.5" fill="#082f49" />
-      <circle cx="43" cy="45" r="5.5" fill="#082f49" />
-      <circle cx="21" cy="45" r="2" fill="#e0f2fe" />
-      <circle cx="43" cy="45" r="2" fill="#e0f2fe" />
+      <circle cx="21" cy="45" r="5.5" fill="#470000" />
+      <circle cx="43" cy="45" r="5.5" fill="#470000" />
+      <circle cx="21" cy="45" r="2" fill="#ffebeb" />
+      <circle cx="43" cy="45" r="2" fill="#ffebeb" />
     </svg>
   );
 }
