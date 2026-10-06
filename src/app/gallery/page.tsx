@@ -35,7 +35,6 @@ export default async function GalleryPage() {
     where: { archivedAt: null },
     select: {
       id: true,
-      name: true,
       slug: true,
       images: true,
       imageCategories: true,
@@ -63,7 +62,6 @@ export default async function GalleryPage() {
 
       return {
         id: vehicle.id,
-        name: vehicle.name,
         slug: vehicle.slug,
         photos,
         videos: vehicle.videos.filter(Boolean),

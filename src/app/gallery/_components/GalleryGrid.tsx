@@ -14,7 +14,6 @@ import { GALLERY_CATEGORY_LABELS, type GalleryCategory } from '@/types';
  */
 export interface GalleryVehicle {
   id: string;
-  name: string;
   slug: string;
   photos: Array<{ url: string; category: GalleryCategory }>;
   videos: string[];
@@ -24,9 +23,11 @@ interface MediaItem {
   key: string;
   type: 'photo' | 'video';
   url: string;
-  vehicleName: string;
+  /** Shown on the tile and in the lightbox. Deliberately never a vehicle name. */
+  caption: string;
+  /** Describes the media for assistive tech - also never a vehicle name. */
+  alt: string;
   vehicleSlug: string;
-  label: string;
 }
 
 /** Grid densities used for the `sizes` hint, so phones never download 4K tiles. */
@@ -40,21 +41,24 @@ export function GalleryGrid({ vehicles }: { vehicles: GalleryVehicle[] }) {
   const items = useMemo<MediaItem[]>(
     () =>
       vehicles.flatMap((vehicle) => [
-        ...vehicle.photos.map((photo, index) => ({
-          key: `${vehicle.id}-photo-${index}`,
-          type: 'photo' as const,
-          url: photo.url,
-          vehicleName: vehicle.name,
-          vehicleSlug: vehicle.slug,
-          label: `${vehicle.name} - ${GALLERY_CATEGORY_LABELS[photo.category] ?? 'Exterior'}`,
-        })),
+        ...vehicle.photos.map((photo, index) => {
+          const caption = GALLERY_CATEGORY_LABELS[photo.category] ?? 'Exterior';
+          return {
+            key: `${vehicle.id}-photo-${index}`,
+            type: 'photo' as const,
+            url: photo.url,
+            caption,
+            alt: `${caption} photo of a rental vehicle`,
+            vehicleSlug: vehicle.slug,
+          };
+        }),
         ...vehicle.videos.map((url, index) => ({
           key: `${vehicle.id}-video-${index}`,
           type: 'video' as const,
           url,
-          vehicleName: vehicle.name,
+          caption: 'Video',
+          alt: 'Video of a rental vehicle',
           vehicleSlug: vehicle.slug,
-          label: `${vehicle.name} - video`,
         })),
       ]),
     [vehicles]
@@ -123,13 +127,13 @@ export function GalleryGrid({ vehicles }: { vehicles: GalleryVehicle[] }) {
               type="button"
               onClick={() => setActiveIndex(index)}
               className="group relative block overflow-hidden rounded-2xl bg-gray-100 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 dark:bg-gray-800"
-              aria-label={`Open ${item.label}`}
+              aria-label={`Open ${item.alt}`}
             >
               <span className="relative block aspect-video w-full">
                 {item.type === 'photo' ? (
                   <Image
                     src={item.url}
-                    alt={item.label}
+                    alt={item.alt}
                     fill
                     sizes={TILE_SIZES}
                     className="object-cover transition-transform duration-300 group-hover:scale-105"
@@ -147,10 +151,7 @@ export function GalleryGrid({ vehicles }: { vehicles: GalleryVehicle[] }) {
               </span>
               <span className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/75 to-transparent p-3">
                 <span className="block truncate text-xs font-medium text-white">
-                  {item.vehicleName}
-                </span>
-                <span className="block truncate text-[11px] text-white/75">
-                  {item.type === 'video' ? 'Video' : item.label.split(' - ')[1]}
+                  {item.caption}
                 </span>
               </span>
             </button>
@@ -162,13 +163,12 @@ export function GalleryGrid({ vehicles }: { vehicles: GalleryVehicle[] }) {
         <div
           role="dialog"
           aria-modal="true"
-          aria-label={active.label}
+          aria-label={active.caption}
           className="fixed inset-0 z-50 flex flex-col bg-black/95"
         >
           <div className="flex items-center justify-between gap-3 px-4 py-3">
             <div className="min-w-0">
-              <p className="truncate text-sm font-medium text-white">{active.vehicleName}</p>
-              <p className="truncate text-xs text-gray-400">{active.label}</p>
+              <p className="truncate text-sm font-medium text-white">{active.caption}</p>
             </div>
             <button
               type="button"
@@ -206,7 +206,7 @@ export function GalleryGrid({ vehicles }: { vehicles: GalleryVehicle[] }) {
               // eslint-disable-next-line @next/next/no-img-element
               <img
                 src={active.url}
-                alt={active.label}
+                alt={active.alt}
                 className="max-h-full max-w-full rounded-lg object-contain"
               />
             ) : (
