@@ -6,6 +6,7 @@ import { Toaster } from 'react-hot-toast';
 import { SITE_URL, SITE_NAME } from '@/config/site';
 import { getSEOConfig, getBusinessInfo } from '@/lib/settings';
 import { buildStructuredDataGraph } from '@/lib/seo';
+import { getContentSecurityPolicy } from '@/config/security-headers';
 import { GoogleAnalytics } from '@/components/common/GoogleAnalytics';
 
 const inter = Inter({ subsets: ['latin'], display: 'swap', variable: '--font-inter' });
@@ -81,6 +82,29 @@ export default async function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${poppins.variable} antialiased`}>
       <head>
+        {/*
+          The same Content-Security-Policy that next.config.js puts on the
+          response header, mirrored as a meta tag because Hostinger's platform
+          rewrites that one header back to `upgrade-insecure-requests` while
+          leaving the headers around it untouched. A meta element is not
+          rewritten, so this is what actually takes effect in production.
+
+          It is deliberately the first child of <head>: the policy applies from
+          wherever the element is parsed, so putting it first covers the
+          preconnects, the stylesheets and every script below it.
+
+          `frame-ancestors` is dropped because browsers ignore it when it is
+          delivered via meta - clickjacking stays covered by the
+          X-Frame-Options: DENY header set in next.config.js.
+
+          Full rationale (including why 'unsafe-inline' is unavoidable here)
+          lives in src/config/security-headers.js, which is the single source
+          for both forms.
+        */}
+        <meta
+          httpEquiv="Content-Security-Policy"
+          content={getContentSecurityPolicy({ includeFrameAncestors: false })}
+        />
         {/* Fonts are self-hosted through next/font above - no runtime Google
             Fonts requests, so no preconnects to fonts.googleapis.com. */}
         <link rel="dns-prefetch" href="https://wa.me" />
