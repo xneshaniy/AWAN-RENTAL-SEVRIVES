@@ -35,6 +35,7 @@ export default async function AdminEditVehiclePage({ params }: { params: { id: s
     features: vehicle.features,
     images: vehicle.images,
     imageCategories: vehicle.imageCategories,
+    videos: vehicle.videos,
     thumbnail: vehicle.thumbnail,
     isAvailable: vehicle.isAvailable,
     isFeatured: vehicle.isFeatured,

@@ -187,6 +187,19 @@ const optionalImageSource = z
   .nullable()
   .transform((value) => (value === '' ? null : value));
 
+/**
+ * Video links follow the same rules as images: a site path or an http(s) URL.
+ * Empty input is rejected outright rather than normalised, because a blank
+ * row in the admin's video list is a mistake to surface, not to save.
+ */
+const videoSource = z
+  .string()
+  .trim()
+  .refine(
+    (value) => value.startsWith('/') || /^https?:\/\//.test(value),
+    'Video must be a site path (/...) or an http(s) URL'
+  );
+
 export const vehicleSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters').max(100),
   brand: z.string().min(1, 'Brand is required').max(50),
@@ -210,6 +223,9 @@ export const vehicleSchema = z.object({
   // Index-aligned with `images`; may be empty (legacy vehicles), in which case
   // every photo is treated as EXTERIOR by the public gallery.
   imageCategories: z.array(z.enum(GALLERY_CATEGORIES)).default([]),
+  // Uploaded clips for the site-wide /gallery page. Empty on every vehicle
+  // saved before this field existed, which the gallery treats as "no videos".
+  videos: z.array(videoSource).default([]),
   thumbnail: optionalImageSource,
   isAvailable: z.boolean().default(true),
   isFeatured: z.boolean().default(false),

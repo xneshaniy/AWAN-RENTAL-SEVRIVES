@@ -308,6 +308,7 @@ export interface NavItem {
 export const MAIN_NAV: NavItem[] = [
   { label: 'Home', href: '/' },
   { label: 'Vehicles', href: '/vehicles' },
+  { label: 'Gallery', href: '/gallery' },
   { label: 'Services', href: '/services', children: [
     { label: 'Self Drive', href: '/self-drive' },
     { label: 'Chauffeur Service', href: '/chauffeur-service' },

@@ -3,14 +3,22 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import {
   MAX_UPLOAD_BYTES,
+  MAX_VIDEO_BYTES,
   CloudinaryError,
   allowUpload,
   isCloudinaryConfigured,
   uploadImage,
+  uploadVideo,
   validateImageFile,
+  validateVideoFile,
 } from '@/lib/cloudinary';
 
 export const runtime = 'nodejs';
+
+/** Which media kind the caller is uploading; anything else is rejected. */
+function isVideoKind(value: FormDataEntryValue | null): boolean {
+  return typeof value === 'string' && value === 'video';
+}
 
 /**
  * `GET` reports whether uploads are configured, so the admin form can show the
@@ -26,16 +34,18 @@ export async function GET() {
   return NextResponse.json({
     configured: isCloudinaryConfigured(),
     maxBytes: MAX_UPLOAD_BYTES,
+    maxVideoBytes: MAX_VIDEO_BYTES,
   });
 }
 
 /**
- * `POST` accepts `multipart/form-data` with a single `file` part and returns
- * the CDN URL to paste into the vehicle gallery.
+ * `POST` accepts `multipart/form-data` with a single `file` part (plus an
+ * optional `kind` field, `image` or `video`) and returns the CDN URL to paste
+ * into the vehicle gallery.
  *
  * Multipart is used rather than a server action so there is no framework body
- * size ceiling above `MAX_UPLOAD_BYTES` - a phone photo must not silently fail
- * at 1 MB.
+ * size ceiling above `MAX_UPLOAD_BYTES` / `MAX_VIDEO_BYTES` - a phone photo
+ * must not silently fail at 1 MB, and a clip must not fail at the photo limit.
  */
 export async function POST(request: NextRequest) {
   const session = await getServerSession(authOptions);
@@ -68,19 +78,24 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'No image file was provided.' }, { status: 400 });
   }
 
-  const invalid = validateImageFile(file);
+  // Photos and clips share one endpoint: the session check, the per-IP rate
+  // limit and the response shape are identical, and only the validation plus
+  // the Cloudinary resource type differ. `kind` is an ordinary form field so
+  // an unrecognised value falls back to the stricter photo rules.
+  const video = isVideoKind(formData.get('kind'));
+  const invalid = video ? validateVideoFile(file) : validateImageFile(file);
   if (invalid) {
     return NextResponse.json({ error: invalid }, { status: 400 });
   }
 
   try {
-    const result = await uploadImage(file);
+    const result = video ? await uploadVideo(file) : await uploadImage(file);
     return NextResponse.json(result);
   } catch (error) {
     if (error instanceof CloudinaryError) {
       return NextResponse.json({ error: error.message }, { status: error.status });
     }
-    console.error('Vehicle image upload failed:', error);
+    console.error(video ? 'Vehicle video upload failed:' : 'Vehicle image upload failed:', error);
     return NextResponse.json({ error: 'Upload failed. Please try again.' }, { status: 500 });
   }
 }

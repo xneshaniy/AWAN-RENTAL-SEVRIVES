@@ -14,7 +14,7 @@ import { GALLERY_CATEGORIES, GALLERY_CATEGORY_LABELS, type GalleryCategory } fro
 import { Button } from '@/components/ui/Button';
 import { Input, Textarea, Select } from '@/components/ui/Input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
-import { ArrowLeft, ImagePlus, Trash2, Upload } from 'lucide-react';
+import { ArrowLeft, ImagePlus, Trash2, Upload, Video } from 'lucide-react';
 
 type VehicleFormValues = z.infer<typeof vehicleSchema>;
 
@@ -40,6 +40,8 @@ export interface VehicleFormInitial {
   images: string[];
   /** Index-aligned with `images`; absent on vehicles saved before this field existed. */
   imageCategories?: string[];
+  /** Uploaded clips for the site-wide gallery; absent on older vehicles. */
+  videos?: string[];
   thumbnail?: string | null;
   isAvailable: boolean;
   isFeatured: boolean;
@@ -137,6 +139,11 @@ export function VehicleForm({ mode, vehicleId, initial }: VehicleFormProps) {
   });
   const [imagesError, setImagesError] = useState<string | null>(null);
 
+  // Uploaded clips. Kept as a plain string list (no gallery section, unlike
+  // photos) because the public gallery always presents a video as a video.
+  const [videos, setVideos] = useState<string[]>(() => initial?.videos ?? []);
+  const [videosError, setVideosError] = useState<string | null>(null);
+
   // Cloudinary upload. The button only appears once the API confirms the three
   // CLOUDINARY_* variables are present, so on an unconfigured deployment the
   // form never offers an action that would fail with a 503. 'checking' exists so
@@ -147,6 +154,13 @@ export function VehicleForm({ mode, vehicleId, initial }: VehicleFormProps) {
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  // Separate booleans so a clip and a photo can never race for one flag, and
+  // so the "Upload Photo" button keeps its own progress label.
+  const [uploadingVideo, setUploadingVideo] = useState(false);
+  const [videoUploadError, setVideoUploadError] = useState<string | null>(null);
+  const videoInputRef = useRef<HTMLInputElement | null>(null);
+  /** Clip size ceiling in MB, read back from the API so the hint never drifts. */
+  const [videoLimitMb, setVideoLimitMb] = useState<number | null>(null);
   const [featuresText, setFeaturesText] = useState((initial?.features ?? []).join('\n'));
 
   const {
@@ -198,6 +212,10 @@ export function VehicleForm({ mode, vehicleId, initial }: VehicleFormProps) {
         setImagesError(message);
         return;
       }
+      if (field.startsWith('videos')) {
+        setVideosError(message);
+        return;
+      }
       try {
         setError(field as FieldPath<VehicleFormValues>, { type: 'server', message });
       } catch {
@@ -208,11 +226,14 @@ export function VehicleForm({ mode, vehicleId, initial }: VehicleFormProps) {
 
   const onSubmit = async (data: VehicleFormValues) => {
     setImagesError(null);
+    setVideosError(null);
     setIsSubmitting(true);
     try {
       const cleanedRows = images.filter((row) => row.url.trim());
       const cleanedImages = cleanedRows.map((row) => row.url.trim());
       const cleanedCategories = cleanedRows.map((row) => row.category);
+      // Blank rows are dropped so an empty upload slot never stores ''.
+      const cleanedVideos = videos.map((url) => url.trim()).filter(Boolean);
       const features = featuresText
         .split('\n')
         .map((line) => line.trim())
@@ -222,6 +243,7 @@ export function VehicleForm({ mode, vehicleId, initial }: VehicleFormProps) {
         ...data,
         images: cleanedImages,
         imageCategories: cleanedCategories,
+        videos: cleanedVideos,
         features,
         weeklyRate: data.weeklyRate || null,
         monthlyRate: data.monthlyRate || null,
@@ -261,21 +283,65 @@ export function VehicleForm({ mode, vehicleId, initial }: VehicleFormProps) {
     setImages((current) => current.filter((_, i) => i !== index));
 
   // Ask once whether uploads are available. A failed/unauthorised probe simply
-  // keeps the button hidden - it must never block the rest of the form.
+  // keeps the button hidden - it must never block the rest of the form. The
+  // clip size ceiling rides along on the same call so the hint text below the
+  // video list always matches what the server will actually accept.
   useEffect(() => {
     let cancelled = false;
-    fetch('/api/admin/upload')
-      .then((res) => (res.ok ? res.json() : { configured: false }))
-      .then((data) => {
-        if (!cancelled) setUploadStatus(data?.configured ? 'ready' : 'unavailable');
-      })
-      .catch(() => {
+
+    const probe = async () => {
+      try {
+        const res = await fetch('/api/admin/upload');
+        const body: { configured?: boolean; maxVideoBytes?: number } = res.ok
+          ? await res.json()
+          : {};
+        if (cancelled) return;
+        setUploadStatus(body?.configured ? 'ready' : 'unavailable');
+        if (typeof body?.maxVideoBytes === 'number') {
+          setVideoLimitMb(Math.round(body.maxVideoBytes / (1024 * 1024)));
+        }
+      } catch {
         if (!cancelled) setUploadStatus('unavailable');
-      });
+      }
+    };
+
+    void probe();
     return () => {
       cancelled = true;
     };
   }, []);
+
+  /** One multipart call to the shared upload endpoint for either media kind. */
+  const postUpload = async (
+    file: File,
+    kind: 'image' | 'video'
+  ): Promise<{ ok: true; url: string } | { ok: false; error: string }> => {
+    const body = new FormData();
+    body.append('file', file);
+    // Tells the endpoint which validation rules to apply and which Cloudinary
+    // resource type to post to. A missing kind falls back to the photo rules.
+    body.append('kind', kind);
+
+    try {
+      const res = await fetch('/api/admin/upload', { method: 'POST', body });
+      const data = (await res.json().catch(() => ({}))) as {
+        url?: string;
+        error?: string;
+      };
+
+      if (res.ok && data.url) return { ok: true, url: data.url };
+      return {
+        ok: false,
+        error:
+          data?.error ||
+          (kind === 'video'
+            ? 'Upload failed. Please try again.'
+            : 'Upload failed. Please try again, or paste an image URL.'),
+      };
+    } catch {
+      return { ok: false, error: 'Upload failed. Check your connection and try again.' };
+    }
+  };
 
   const uploadFile = async (file: File) => {
     if (uploading) return;
@@ -283,30 +349,44 @@ export function VehicleForm({ mode, vehicleId, initial }: VehicleFormProps) {
     setUploadError(null);
 
     try {
-      const body = new FormData();
-      body.append('file', file);
-
-      const res = await fetch('/api/admin/upload', { method: 'POST', body });
-      const data = (await res.json().catch(() => ({}))) as {
-        url?: string;
-        error?: string;
-      };
-
-      if (!res.ok || !data.url) {
-        setUploadError(data?.error || 'Upload failed. Please try again, or paste an image URL.');
+      const result = await postUpload(file, 'image');
+      if (!result.ok) {
+        setUploadError(result.error);
         return;
       }
 
-      setImages((current) => [...current, { url: data.url!, category: 'EXTERIOR' }]);
+      setImages((current) => [...current, { url: result.url, category: 'EXTERIOR' }]);
       toast.success('Photo uploaded - remember to save the vehicle.');
-    } catch {
-      setUploadError('Upload failed. Check your connection and try again.');
     } finally {
       setUploading(false);
       // Clear the value so choosing the same file twice still fires onChange.
       if (fileInputRef.current) fileInputRef.current.value = '';
     }
   };
+
+  const uploadVideoFile = async (file: File) => {
+    if (uploadingVideo) return;
+    setUploadingVideo(true);
+    setVideoUploadError(null);
+
+    try {
+      const result = await postUpload(file, 'video');
+      if (!result.ok) {
+        setVideoUploadError(result.error);
+        return;
+      }
+
+      setVideos((current) => [...current, result.url]);
+      toast.success('Video uploaded - remember to save the vehicle.');
+    } finally {
+      setUploadingVideo(false);
+      // Clear the value so choosing the same file twice still fires onChange.
+      if (videoInputRef.current) videoInputRef.current.value = '';
+    }
+  };
+
+  const removeVideo = (index: number) =>
+    setVideos((current) => current.filter((_, i) => i !== index));
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6" aria-busy={isSubmitting}>
@@ -614,6 +694,92 @@ export function VehicleForm({ mode, vehicleId, initial }: VehicleFormProps) {
               Pick a gallery section for each photo. The public vehicle page shows filter
               tabs for the sections you use; every photo left as Exterior simply joins the
               main gallery.
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card variant="default" padding="lg">
+          <CardHeader>
+            <CardTitle className="flex items-center justify-between">
+              <span>Videos</span>
+              {uploadStatus === 'ready' && (
+                <>
+                  <input
+                    ref={videoInputRef}
+                    type="file"
+                    accept="video/mp4,video/webm,video/quicktime"
+                    className="hidden"
+                    tabIndex={-1}
+                    aria-hidden="true"
+                    onChange={(event) => {
+                      const file = event.target.files?.[0];
+                      if (file) void uploadVideoFile(file);
+                    }}
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => videoInputRef.current?.click()}
+                    disabled={uploadingVideo}
+                  >
+                    <Upload className="mr-1.5 h-4 w-4" aria-hidden="true" />
+                    {uploadingVideo ? 'Uploading...' : 'Upload Video'}
+                  </Button>
+                </>
+              )}
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {uploadStatus === 'unavailable' && (
+              <p className="rounded-lg bg-gray-50 px-3 py-2 text-xs leading-relaxed text-gray-500 dark:bg-gray-800 dark:text-gray-400">
+                Video upload isn&apos;t turned on for this site yet, so clips can&apos;t be
+                added from this device. The &quot;Upload Video&quot; button appears here
+                as soon as it is.
+              </p>
+            )}
+            {videoUploadError && (
+              <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+                {videoUploadError}
+              </p>
+            )}
+            {videosError && (
+              <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+                {videosError}
+              </p>
+            )}
+            {videos.length === 0 && (
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                No videos yet. Anything you upload here appears on the Gallery page
+                alongside this vehicle&apos;s photos.
+              </p>
+            )}
+            {videos.map((url, index) => (
+              <div
+                key={`${url}-${index}`}
+                className="flex items-center gap-3 rounded-xl border border-gray-200 px-3 py-2 dark:border-gray-700"
+              >
+                <Video className="h-5 w-5 shrink-0 text-gray-400 dark:text-gray-500" aria-hidden="true" />
+                <span
+                  className="min-w-0 flex-1 truncate text-sm text-gray-700 dark:text-gray-300"
+                  title={url}
+                >
+                  {url}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => removeVideo(index)}
+                  aria-label={`Remove video ${index + 1}`}
+                  className="rounded-lg p-2 text-gray-500 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/30"
+                >
+                  <Trash2 className="h-5 w-5" aria-hidden="true" />
+                </button>
+              </div>
+            ))}
+            <p className="text-xs text-gray-500 dark:text-gray-400">
+              Clips play on the Gallery page with a play button, and on this
+              vehicle&apos;s own page. MP4, WebM or MOV
+              {videoLimitMb ? `, up to ${videoLimitMb} MB each` : ''}.
             </p>
           </CardContent>
         </Card>

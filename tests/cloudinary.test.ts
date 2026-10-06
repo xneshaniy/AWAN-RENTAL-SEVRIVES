@@ -2,9 +2,11 @@ import assert from 'node:assert/strict';
 import { describe, test } from 'node:test';
 import {
   MAX_UPLOAD_BYTES,
+  MAX_VIDEO_BYTES,
   cloudinarySignature,
   isCloudinaryConfigured,
   validateImageFile,
+  validateVideoFile,
 } from '@/lib/cloudinary';
 
 /**
@@ -92,6 +94,53 @@ describe('validateImageFile', () => {
 
   test('a file exactly at the limit is still allowed', () => {
     assert.equal(validateImageFile(fakeFile({ size: MAX_UPLOAD_BYTES })), null);
+  });
+});
+
+describe('validateVideoFile', () => {
+  /** Same shape as `fakeFile`, but a clip rather than a photo. */
+  const fakeClip = (overrides: Partial<{ name: string; type: string; size: number }> = {}) => ({
+    name: 'walkaround.mp4',
+    type: 'video/mp4',
+    size: 1024 * 1024,
+    ...overrides,
+  });
+
+  test('accepts a normal MP4 within the size limit', () => {
+    assert.equal(validateVideoFile(fakeClip()), null);
+  });
+
+  test('accepts every supported video MIME type', () => {
+    for (const type of ['video/mp4', 'video/webm', 'video/quicktime']) {
+      assert.equal(validateVideoFile(fakeClip({ type })), null, `${type} should be allowed`);
+    }
+  });
+
+  test('rejects a non-video file with an actionable message', () => {
+    const message = validateVideoFile(fakeClip({ type: 'video/avi' }));
+    assert.ok(message, 'an unsupported type must be explained, not silently dropped');
+    assert.match(message, /MP4, WebM or MOV/);
+  });
+
+  test('rejects an empty file', () => {
+    assert.match(validateVideoFile(fakeClip({ size: 0 })) ?? '', /empty/);
+  });
+
+  test('rejects a clip above the ceiling and names the limit', () => {
+    const message = validateVideoFile(fakeClip({ size: MAX_VIDEO_BYTES + 1 }));
+    assert.ok(message, 'oversized clips must be rejected before the network call');
+    assert.match(message, /too large/);
+    assert.match(message, /100 MB/);
+  });
+
+  test('a clip exactly at the limit is still allowed', () => {
+    assert.equal(validateVideoFile(fakeClip({ size: MAX_VIDEO_BYTES })), null);
+  });
+
+  test('the clip ceiling is far above the photo ceiling', () => {
+    // The whole point of a separate limit: an ordinary phone video passes 8 MB,
+    // so sharing the photo ceiling would make the button unusable in practice.
+    assert.ok(MAX_VIDEO_BYTES > MAX_UPLOAD_BYTES * 10);
   });
 });
 

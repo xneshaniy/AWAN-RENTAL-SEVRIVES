@@ -102,6 +102,10 @@ model Vehicle {
   // the public gallery treats the remaining photos as EXTERIOR, so a vehicle
   // created before this column existed still renders unchanged.
   imageCategories String[]     @default([])
+  // Video clips shown on the site-wide gallery page, stored as CDN URLs
+  // (Cloudinary). Empty for every vehicle saved before this column existed,
+  // so the gallery simply shows those vehicles' photos and nothing breaks.
+  videos          String[]     @default([])
   thumbnail       String?
   isAvailable     Boolean      @default(true)
   isFeatured      Boolean      @default(false)

@@ -31,6 +31,7 @@ export function Footer({ businessInfo }: FooterProps) {
     quick: [
       { label: 'Home', href: '/' },
       { label: 'Vehicles', href: '/vehicles' },
+      { label: 'Gallery', href: '/gallery' },
       { label: 'Services', href: '/services' },
       { label: 'Self Drive', href: '/self-drive' },
       { label: 'Chauffeur Service', href: '/chauffeur-service' },
