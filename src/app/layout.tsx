@@ -35,6 +35,9 @@ export async function generateMetadata(): Promise<Metadata> {
     creator: SITE_NAME,
     publisher: SITE_NAME,
     robots: 'index, follow',
+    // The PWA manifest was shipped in public/ but never linked, so installable
+    // metadata and the themed icons never reached the browser.
+    manifest: '/site.webmanifest',
     openGraph: {
       type: 'website',
       locale: 'en_PK',

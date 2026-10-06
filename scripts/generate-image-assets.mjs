@@ -1,76 +1,33 @@
 /**
- * Generates the raster image assets that are derived from SVG sources.
+ * Generates the raster image assets that are derived from the logo source.
  *
  *   node scripts/generate-image-assets.mjs
  *
  * Outputs:
- *   src/app/icon.svg                  (hand-maintained source of the logo)
- *   src/app/apple-icon.png            180x180, full bleed (iOS masks it itself)
- *   public/favicon.ico                16/32/48 PNG entries in a classic ICO
  *   public/placeholder-vehicle.png    800x600 fallback thumbnail
  *   public/og-image.jpg               1200x630 social share card
+ *
+ * Icons (public/favicon.ico, public/favicon-*.png, public/apple-touch-icon.png,
+ * public/site.webmanifest, src/app/icon.png, src/app/apple-icon.png) are
+ * produced by scripts/generate-favicons.mjs from Logo/logo.png. Splitting the
+ * outputs keeps the two scripts from overwriting each other's work.
  *
  * The placeholder is rasterised on purpose: next/image refuses to run SVG
  * through the optimizer unless dangerouslyAllowSVG is enabled, which would be
  * an unnecessary risk while remotePatterns allows any host. Rasterising once at
  * build-authoring time keeps the optimizer strict.
  */
-import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
+import { readFileSync, mkdirSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import sharp from 'sharp';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const svg = readFileSync(resolve(root, 'src/app/icon.svg'));
-
-/** Same logo artwork, but a full-bleed square: iOS applies its own mask. */
-const appleSvg = Buffer.from(
-  [
-    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">',
-    '<rect width="64" height="64" fill="#0369a1"/>',
-    '<path d="M21 31 L26 22 H38 L43 31 Z" fill="#e0f2fe"/>',
-    '<rect x="12" y="31" width="40" height="12" rx="5" fill="#ffffff"/>',
-    '<circle cx="21" cy="45" r="5.5" fill="#082f49"/>',
-    '<circle cx="43" cy="45" r="5.5" fill="#082f49"/>',
-    '<circle cx="21" cy="45" r="2" fill="#e0f2fe"/>',
-    '<circle cx="43" cy="45" r="2" fill="#e0f2fe"/>',
-    '</svg>',
-  ].join('')
-);
+/** Single source of truth for the brand artwork. */
+const LOGO = resolve(root, 'Logo', 'logo.png');
 
 mkdirSync(resolve(root, 'src/app'), { recursive: true });
 mkdirSync(resolve(root, 'public'), { recursive: true });
-
-await sharp(appleSvg).resize(180, 180).png().toFile(resolve(root, 'src/app/apple-icon.png'));
-
-/** Sizes embedded in the .ico, smallest first. */
-const SIZES = [16, 32, 48];
-const pngs = [];
-for (const size of SIZES) {
-  pngs.push({ size, data: await sharp(svg).resize(size, size).png().toBuffer() });
-}
-
-// ICONDIR (6 bytes) + one 16-byte ICONDIRENTRY per image, then the image data.
-const header = Buffer.alloc(6 + pngs.length * 16);
-header.writeUInt16LE(0, 0); // reserved, must be 0
-header.writeUInt16LE(1, 2); // type 1 = icon
-header.writeUInt16LE(pngs.length, 4);
-
-let offset = header.length;
-pngs.forEach((entry, i) => {
-  const p = 6 + i * 16;
-  header.writeUInt8(entry.size % 256, p); // width (0 == 256)
-  header.writeUInt8(entry.size % 256, p + 1); // height
-  header.writeUInt8(0, p + 2); // colour count, 0 = true colour
-  header.writeUInt8(0, p + 3); // reserved
-  header.writeUInt16LE(1, p + 4); // colour planes
-  header.writeUInt16LE(32, p + 6); // bits per pixel
-  header.writeUInt32LE(entry.data.length, p + 8);
-  header.writeUInt32LE(offset, p + 12);
-  offset += entry.data.length;
-});
-
-writeFileSync(resolve(root, 'public/favicon.ico'), Buffer.concat([header, ...pngs.map((e) => e.data)]));
 
 const placeholderSvg = readFileSync(resolve(root, 'public/placeholder-vehicle.svg'));
 await sharp(placeholderSvg)
@@ -83,6 +40,10 @@ await sharp(placeholderSvg)
  * Without it every Facebook/WhatsApp/X share renders a broken preview, so it is
  * generated here rather than shipped by hand. 1200x630 is the dimension every
  * major platform crops to.
+ *
+ * The card is drawn as SVG (gradient, rings, typography) and the real logo is
+ * composited on top afterwards, so the share image can never drift from the
+ * actual brand artwork.
  */
 const ogSvg = Buffer.from(
   [
@@ -106,18 +67,6 @@ const ogSvg = Buffer.from(
     '<circle cx="120" cy="560" r="220"/>',
     '</g>',
     '<path d="M0 0 H620 L360 630 H0 Z" fill="url(#shine)"/>',
-    // Logo lock-up, reusing the apple-icon artwork so the mark always matches.
-    '<g transform="translate(96 168)">',
-    '<rect x="0" y="0" width="152" height="152" rx="34" fill="#ffffff"/>',
-    '<g transform="translate(3.4 -11) scale(2.4)">',
-    '<path d="M21 31 L26 22 H38 L43 31 Z" fill="#0369a1"/>',
-    '<rect x="12" y="31" width="40" height="12" rx="5" fill="#082f49"/>',
-    '<circle cx="21" cy="45" r="5.5" fill="#075985"/>',
-    '<circle cx="43" cy="45" r="5.5" fill="#075985"/>',
-    '<circle cx="21" cy="45" r="2" fill="#ffffff"/>',
-    '<circle cx="43" cy="45" r="2" fill="#ffffff"/>',
-    '</g>',
-    '</g>',
     // Brand name + tagline.
     '<text x="296" y="248" fill="#ffffff" font-family="Segoe UI, Helvetica, Arial, sans-serif"',
     ' font-size="74" font-weight="700" letter-spacing="-1">AWAN RENTAL SERVICE</text>',
@@ -134,8 +83,25 @@ const ogSvg = Buffer.from(
   ].join('')
 );
 
-await sharp(ogSvg).jpeg({ quality: 88, mozjpeg: true }).toFile(resolve(root, 'public/og-image.jpg'));
+const card = await sharp(ogSvg).png().toBuffer();
 
-console.log(
-  'wrote src/app/apple-icon.png, public/favicon.ico, public/placeholder-vehicle.png, public/og-image.jpg'
+// Logo lock-up: 152x152 rounded plate at (96,168), matching the original
+// layout. `dest-in` keeps only the part of the logo inside the rounded rect,
+// so the artwork gets clean corners instead of a hard square edge.
+const BOX = 152;
+const mask = Buffer.from(
+  `<svg xmlns="http://www.w3.org/2000/svg" width="${BOX}" height="${BOX}">` +
+    `<rect width="${BOX}" height="${BOX}" rx="34" fill="#ffffff"/></svg>`
 );
+const plate = await sharp(LOGO)
+  .resize(BOX, BOX, { fit: 'cover' })
+  .composite([{ input: mask, blend: 'dest-in' }])
+  .png()
+  .toBuffer();
+
+await sharp(card)
+  .composite([{ input: plate, left: 96, top: 168 }])
+  .jpeg({ quality: 88, mozjpeg: true })
+  .toFile(resolve(root, 'public/og-image.jpg'));
+
+console.log('wrote public/placeholder-vehicle.png, public/og-image.jpg');
