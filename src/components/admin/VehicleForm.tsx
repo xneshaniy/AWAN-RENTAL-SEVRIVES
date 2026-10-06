@@ -139,8 +139,11 @@ export function VehicleForm({ mode, vehicleId, initial }: VehicleFormProps) {
 
   // Cloudinary upload. The button only appears once the API confirms the three
   // CLOUDINARY_* variables are present, so on an unconfigured deployment the
-  // form never offers an action that would fail with a 503.
-  const [uploadConfigured, setUploadConfigured] = useState(false);
+  // form never offers an action that would fail with a 503. 'checking' exists so
+  // the form can say *why* the button is absent instead of hiding it silently.
+  const [uploadStatus, setUploadStatus] = useState<'checking' | 'ready' | 'unavailable'>(
+    'checking',
+  );
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -264,10 +267,10 @@ export function VehicleForm({ mode, vehicleId, initial }: VehicleFormProps) {
     fetch('/api/admin/upload')
       .then((res) => (res.ok ? res.json() : { configured: false }))
       .then((data) => {
-        if (!cancelled) setUploadConfigured(Boolean(data?.configured));
+        if (!cancelled) setUploadStatus(data?.configured ? 'ready' : 'unavailable');
       })
       .catch(() => {
-        if (!cancelled) setUploadConfigured(false);
+        if (!cancelled) setUploadStatus('unavailable');
       });
     return () => {
       cancelled = true;
@@ -520,7 +523,7 @@ export function VehicleForm({ mode, vehicleId, initial }: VehicleFormProps) {
             <CardTitle className="flex items-center justify-between">
               <span>Images</span>
               <div className="flex items-center gap-2">
-                {uploadConfigured && (
+                {uploadStatus === 'ready' && (
                   <>
                     <input
                       ref={fileInputRef}
@@ -554,6 +557,13 @@ export function VehicleForm({ mode, vehicleId, initial }: VehicleFormProps) {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
+            {uploadStatus === 'unavailable' && (
+              <p className="rounded-lg bg-gray-50 px-3 py-2 text-xs leading-relaxed text-gray-500 dark:bg-gray-800 dark:text-gray-400">
+                Photo upload from this device isn&apos;t turned on for this site yet, so paste
+                an image link instead. The &quot;Upload Photo&quot; button appears here as
+                soon as it is.
+              </p>
+            )}
             {uploadError && (
               <p role="alert" className="text-sm text-red-600 dark:text-red-400">
                 {uploadError}
