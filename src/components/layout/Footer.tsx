@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { Phone, Mail, MapPin, Clock, Facebook, Instagram, Linkedin, MessageCircle } from 'lucide-react';
-import { BrandMark } from '@/components/common/BrandMark';
+import { Logo } from '@/components/common/Logo';
 import { cn } from '@/lib/utils';
 import { WhatsAppButton } from '@/components/common/WhatsAppButton';
 import { WHATSAPP_CONFIG_HINT, getWhatsAppUrl, generateGeneralWhatsAppMessage } from '@/lib/whatsapp';
@@ -73,9 +73,8 @@ export function Footer({ businessInfo }: FooterProps) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
           <div className="lg:col-span-1">
-            <Link href="/" className="flex items-center gap-2 mb-4" aria-label={`${companyName} Home`}>
-              <BrandMark className="w-8 h-8" />
-              <span className="font-heading font-bold text-xl text-white">{companyName}</span>
+            <Link href="/" className="mb-4 inline-flex" aria-label={`${companyName} Home`}>
+              <Logo className="h-32 w-auto rounded-2xl" />
             </Link>
             <p className="text-gray-400 text-sm leading-relaxed mb-6">
               Your trusted partner for car rental and ground transportation services across Pakistan.

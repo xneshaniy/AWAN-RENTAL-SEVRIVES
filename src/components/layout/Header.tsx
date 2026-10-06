@@ -39,9 +39,13 @@ export function Header({ businessInfo }: HeaderProps) {
     >
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" aria-label="Main navigation">
         <div className="flex items-center justify-between h-16 lg:h-20">
-          <Link href="/" className="flex items-center gap-2" aria-label="Awan Rental Service Home">
-            <BrandMark className="w-8 h-8" />
-            <span className="font-heading font-bold text-xl text-gray-900 dark:text-white">
+          <Link
+            href="/"
+            className="flex min-w-0 items-center gap-2"
+            aria-label="Awan Rental Service Home"
+          >
+            <BrandMark className="h-5 w-auto shrink-0 sm:h-8" />
+            <span className="min-w-0 truncate font-heading font-bold text-lg text-gray-900 dark:text-white sm:text-xl">
               Awan Rental Service
             </span>
           </Link>
@@ -151,9 +155,13 @@ export function Header({ businessInfo }: HeaderProps) {
         <div className="lg:hidden fixed inset-0 z-50 bg-white dark:bg-gray-900 animate-slide-down">
           <div className="flex flex-col h-full">
             <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
-              <Link href="/" className="flex items-center gap-2" aria-label="Awan Rental Service Home">
-                <BrandMark className="w-8 h-8" />
-                <span className="font-heading font-bold text-xl text-gray-900 dark:text-white">
+              <Link
+                href="/"
+                className="flex min-w-0 items-center gap-2"
+                aria-label="Awan Rental Service Home"
+              >
+                <BrandMark className="h-5 w-auto shrink-0 sm:h-8" />
+                <span className="min-w-0 truncate font-heading font-bold text-lg text-gray-900 dark:text-white sm:text-xl">
                   Awan Rental Service
                 </span>
               </Link>

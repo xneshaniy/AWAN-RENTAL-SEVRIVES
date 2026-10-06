@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/Button';
 import { getBusinessInfo } from '@/lib/settings';
 import { Layout } from '@/components/layout/Layout';
 import { WhatsAppFloat } from '@/components/common/WhatsAppFloat';
-import { BrandMark } from '@/components/common/BrandMark';
+import { Logo } from '@/components/common/Logo';
 
 /**
  * Rendered inside the normal site chrome. A dead end with no header, no footer
@@ -21,7 +21,10 @@ export default async function NotFound() {
         aria-labelledby="notfound-title"
       >
         <div className="w-full max-w-md text-center">
-          <BrandMark className="mx-auto mb-6 h-16 w-16 animate-fade-in" title="Awan Rental Service" />
+          <Logo
+            className="mx-auto mb-6 block h-36 w-auto animate-fade-in"
+            title="Awan Rental Service"
+          />
 
           <p
             className="mb-2 animate-slide-up text-8xl font-bold leading-none text-primary-600/20 dark:text-primary-400/20"
