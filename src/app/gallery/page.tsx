@@ -84,7 +84,7 @@ export default async function GalleryPage() {
             </h1>
             <p className="text-lg text-gray-600 dark:text-gray-400">
               Photos and video clips of our fleet, straight from the vehicles we rent out.
-              Pick a vehicle to see only its media, then open any picture or clip full screen.
+              Open any picture or clip full screen.
             </p>
           </div>
 

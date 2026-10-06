@@ -24,38 +24,26 @@ interface MediaItem {
   key: string;
   type: 'photo' | 'video';
   url: string;
-  vehicleId: string;
   vehicleName: string;
   vehicleSlug: string;
   label: string;
 }
 
-type KindFilter = 'all' | 'photos' | 'videos';
-
-const KIND_OPTIONS: Array<{ value: KindFilter; label: string }> = [
-  { value: 'all', label: 'All' },
-  { value: 'photos', label: 'Photos' },
-  { value: 'videos', label: 'Videos' },
-];
-
 /** Grid densities used for the `sizes` hint, so phones never download 4K tiles. */
 const TILE_SIZES = '(min-width: 1024px) 25vw, (min-width: 640px) 33vw, 50vw';
 
 export function GalleryGrid({ vehicles }: { vehicles: GalleryVehicle[] }) {
-  const [kind, setKind] = useState<KindFilter>('all');
-  const [vehicleId, setVehicleId] = useState<string>('all');
-  /** Index into the filtered list, not the full list - prev/next stay in view. */
+  /** Index into `items`, so prev/next stay in view. */
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
 
-  // Photos first, then clips, so the ordering never changes while filtering.
-  const allItems = useMemo<MediaItem[]>(
+  // Photos first, then clips, so the order is stable between visits.
+  const items = useMemo<MediaItem[]>(
     () =>
       vehicles.flatMap((vehicle) => [
         ...vehicle.photos.map((photo, index) => ({
           key: `${vehicle.id}-photo-${index}`,
           type: 'photo' as const,
           url: photo.url,
-          vehicleId: vehicle.id,
           vehicleName: vehicle.name,
           vehicleSlug: vehicle.slug,
           label: `${vehicle.name} - ${GALLERY_CATEGORY_LABELS[photo.category] ?? 'Exterior'}`,
@@ -64,7 +52,6 @@ export function GalleryGrid({ vehicles }: { vehicles: GalleryVehicle[] }) {
           key: `${vehicle.id}-video-${index}`,
           type: 'video' as const,
           url,
-          vehicleId: vehicle.id,
           vehicleName: vehicle.name,
           vehicleSlug: vehicle.slug,
           label: `${vehicle.name} - video`,
@@ -73,32 +60,7 @@ export function GalleryGrid({ vehicles }: { vehicles: GalleryVehicle[] }) {
     [vehicles]
   );
 
-  const visible = useMemo(
-    () =>
-      allItems.filter(
-        (item) =>
-          (kind === 'all' || item.type === (kind === 'photos' ? 'photo' : 'video')) &&
-          (vehicleId === 'all' || item.vehicleId === vehicleId)
-      ),
-    [allItems, kind, vehicleId]
-  );
-
-  // Only vehicles that actually contribute to the current view get a pill.
-  const vehicleOptions = useMemo(() => {
-    const ids = new Set(
-      allItems
-        .filter((item) => kind === 'all' || item.type === (kind === 'photos' ? 'photo' : 'video'))
-        .map((item) => item.vehicleId)
-    );
-    return vehicles.filter((vehicle) => ids.has(vehicle.id));
-  }, [allItems, vehicles, kind]);
-
-  // Leaving a filter that empties the list must not strand a stale index.
-  useEffect(() => {
-    setActiveIndex(null);
-  }, [kind, vehicleId]);
-
-  const active = activeIndex === null ? null : visible[activeIndex] ?? null;
+  const active = activeIndex === null ? null : items[activeIndex] ?? null;
 
   // Lock the page behind the overlay while it is open.
   useEffect(() => {
@@ -117,113 +79,45 @@ export function GalleryGrid({ vehicles }: { vehicles: GalleryVehicle[] }) {
         setActiveIndex(null);
         return;
       }
-      if (visible.length < 2) return;
+      if (items.length < 2) return;
       if (event.key === 'ArrowLeft') {
         event.preventDefault();
         setActiveIndex((current) =>
-          current === null ? current : (current - 1 + visible.length) % visible.length
+          current === null ? current : (current - 1 + items.length) % items.length
         );
       }
       if (event.key === 'ArrowRight') {
         event.preventDefault();
         setActiveIndex((current) =>
-          current === null ? current : (current + 1) % visible.length
+          current === null ? current : (current + 1) % items.length
         );
       }
     };
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
-  }, [activeIndex, visible.length]);
+  }, [activeIndex, items.length]);
 
   const step = (delta: number) => {
-    if (visible.length < 2) return;
+    if (items.length < 2) return;
     setActiveIndex((current) =>
-      current === null ? current : (current + delta + visible.length) % visible.length
+      current === null ? current : (current + delta + items.length) % items.length
     );
   };
 
   return (
     <div className="space-y-6">
-      {/* Media type */}
-      <div
-        className="flex flex-wrap items-center gap-2"
-        role="group"
-        aria-label="Filter gallery by media type"
-      >
-        {KIND_OPTIONS.map((option) => {
-          const selected = kind === option.value;
-          return (
-            <button
-              key={option.value}
-              type="button"
-              onClick={() => setKind(option.value)}
-              aria-pressed={selected}
-              className={
-                selected
-                  ? 'rounded-full bg-primary-600 px-4 py-2 text-sm font-medium text-white'
-                  : 'rounded-full border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:border-primary-500 hover:text-primary-600 dark:border-gray-600 dark:text-gray-300'
-              }
-            >
-              {option.label}
-            </button>
-          );
-        })}
-      </div>
-
-      {/* One pill per vehicle that has media of the selected kind */}
-      {vehicleOptions.length > 1 && (
-        <div
-          className="flex flex-wrap items-center gap-2"
-          role="group"
-          aria-label="Filter gallery by vehicle"
-        >
-          <button
-            type="button"
-            onClick={() => setVehicleId('all')}
-            aria-pressed={vehicleId === 'all'}
-            className={
-              vehicleId === 'all'
-                ? 'rounded-full bg-gray-900 px-4 py-2 text-sm font-medium text-white dark:bg-white dark:text-gray-900'
-                : 'rounded-full border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:border-primary-500 hover:text-primary-600 dark:border-gray-600 dark:text-gray-300'
-            }
-          >
-            All vehicles
-          </button>
-          {vehicleOptions.map((vehicle) => {
-            const selected = vehicleId === vehicle.id;
-            return (
-              <button
-                key={vehicle.id}
-                type="button"
-                onClick={() => setVehicleId(vehicle.id)}
-                aria-pressed={selected}
-                className={
-                  selected
-                    ? 'rounded-full bg-gray-900 px-4 py-2 text-sm font-medium text-white dark:bg-white dark:text-gray-900'
-                    : 'rounded-full border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:border-primary-500 hover:text-primary-600 dark:border-gray-600 dark:text-gray-300'
-                }
-              >
-                {vehicle.name}
-              </button>
-            );
-          })}
-        </div>
-      )}
-
-      {visible.length === 0 ? (
+      {items.length === 0 ? (
         <div className="rounded-2xl border border-dashed border-gray-300 px-6 py-16 text-center dark:border-gray-700">
           <p className="text-lg font-medium text-gray-900 dark:text-white">
             Nothing to show here yet
           </p>
           <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-            {kind === 'videos'
-              ? 'No videos have been uploaded for this selection yet.'
-              : 'No photos match this selection yet.'}
+            No photos or video clips have been added yet.
           </p>
         </div>
       ) : (
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4">
-          {visible.map((item, index) => (
+          {items.map((item, index) => (
             <button
               key={item.key}
               type="button"
@@ -287,7 +181,7 @@ export function GalleryGrid({ vehicles }: { vehicles: GalleryVehicle[] }) {
           </div>
 
           <div className="relative flex min-h-0 flex-1 items-center justify-center px-2 pb-4 sm:px-16">
-            {visible.length > 1 && (
+            {items.length > 1 && (
               <>
                 <button
                   type="button"
@@ -330,8 +224,8 @@ export function GalleryGrid({ vehicles }: { vehicles: GalleryVehicle[] }) {
 
           <div className="flex items-center justify-center gap-4 px-4 pb-5">
             <p className="text-xs text-gray-400">
-              {activeIndex !== null && visible.length > 1
-                ? `${activeIndex + 1} of ${visible.length}`
+              {activeIndex !== null && items.length > 1
+                ? `${activeIndex + 1} of ${items.length}`
                 : ''}
             </p>
             <Link
