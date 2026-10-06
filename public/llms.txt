@@ -1,0 +1,60 @@
+# AWAN RENTAL SERVICE
+
+> Car rental and ground transportation company based in Islamabad, serving Rawalpindi, Lahore and destinations across Pakistan. This site publishes the current fleet, service categories, rental terms, frequently asked questions and an online booking enquiry form.
+
+AWAN RENTAL SERVICE rents passenger cars and commercial vehicles for self-drive and chauffeur-driven hire, and operates airport transfers, corporate travel, intercity travel, family travel and event transportation. Each vehicle has its own page listing its specification, location and, where one has been configured, its daily, weekly and monthly price. Prices and availability are read live from the site's own data, so the vehicle pages and the booking form are the source of truth rather than this file.
+
+## Fleet, gallery and booking
+
+- [Home](https://awanrentalservice.org/): entry point, featured vehicles and the main booking search.
+- [All vehicles](https://awanrentalservice.org/vehicles): filterable list of vehicles by category, rental type and price.
+- [Gallery](https://awanrentalservice.org/gallery): photos and videos attached to the vehicles in the fleet, filterable by vehicle and by photos or videos.
+- [Booking enquiry](https://awanrentalservice.org/booking): form for requesting a vehicle for given dates.
+- [Frequently asked questions](https://awanrentalservice.org/faq): rental, documentation, payment and policy questions.
+
+## Service categories
+
+- [Services overview](https://awanrentalservice.org/services)
+- [Self drive](https://awanrentalservice.org/self-drive)
+- [Chauffeur service](https://awanrentalservice.org/chauffeur-service)
+- [Airport transfers](https://awanrentalservice.org/airport-transfers)
+- [Corporate travel](https://awanrentalservice.org/corporate-travel)
+- [Intercity travel](https://awanrentalservice.org/intercity-travel)
+- [Family travel](https://awanrentalservice.org/family-travel)
+- [Event transportation](https://awanrentalservice.org/event-transportation)
+- [Commercial vehicle rental](https://awanrentalservice.org/commercial-vehicle-rental)
+
+## Area pages
+
+- [Car rental Islamabad](https://awanrentalservice.org/car-rental-islamabad)
+- [Car rental Rawalpindi](https://awanrentalservice.org/car-rental-rawalpindi)
+- [Car rental Lahore](https://awanrentalservice.org/car-rental-lahore)
+- [Self drive car rental Pakistan](https://awanrentalservice.org/self-drive-car-rental-pakistan)
+- [Chauffeur service Pakistan](https://awanrentalservice.org/chauffeur-service-pakistan)
+- [Airport transfer Islamabad](https://awanrentalservice.org/airport-transfer-islamabad)
+- [Corporate car rental Pakistan](https://awanrentalservice.org/corporate-car-rental-pakistan)
+
+## Company
+
+- [About](https://awanrentalservice.org/about)
+- [Blog](https://awanrentalservice.org/blog)
+- [Contact](https://awanrentalservice.org/contact)
+
+## Legal documents
+
+- [Privacy policy](https://awanrentalservice.org/privacy-policy)
+- [Terms and conditions](https://awanrentalservice.org/terms-and-conditions)
+- [Rental terms](https://awanrentalservice.org/rental-terms)
+- [Cancellation and refunds](https://awanrentalservice.org/cancellation-policy)
+- [Cookie policy](https://awanrentalservice.org/cookie-policy)
+
+## Machine-readable indexes
+
+- [Sitemap](https://awanrentalservice.org/sitemap.xml): every indexable page, refreshed when content is published.
+- [Robots](https://awanrentalservice.org/robots.txt): crawl rules; /admin/ and /api/ are disallowed.
+
+## Contact
+
+- Phone and WhatsApp: +92 305 6846811
+- Email: info@awanrentalservice.org
+- Enquiry form: https://awanrentalservice.org/contact

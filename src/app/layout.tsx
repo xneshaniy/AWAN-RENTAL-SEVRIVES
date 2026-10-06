@@ -84,6 +84,13 @@ export default async function RootLayout({
         {/* Fonts are self-hosted through next/font above - no runtime Google
             Fonts requests, so no preconnects to fonts.googleapis.com. */}
         <link rel="dns-prefetch" href="https://wa.me" />
+        {/* gtag.js is the only third-party script on the page. Opening the
+            connection while the head is still parsing means the analytics
+            fetch (which runs after hydration) no longer pays DNS + TCP + TLS
+            out of the measured window. No crossorigin attribute: the script is
+            fetched as a classic script, so the non-CORS connection is the one
+            that must be warmed up. */}
+        <link rel="preconnect" href="https://www.googletagmanager.com" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}

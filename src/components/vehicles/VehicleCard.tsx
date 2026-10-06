@@ -68,11 +68,27 @@ export function VehicleCard({ vehicle, variant = 'default', showBookingCTA = tru
   const ctaButtons = (
     <div className="flex flex-col gap-2">
       <div className="flex gap-2">
+        {/*
+          Every card renders the same "View Details" / "Book Now" wording while
+          linking to a different vehicle, so screen-reader users browsing the
+          list hear an indistinguishable run of identical links. The visible
+          label is unchanged; the aria-label makes each link's destination
+          explicit from its accessible name.
+        */}
         <Button variant="outline" size="md" fullWidth asChild className="flex-1">
-          <Link href={detailHref}>View Details</Link>
+          <Link href={detailHref} aria-label={`View ${vehicle.name} details`}>
+            View Details
+          </Link>
         </Button>
         <Button variant="primary" size="md" fullWidth asChild className="flex-1">
-          <Link href={bookHref}>{canBook ? 'Book Now' : 'Request a Quote'}</Link>
+          <Link
+            href={bookHref}
+            aria-label={
+              canBook ? `Book ${vehicle.name} online` : `Request a quote for ${vehicle.name}`
+            }
+          >
+            {canBook ? 'Book Now' : 'Request a Quote'}
+          </Link>
         </Button>
       </div>
       <WhatsAppButton

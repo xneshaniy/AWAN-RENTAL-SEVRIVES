@@ -1,6 +1,7 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
+import Script from 'next/script';
 import { useEffect } from 'react';
 
 const GA_ID = process.env.NEXT_PUBLIC_GA_ID;
@@ -58,10 +59,20 @@ export function GoogleAnalytics() {
 
   return (
     <>
-      <script
-        async
+      {/*
+        next/script with `afterInteractive` - the Next.js-recommended strategy
+        for third-party code. The gtag library is injected only once the page
+        has hydrated, so its ~175 KiB of download and its main-thread work no
+        longer compete with rendering the hero and the booking form.
+
+        Tracking is unaffected: the inline bootstrap below runs during HTML
+        parsing and queues `js`/`config` (and the page_view pushed by the
+        effect above) on window.dataLayer, so GA4 replays the full queue the
+        moment the library arrives - including the very first page_view.
+      */}
+      <Script
+        strategy="afterInteractive"
         src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
-        suppressHydrationWarning
       />
       <script
         dangerouslySetInnerHTML={{
