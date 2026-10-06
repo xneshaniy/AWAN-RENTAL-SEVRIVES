@@ -39,12 +39,22 @@
  *
  * TRUSTED TYPES
  * -------------
- * `trusted-types 'none'` records that this application never creates a
- * Trusted Types policy, which is accurate - nothing in the source does, and
- * React 18 only writes `innerHTML` through `dangerouslySetInnerHTML`.
- * `require-trusted-types-for` is deliberately NOT set: enabling enforcement
- * would make those assignments throw and blank out the JSON-LD blocks and the
- * analytics bootstrap. Enforcement needs a reviewed policy first.
+ * Deliberately absent. A previous version of this policy carried
+ * `trusted-types 'none'` on the reasoning that the application writes no
+ * Trusted Types policies of its own. That was wrong: Next.js's own webpack
+ * runtime calls `trustedTypes.createPolicy('nextjs#bundler')`, so the directive
+ * blocked the framework itself. The observable damage on the live site was two
+ * console errors and a client-side navigation that no longer worked - "Failed
+ * to fetch RSC payload for /booking. Falling back to browser navigation" -
+ * which is also what dropped Best Practices from 100 to 92 in PageSpeed.
+ *
+ * Enforcement (`require-trusted-types-for`) is not set either, because that
+ * would make every `innerHTML`/`assign` sink throw unless each script is first
+ * rewritten to construct policies from reviewed types - React 18's
+ * `dangerouslySetInnerHTML` would blank out the JSON-LD blocks and the
+ * analytics bootstrap the moment it ran. Without enforcement, listing allowed
+ * policies buys no protection at all, so the only correct value here is to
+ * leave Trusted Types out until it can be adopted properly.
  *
  * `frame-ancestors` is only meaningful in a response header, so it is omitted
  * from the meta form. Clickjacking protection is unaffected - the
@@ -99,7 +109,6 @@ function getContentSecurityPolicy(options) {
     "form-action 'self'",
     // Response-header only: browsers ignore it when delivered via <meta>.
     ...(includeFrameAncestors ? ["frame-ancestors 'none'"] : []),
-    "trusted-types 'none'",
     'upgrade-insecure-requests',
   ];
 
