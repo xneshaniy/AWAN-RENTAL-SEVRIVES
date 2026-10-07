@@ -20,8 +20,13 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     const variants = {
       primary: 'bg-primary-600 text-white hover:bg-primary-700 focus:ring-primary-500 shadow-sm',
       secondary: 'bg-secondary-600 text-white hover:bg-secondary-700 focus:ring-secondary-500 shadow-sm',
-      outline: 'border-2 border-primary-600 text-primary-600 hover:bg-primary-50 focus:ring-primary-500',
-      ghost: 'text-primary-600 hover:bg-primary-50 focus:ring-primary-500',
+      // outline/ghost show text-only green: #15803d is 4.96:1 on the light page
+      // but only 2.70:1 on a dark-mode card (gray-800), so dark swaps to
+      // primary-400 #4ade80 - 6.6:1 on gray-800.
+      outline:
+        'border-2 border-primary-600 text-primary-600 hover:bg-primary-50 focus:ring-primary-500 dark:border-primary-400 dark:text-primary-400 dark:hover:bg-primary-900/30 dark:focus:ring-primary-400',
+      ghost:
+        'text-primary-600 hover:bg-primary-50 focus:ring-primary-500 dark:text-primary-400 dark:hover:bg-primary-900/30 dark:focus:ring-primary-400',
       destructive: 'bg-red-600 text-white hover:bg-red-700 focus:ring-red-500 shadow-sm',
       whatsapp: 'bg-green-600 text-white hover:bg-green-700 focus:ring-green-500 shadow-sm flex items-center gap-2',
     };

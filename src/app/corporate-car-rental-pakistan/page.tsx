@@ -187,7 +187,7 @@ export default async function CorporateCarRentalPakistanPage() {
                       >
                         {service.title}
                       </Link>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">{service.description}</p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">{service.description}</p>
                     </div>
                   ))
                 ) : (
@@ -233,7 +233,7 @@ export default async function CorporateCarRentalPakistanPage() {
             <Button size="lg" variant="secondary" asChild className="group">
               <Link href="/booking">Book a Car</Link>
             </Button>
-            <Button size="lg" variant="outline" asChild className="group border-white/60 text-white hover:bg-white/10 hover:text-white">
+            <Button size="lg" variant="outline" asChild className="group border-white/60 text-white hover:bg-white/10 hover:text-white dark:border-white/60 dark:text-white dark:hover:bg-white/10 dark:hover:text-white">
               <Link href="/contact">Contact Us</Link>
             </Button>
             <WhatsAppButton

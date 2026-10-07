@@ -112,7 +112,7 @@ export default async function AdminGalleryPage() {
           </h1>
           <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
             Every photo and clip across the live fleet, in one place. This is exactly what the
-            public <Link href="/gallery" className="text-primary-600 hover:underline">Gallery</Link>{' '}
+            public <Link href="/gallery" className="text-primary-600 hover:underline dark:text-primary-400">Gallery</Link>{' '}
             shows - uploads appear here as soon as the vehicle is saved.
           </p>
         </div>

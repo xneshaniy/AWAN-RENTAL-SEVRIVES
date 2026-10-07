@@ -266,7 +266,7 @@ export default async function AdminBookingsPage({ searchParams }: BookingsPagePr
                             <div className="text-xs text-gray-500">
                               {booking.user?.email || booking.customerEmail}
                             </div>
-                            <div className="text-xs text-gray-400">{booking.customerPhone}</div>
+                            <div className="text-xs text-gray-500 dark:text-gray-400">{booking.customerPhone}</div>
                           </td>
                           <td className="py-4 text-sm text-gray-700 dark:text-gray-300">
                             {booking.vehicle?.name || 'N/A'}

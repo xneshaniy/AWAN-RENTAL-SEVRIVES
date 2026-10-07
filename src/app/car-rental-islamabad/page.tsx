@@ -171,7 +171,9 @@ export default async function IslamabadCarRentalPage() {
                       <MapPin className="w-5 h-5 text-primary-600 dark:text-primary-400 flex-shrink-0 mt-0.5" />
                       <div>
                         <h4 className="font-semibold text-gray-900 dark:text-white">{area.name}</h4>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">{area.description}</p>
+                        {/* On bg-cream-100, gray-500 is 4.47:1 - a hair under AA.
+                            gray-600 clears it at 6.99:1. */}
+                        <p className="text-sm text-gray-600 dark:text-gray-400">{area.description}</p>
                       </div>
                     </div>
                   </Card>
@@ -192,7 +194,7 @@ export default async function IslamabadCarRentalPage() {
                         </div>
                         <div>
                           <p className="font-medium text-gray-900 dark:text-white">{route.from} → {route.to}</p>
-                          <p className="text-sm text-gray-500 dark:text-gray-400">{route.distance} · {route.time}</p>
+                          <p className="text-sm text-gray-600 dark:text-gray-400">{route.distance} · {route.time}</p>
                         </div>
                       </div>
                       {route.popular && <Badge variant="warning" size="sm">Popular</Badge>}
@@ -217,7 +219,7 @@ export default async function IslamabadCarRentalPage() {
             <Button size="lg" variant="secondary" asChild className="group">
               <Link href="/booking">Book a Car</Link>
             </Button>
-            <Button size="lg" variant="outline" asChild className="group border-white/60 text-white hover:bg-white/10 hover:text-white">
+            <Button size="lg" variant="outline" asChild className="group border-white/60 text-white hover:bg-white/10 hover:text-white dark:border-white/60 dark:text-white dark:hover:bg-white/10 dark:hover:text-white">
               <Link href="/vehicles">View All Vehicles</Link>
             </Button>
             <WhatsAppButton

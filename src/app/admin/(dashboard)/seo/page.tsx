@@ -35,7 +35,7 @@ export default async function AdminSeoPage() {
       <div className="flex flex-col gap-3">
         <Link
           href="/admin"
-          className="inline-flex w-fit items-center gap-1.5 text-sm font-medium text-gray-500 hover:text-primary-600 dark:text-gray-400 dark:hover:text-primary-400"
+          className="inline-flex w-fit items-center gap-1.5 text-sm font-medium text-gray-600 hover:text-primary-600 dark:text-gray-400 dark:hover:text-primary-400"
         >
           <ArrowLeft className="h-4 w-4" aria-hidden="true" />
           Back to Dashboard

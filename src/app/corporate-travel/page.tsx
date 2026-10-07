@@ -63,7 +63,7 @@ export default async function CorporateTravelPage() {
                   label="Discuss Corporate Needs"
                   ariaLabel="Discuss corporate transportation needs on WhatsApp"
                 />
-                <Button variant="outline" size="lg" className="border-white/30 text-white hover:bg-white/10" asChild>
+                <Button variant="outline" size="lg" className="border-white/30 text-white hover:bg-white/10 dark:border-white/30 dark:text-white dark:hover:bg-white/10" asChild>
                   <Link href="/vehicles">View Fleet</Link>
                 </Button>
               </div>
@@ -174,7 +174,7 @@ export default async function CorporateTravelPage() {
                   label="Contact on WhatsApp"
                   ariaLabel="Contact the corporate travel team on WhatsApp"
                 />
-                <Button size="lg" variant="outline" className="border-white/30 text-white hover:bg-white/10" asChild>
+                <Button size="lg" variant="outline" className="border-white/30 text-white hover:bg-white/10 dark:border-white/30 dark:text-white dark:hover:bg-white/10" asChild>
                   <Link href="/contact">Email Us</Link>
                 </Button>
               </div>

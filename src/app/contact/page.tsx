@@ -236,7 +236,7 @@ export default async function ContactPage() {
               label="Book on WhatsApp"
               ariaLabel="Book a ride on WhatsApp"
             />
-            <Button size="lg" variant="outline" className="border-white/30 text-white hover:bg-white/10" asChild>
+            <Button size="lg" variant="outline" className="border-white/30 text-white hover:bg-white/10 dark:border-white/30 dark:text-white dark:hover:bg-white/10" asChild>
               <Link href="/booking">Book Online</Link>
             </Button>
           </div>

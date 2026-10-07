@@ -179,7 +179,7 @@ export default async function AirportTransferIslamabadPage() {
                       <div>
                         <p className="font-medium text-gray-900 dark:text-white">{airport.label}</p>
                         {airport.note && (
-                          <p className="text-sm text-gray-500 dark:text-gray-400">{airport.note}</p>
+                          <p className="text-sm text-gray-600 dark:text-gray-400">{airport.note}</p>
                         )}
                       </div>
                       <Badge variant="success" size="sm">Available</Badge>
@@ -228,7 +228,7 @@ export default async function AirportTransferIslamabadPage() {
             <Button size="lg" variant="secondary" asChild className="group">
               <Link href="/airport-transfers">Request a Transfer</Link>
             </Button>
-            <Button size="lg" variant="outline" asChild className="group border-white/60 text-white hover:bg-white/10 hover:text-white">
+            <Button size="lg" variant="outline" asChild className="group border-white/60 text-white hover:bg-white/10 hover:text-white dark:border-white/60 dark:text-white dark:hover:bg-white/10 dark:hover:text-white">
               <Link href="/booking">Book a Car</Link>
             </Button>
             <WhatsAppButton

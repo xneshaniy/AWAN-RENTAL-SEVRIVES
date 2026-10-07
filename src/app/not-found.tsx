@@ -69,7 +69,11 @@ export default async function NotFound() {
             <p className="mb-4 text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
               Popular pages
             </p>
-            <div className="flex items-center justify-center gap-8 text-gray-400">
+            {/* gray-400 is 2.54:1 on this section's white - below the 4.5:1
+                WCAG AA minimum. gray-500 lifts it to 4.83:1 in light mode;
+                on the dark page background gray-500 is only 4.14:1, so dark
+                keeps gray-400 (7.88:1). */}
+            <div className="flex items-center justify-center gap-8 text-gray-500 dark:text-gray-400">
               <Link
                 href="/services"
                 className="flex flex-col items-center gap-1 transition-colors hover:text-primary-600 dark:hover:text-primary-400"

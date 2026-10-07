@@ -120,7 +120,15 @@ export default async function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
         />
       </head>
-      <body className="font-sans text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-50 min-h-screen">
+      {/*
+        No bg-/text- utilities here: globals.css already does
+        `@apply bg-background text-foreground` on body, and those two tokens are
+        the ones that flip for dark mode (--background goes to hsl(222 84% 5%),
+        --foreground to near-white). The utilities used to sit on top of that and
+        pin dark mode to bg-gray-50 + text-gray-100 - near-white text on a
+        near-white page, 1.05:1, unreadable for anyone whose OS prefers dark.
+      */}
+      <body className="font-sans min-h-screen">
         <a
           href="#main-content"
           className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100] focus:rounded-xl focus:bg-white focus:px-4 focus:py-2 focus:text-sm focus:font-medium focus:text-primary-700 focus:shadow-lg"

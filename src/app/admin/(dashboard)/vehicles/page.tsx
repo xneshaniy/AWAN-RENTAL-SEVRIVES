@@ -243,7 +243,7 @@ export default async function AdminVehiclesPage({ searchParams }: VehiclesPagePr
                         <div className="text-sm text-gray-500 dark:text-gray-400">
                           {vehicle.brand} {vehicle.model} · {vehicle.year}
                         </div>
-                        <div className="text-xs text-gray-400">{vehicle.licensePlate}</div>
+                        <div className="text-xs text-gray-500 dark:text-gray-400">{vehicle.licensePlate}</div>
                       </td>
                       <td className="py-4">
                         <Badge variant="info">{getVehicleCategoryLabel(vehicle.category)}</Badge>
@@ -257,12 +257,12 @@ export default async function AdminVehiclesPage({ searchParams }: VehiclesPagePr
                         </div>
                         <div className="flex flex-wrap gap-1 pt-1">
                           {vehicle.selfDriveAvailable && (
-                            <span className="rounded bg-gray-100 px-1.5 py-0.5 text-xs dark:bg-gray-700">
+                            <span className="rounded bg-gray-100 px-1.5 py-0.5 text-xs text-gray-600 dark:bg-gray-700 dark:text-gray-300">
                               Self-drive
                             </span>
                           )}
                           {vehicle.chauffeurAvailable && (
-                            <span className="rounded bg-gray-100 px-1.5 py-0.5 text-xs dark:bg-gray-700">
+                            <span className="rounded bg-gray-100 px-1.5 py-0.5 text-xs text-gray-600 dark:bg-gray-700 dark:text-gray-300">
                               Chauffeur
                             </span>
                           )}

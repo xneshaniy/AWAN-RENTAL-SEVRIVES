@@ -328,7 +328,7 @@ export function AdminUsersManager({ initialUsers, currentUserEmail }: AdminUsers
                               Edit
                             </button>
                             {isSelf ? (
-                              <span className="text-xs text-gray-400" title="You cannot remove your own account">
+                              <span className="text-xs text-gray-500 dark:text-gray-400" title="You cannot remove your own account">
                                 Signed in
                               </span>
                             ) : (

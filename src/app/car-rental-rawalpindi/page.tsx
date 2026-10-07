@@ -165,7 +165,7 @@ export default async function RawalpindiCarRentalPage() {
                       <MapPin className="w-5 h-5 text-secondary-600 dark:text-secondary-400 flex-shrink-0 mt-0.5" aria-hidden="true" />
                       <div>
                         <h3 className="font-semibold text-gray-900 dark:text-white">{area.name}</h3>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">{area.description}</p>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">{area.description}</p>
                       </div>
                     </div>
                   </Card>
@@ -186,7 +186,7 @@ export default async function RawalpindiCarRentalPage() {
                         </div>
                         <div>
                           <p className="font-medium text-gray-900 dark:text-white">{route.from} → {route.to}</p>
-                          <p className="text-sm text-gray-500 dark:text-gray-400">{route.distance} · {route.time}</p>
+                          <p className="text-sm text-gray-600 dark:text-gray-400">{route.distance} · {route.time}</p>
                         </div>
                       </div>
                       {route.popular && <Badge variant="warning" size="sm">Popular</Badge>}
@@ -194,7 +194,7 @@ export default async function RawalpindiCarRentalPage() {
                   </Card>
                 ))}
               </div>
-              <p className="mt-4 text-sm text-gray-500 dark:text-gray-400">
+              <p className="mt-4 text-sm text-gray-600 dark:text-gray-400">
                 Distances and times are approximate. Need a different destination?{' '}
                 <Link href="/contact" className="font-medium text-secondary-600 hover:text-secondary-700 dark:text-secondary-400">
                   Ask us
@@ -222,7 +222,7 @@ export default async function RawalpindiCarRentalPage() {
             <Button size="lg" variant="secondary" asChild className="group">
               <Link href="/booking">Book a Car</Link>
             </Button>
-            <Button size="lg" variant="outline" asChild className="group border-white/60 text-white hover:bg-white/10 hover:text-white">
+            <Button size="lg" variant="outline" asChild className="group border-white/60 text-white hover:bg-white/10 hover:text-white dark:border-white/60 dark:text-white dark:hover:bg-white/10 dark:hover:text-white">
               <Link href="/vehicles">View All Vehicles</Link>
             </Button>
             <WhatsAppButton

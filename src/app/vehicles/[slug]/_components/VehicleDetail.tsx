@@ -562,7 +562,7 @@ export function VehicleDetail({ vehicle, similarVehicles }: VehicleDetailProps) 
                     { label: 'Air Conditioning', value: vehicle.ac ? 'Yes' : 'No' },
                   ].map((item) => (
                     <div key={item.label} className="p-3 rounded-xl bg-cream-100 dark:bg-gray-800">
-                      <p className="text-xs text-gray-500 dark:text-gray-400">{item.label}</p>
+                      <p className="text-xs text-gray-600 dark:text-gray-400">{item.label}</p>
                       <p className="font-medium text-gray-900 dark:text-white">{item.value}</p>
                     </div>
                   ))}

@@ -88,7 +88,7 @@ export async function LegalLayout({
             {title}
           </h1>
           <p className={`text-lg max-w-3xl ${LEGAL_TEXT}`}>{summary}</p>
-          <p className="mt-4 text-sm text-gray-500 dark:text-gray-400">
+          <p className="mt-4 text-sm text-gray-600 dark:text-gray-400">
             Last updated: {lastUpdated}
           </p>
         </div>

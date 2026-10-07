@@ -11,7 +11,7 @@ interface LayoutProps {
 
 export function Layout({ children, businessInfo }: LayoutProps) {
   return (
-    <div className="min-h-screen flex flex-col bg-white dark:bg-gray-50">
+    <div className="min-h-screen flex flex-col">
       <Header businessInfo={businessInfo} />
       <main className="flex-1 pt-16 lg:pt-20" id="main-content">
         {children}
