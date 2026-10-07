@@ -102,6 +102,56 @@ or a booking status change.
 
 ---
 
+## Search & AI visibility (AEO)
+
+The goal: someone asks ChatGPT, Gemini, Claude or Perplexity for a car rental
+in Islamabad and this site is one of the answers they get. What the code
+actually contributes to that:
+
+| Signal | Where | What it does |
+| --- | --- | --- |
+| `robots.txt` | `src/app/robots.ts` | Allows the public site and **names every AI crawler explicitly** — GPTBot, OAI-SearchBot, ChatGPT-User, ClaudeBot, PerplexityBot, Google-Extended, CCBot, Applebot-Extended, Bytespider, meta-externalagent, Amazonbot, cohere-ai, YouBot — so the invitation is auditable instead of implied by a wildcard. |
+| `llms.txt` | `public/llms.txt` | Plain text written for models: what the business is, what each section answers, and which URL to read. Served at `/llms.txt`. |
+| `sitemap.xml` | `src/app/sitemap.ts` | Rendered per request, so a newly published blog post or vehicle page is listed immediately. |
+| JSON-LD | `src/lib/seo.ts`, `src/app/layout.tsx` | Site-wide `Organization` + `WebSite` + `LocalBusiness`/`AutoRental` with `telephone`, `address`, `areaServed` and `sameAs`. Per page: `Service`, `FAQPage`, `BreadcrumbList`, `Article`. |
+| Canonicals | each `page.tsx` | One URL per page, so engines consolidate signals instead of splitting them across variants. |
+| IndexNow | `scripts/submit-indexnow.mjs` | Pushes every sitemap URL to Bing, Yandex, Ecosia, Seznam and Naver on demand — free, no account. |
+
+### robots.txt group semantics (what the tests guard)
+
+A crawler uses **only** the most specific `User-agent` group that names it;
+groups are never merged. A named AI group carrying `Allow: /` but no
+`Disallow` would therefore out-permission the `*` group and hand GPTBot and
+friends `/admin/` and `/api/`. Every group repeats the same block list, and
+`tests/robots.test.ts` pins that in six assertions.
+
+### Submitting to the indexes
+
+```bash
+npm run indexnow                # submit the production sitemap
+npm run indexnow -- --dry-run   # list the URLs, send nothing
+```
+
+The key is `public/<uuid>.txt`, published on purpose; the payload is public
+sitemap URLs only. Nothing secret is sent and nothing is paid for.
+
+### What code cannot do
+
+Markup gets a site *read*; it does not get it *cited*. That part is external:
+
+1. **Google Search Console** — verified for this domain. Submit the sitemap,
+   then use **Request Indexing** on `/`, `/vehicles`, `/services`, `/faq`.
+2. **Bing Webmaster Tools** — verified for this domain. Submit the sitemap
+   there too; IndexNow and the console are separate submissions.
+3. **Content worth quoting** — every FAQ entry, service page and blog post is
+   a discrete passage an engine can lift. Fresh, specific, first-hand text is
+   the dominant factor in whether an assistant cites you; markup is not.
+4. **Third-party corroboration** — directories, maps and the profiles listed
+   in `sameAs` are how engines decide a business is real rather than a
+   template site.
+
+---
+
 ## Getting started
 
 ```bash
@@ -192,6 +242,7 @@ npm run test:availability:db  # ⚠️ writes fixture rows, then deletes them
 npm run test:notifications    # notification store: dedup, per-user read, cascade
 npm run test:email            # booking email templates (request vs confirmed)
 npm run test:gallery          # /gallery is not prerendered + admin gallery view
+npm run test:robots           # robots.txt policy: every AI group repeats the block list
 npm run test                  # all of the above, in order
 ```
 
