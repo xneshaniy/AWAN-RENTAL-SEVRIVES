@@ -109,7 +109,9 @@ export function GalleryGrid({ vehicles }: { vehicles: GalleryVehicle[] }) {
   };
 
   return (
-    <div className="space-y-6">
+    // Deliberately not `space-y-6`: the lightbox is a fixed overlay rendered as
+    // the second child, and that utility would push it down by 1.5rem.
+    <div>
       {items.length === 0 ? (
         <div className="rounded-2xl border border-dashed border-gray-300 px-6 py-16 text-center dark:border-gray-700">
           <p className="text-lg font-medium text-gray-900 dark:text-white">
