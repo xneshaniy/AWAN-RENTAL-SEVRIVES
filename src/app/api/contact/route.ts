@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { contactSchema } from '@/lib/validations';
 import { sendEmail, generateContactEmailHtml, generateContactAcknowledgementHtml } from '@/lib/email';
+import { createNotification } from '@/lib/notifications';
 import { getSetting } from '@/lib/settings';
 import { clientIpFromHeaders } from '@/lib/rate-limit';
 import { rateLimitShared } from '@/lib/rate-limit-db';
@@ -38,7 +39,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Persist to the shared ContactMessage inbox read by /admin/messages.
-    await prisma.contactMessage.create({
+    const created = await prisma.contactMessage.create({
       data: {
         name: contactData.name,
         email: contactData.email,
@@ -46,6 +47,17 @@ export async function POST(request: NextRequest) {
         subject: contactData.subject,
         message: contactData.message,
       },
+    });
+
+    // In-app real-time alert for Admin/Staff - after persistence, before the
+    // outbound email, and unable to turn a saved message into an error.
+    await createNotification({
+      type: 'NEW_CONTACT_MESSAGE',
+      title: 'New Contact Message',
+      message: `${contactData.subject} · from ${contactData.name}`,
+      link: `/admin/messages/${created.id}`,
+      contactMessageId: created.id,
+      meta: { subject: contactData.subject },
     });
 
     // Best-effort notifications — persistence already succeeded, so an SMTP

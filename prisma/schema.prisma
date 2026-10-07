@@ -25,6 +25,7 @@ model User {
   bookings      Booking[]
   reviews       Review[]
   inquiries     Inquiry[]
+  notificationReads NotificationRead[]
 
   @@map("users")
 }
@@ -217,6 +218,9 @@ model Booking {
   updatedAt       DateTime      @updatedAt
   payments        Payment[]
   documents       BookingDocument[]
+  // In-app Admin/Staff notifications that point at this booking; removed with
+  // it so a deleted booking can never leave a dead bell entry behind.
+  notifications   Notification[]
 
   // Customer info (for guest bookings)
   customerName    String?
@@ -380,6 +384,8 @@ model ContactMessage {
   @@index([status])
   @@index([isRead])
   @@index([email])
+  // Same lifecycle rule as Booking: the notification dies with the message.
+  notifications   Notification[]
   @@map("contact_messages")
 }
 
@@ -553,4 +559,63 @@ model RateLimit {
 
   @@index([resetAt])
   @@map("rate_limits")
+}
+
+// ---------------------------------------------------------------------------
+// In-app notifications for the Admin/Staff panel.
+//
+// One row per EVENT, not per recipient. Every Admin/Staff account shares the
+// same operational event and each user's read state lives in
+// NotificationRead, so a booking that lands while three staff are online
+// creates exactly ONE notification row instead of three duplicates.
+//
+// Related records are referenced by id rather than by embedding them: a
+// notification holds only a title, one sentence and a deep link - never a copy
+// of the booking or message. The references are proper foreign keys with
+// ON DELETE CASCADE so that deleting a booking or a message (both are allowed
+// through authorized admin endpoints) removes the now-dead notification too,
+// instead of leaving a bell entry whose "View" link 404s.
+// ---------------------------------------------------------------------------
+model Notification {
+  id      String           @id @default(cuid())
+  type    NotificationType
+  title   String
+  message String
+  // Deep link inside the admin panel, e.g. "/admin/bookings/<id>".
+  link    String?
+  // References only - never a duplicated booking or message payload.
+  bookingId        String?
+  booking          Booking?        @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  contactMessageId String?
+  contactMessage   ContactMessage? @relation(fields: [contactMessageId], references: [id], onDelete: Cascade)
+  // Small display-only extras (booking number, vehicle name, from/to status).
+  meta    Json?
+  createdAt DateTime @default(now())
+  reads   NotificationRead[]
+
+  @@index([createdAt])
+  @@index([bookingId])
+  @@index([contactMessageId])
+  @@map("notifications")
+}
+
+// Per-user read state. No row means "unread", so an unread count is simply
+// the notifications that have no read row for this user - it persists across
+// refreshes and is never derived from client-side state.
+model NotificationRead {
+  notificationId String
+  userId         String
+  readAt         DateTime       @default(now())
+  notification   Notification   @relation(fields: [notificationId], references: [id], onDelete: Cascade)
+  user           User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([notificationId, userId])
+  @@index([userId])
+  @@map("notification_reads")
+}
+
+enum NotificationType {
+  NEW_BOOKING
+  BOOKING_STATUS_CHANGED
+  NEW_CONTACT_MESSAGE
 }

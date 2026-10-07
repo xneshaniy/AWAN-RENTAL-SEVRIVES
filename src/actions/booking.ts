@@ -6,7 +6,14 @@ import { prisma } from '@/lib/prisma';
 import type { BookingInput } from '@/lib/validations';
 import { processBookingRequest } from '@/lib/booking';
 import { canTransition } from '@/lib/booking-status';
-import { pickSortBy, pickSortOrder } from '@/lib/utils';
+import { formatDate, getBookingStatusLabel, pickSortBy, pickSortOrder } from '@/lib/utils';
+import { rentalTypeLabel } from '@/lib/whatsapp';
+import { createNotification } from '@/lib/notifications';
+import {
+  isEmailConfigured,
+  sendEmail,
+  generateBookingConfirmedEmailHtml,
+} from '@/lib/email';
 import { clientIpFromHeaders } from '@/lib/rate-limit';
 import { rateLimitShared } from '@/lib/rate-limit-db';
 import { headers } from 'next/headers';
@@ -141,7 +148,21 @@ export async function updateBookingStatus(
 
   const current = await prisma.booking.findUnique({
     where: { id: bookingId },
-    select: { status: true },
+    select: {
+      status: true,
+      bookingNumber: true,
+      customerName: true,
+      customerEmail: true,
+      rentalType: true,
+      pickupLocation: true,
+      dropoffLocation: true,
+      startDate: true,
+      endDate: true,
+      passengers: true,
+      totalAmount: true,
+      specialRequests: true,
+      vehicle: { select: { name: true } },
+    },
   });
   if (!current) {
     return { success: false, error: 'Booking not found' };
@@ -168,6 +189,50 @@ export async function updateBookingStatus(
   });
   if (updated.count === 0) {
     return { success: false, error: 'Booking status changed by someone else. Reload and retry.' };
+  }
+
+  const fromLabel = getBookingStatusLabel(current.status);
+  const toLabel = getBookingStatusLabel(status);
+
+  /* ---- In-app real-time notification (Admin/Staff), emitted first ---- */
+  // Only reached after the atomic UPDATE succeeded, so a rejected or racing
+  // transition never announces itself. Best-effort by contract.
+  await createNotification({
+    type: 'BOOKING_STATUS_CHANGED',
+    title: `Booking ${toLabel}`,
+    message: `${current.bookingNumber} · ${current.customerName} · ${fromLabel} → ${toLabel}`,
+    link: `/admin/bookings/${bookingId}`,
+    bookingId,
+    meta: { bookingNumber: current.bookingNumber, from: current.status, to: status },
+  });
+
+  /* ---- Customer confirmation email - separate system, best-effort ---- */
+  // Sent only on the CONFIRMED transition: one booking can never accumulate
+  // repeated confirmation emails, and it is strictly downstream of both the
+  // database write and the internal notification. Silent when SMTP is not
+  // configured; a mail failure is logged and never fails the status change.
+  if (status === 'CONFIRMED' && current.customerEmail && isEmailConfigured()) {
+    try {
+      await sendEmail({
+        to: current.customerEmail,
+        subject: `Your Booking ${current.bookingNumber} is Confirmed`,
+        html: generateBookingConfirmedEmailHtml({
+          bookingNumber: current.bookingNumber,
+          customerName: current.customerName || 'Customer',
+          vehicleName: current.vehicle?.name || 'Your vehicle',
+          rentalType: rentalTypeLabel(current.rentalType),
+          pickupLocation: current.pickupLocation,
+          dropoffLocation: current.dropoffLocation,
+          pickupDate: formatDate(current.startDate),
+          returnDate: formatDate(current.endDate),
+          passengers: current.passengers,
+          totalAmount: Number(current.totalAmount),
+          specialRequests: current.specialRequests || undefined,
+        }),
+      });
+    } catch (emailError) {
+      console.error('Booking confirmation email failed:', emailError);
+    }
   }
 
   return { success: true, status };

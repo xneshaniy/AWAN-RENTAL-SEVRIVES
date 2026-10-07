@@ -355,7 +355,16 @@ export function VehicleForm({ mode, vehicleId, initial }: VehicleFormProps) {
         return;
       }
 
-      setImages((current) => [...current, { url: result.url, category: 'EXTERIOR' }]);
+      // Blank placeholder rows are dropped first. The form always opens with
+      // one so a URL can be pasted immediately, and appending to it left an
+      // EMPTY row sitting above the freshly uploaded photo - which reads
+      // exactly like "the upload did nothing". Rows the user actually typed
+      // into are kept, and `onSubmit` filters blanks again anyway, so nothing
+      // that would have been saved is lost.
+      setImages((current) => [
+        ...current.filter((row) => row.url.trim()),
+        { url: result.url, category: 'EXTERIOR' },
+      ]);
       toast.success('Photo uploaded - remember to save the vehicle.');
     } finally {
       setUploading(false);

@@ -1,12 +1,17 @@
 import { prisma } from '@/lib/prisma';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/auth';
 import { formatCurrency, cn } from '@/lib/utils';
 import { rentalTypeLabel } from '@/lib/whatsapp';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
-import { Calendar, Car, Clock, Users, Mail, TrendingUp, DollarSign, CheckCircle, AlertCircle, XCircle, Settings } from 'lucide-react';
+import { Calendar, Car, Clock, Users, Mail, TrendingUp, DollarSign, CheckCircle, AlertCircle, XCircle, Settings, Bell } from 'lucide-react';
 import Link from 'next/link';
+import { LiveStatValue } from '@/components/admin/LiveStatValue';
 
 export default async function AdminDashboard() {
+  const session = await getServerSession(authOptions);
+
   const [
     totalVehicles,
     availableVehicles,
@@ -17,6 +22,7 @@ export default async function AdminDashboard() {
     newMessages,
     recentBookings,
     monthlyRevenue,
+    unreadNotifications,
   ] = await Promise.all([
     prisma.vehicle.count(),
     prisma.vehicle.count({ where: { isAvailable: true } }),
@@ -42,17 +48,23 @@ export default async function AdminDashboard() {
       },
       _sum: { totalAmount: true },
     }),
+    // Real unread count for THIS signed-in user, so the card never flashes a
+    // placeholder before the live connection takes over.
+    session?.user
+      ? prisma.notification.count({ where: { reads: { none: { userId: session.user.id } } } })
+      : 0,
   ]);
 
   const stats = [
     { label: 'Total Vehicles', value: totalVehicles, icon: Car, color: 'bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400', href: '/admin/vehicles' },
     { label: 'Available Vehicles', value: availableVehicles, icon: CheckCircle, color: 'bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400', href: '/admin/vehicles?available=true' },
-    { label: 'Pending Bookings', value: pendingBookings, icon: Clock, color: 'bg-yellow-100 text-yellow-600 dark:bg-yellow-900/30 dark:text-yellow-400', href: '/admin/bookings?status=PENDING' },
+    { label: 'Pending Bookings', value: <LiveStatValue stat="pendingBookings" initial={pendingBookings} />, icon: Clock, color: 'bg-yellow-100 text-yellow-600 dark:bg-yellow-900/30 dark:text-yellow-400', href: '/admin/bookings?status=PENDING' },
     { label: 'Confirmed', value: confirmedBookings, icon: CheckCircle, color: 'bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400', href: '/admin/bookings?status=CONFIRMED' },
     { label: 'Completed', value: completedBookings, icon: CheckCircle, color: 'bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400', href: '/admin/bookings?status=COMPLETED' },
     { label: 'Cancelled', value: cancelledBookings, icon: XCircle, color: 'bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400', href: '/admin/bookings?status=CANCELLED' },
-    { label: 'New Messages', value: newMessages, icon: Mail, color: 'bg-purple-100 text-purple-600 dark:bg-purple-900/30 dark:text-purple-400', href: '/admin/messages' },
+    { label: 'New Messages', value: <LiveStatValue stat="newMessages" initial={newMessages} />, icon: Mail, color: 'bg-purple-100 text-purple-600 dark:bg-purple-900/30 dark:text-purple-400', href: '/admin/messages' },
     { label: 'Monthly Revenue', value: formatCurrency(Number(monthlyRevenue._sum.totalAmount || 0)), icon: DollarSign, color: 'bg-emerald-100 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400', href: '/admin/bookings' },
+    { label: 'Unread Notifications', value: <LiveStatValue stat="unreadNotifications" initial={unreadNotifications} />, icon: Bell, color: 'bg-orange-100 text-orange-600 dark:bg-orange-900/30 dark:text-orange-400', href: '/admin' },
   ];
 
   return (
@@ -90,7 +102,12 @@ export default async function AdminDashboard() {
         ))}
       </div>
 
-      <div className="grid lg:grid-cols-2 gap-6">
+      {/* `min-w-0` on each grid item is load-bearing: a grid item's default
+          `min-width: auto` refuses to shrink below its content, so the Recent
+          Bookings table's min-content width (measured at 516px) pushed the
+          whole page to 557px on a 375px phone. The table scrolls inside its
+          own `overflow-x-auto` wrapper instead. */}
+      <div className="grid lg:grid-cols-2 gap-6 [&>*]:min-w-0">
         <Card variant="default" padding="md">
           <CardHeader>
             <CardTitle className="flex items-center justify-between">

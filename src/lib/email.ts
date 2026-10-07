@@ -220,6 +220,68 @@ export function generateBookingEmailHtml(booking: BookingEmailData): string {
   });
 }
 
+/**
+ * Customer email sent when a staff member moves a booking to CONFIRMED.
+ *
+ * This is deliberately NOT a re-send of `generateBookingEmailHtml`: that
+ * template says "we have received your request and will review it shortly",
+ * which would be wrong the moment the booking is actually confirmed. Same
+ * branded layout and the same escaped detail rows, but honest copy for the
+ * state the booking is really in. Sent only on the CONFIRMED transition, so a
+ * booking can never accumulate repeated confirmations.
+ */
+export function generateBookingConfirmedEmailHtml(
+  booking: Omit<BookingEmailData, 'passengers'> & { passengers: number | null }
+): string {
+  const details = `
+    <p>Dear <strong>${escapeHtml(booking.customerName)}</strong>,</p>
+    <p>Your booking with ${escapeHtml(SITE_NAME)} has been <strong>confirmed</strong>. The details below are now locked in for the dates you requested.</p>
+
+    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; margin: 24px 0;">
+      <h3 style="color: #0f172a; margin-top: 0; font-size: 16px;">Booking Details</h3>
+      <table style="width: 100%; border-collapse: collapse;">
+        ${row('Booking Reference:', booking.bookingNumber)}
+        ${row('Vehicle:', booking.vehicleName)}
+        ${row('Rental Type:', booking.rentalType)}
+        ${row('Pickup Location:', booking.pickupLocation)}
+        ${row('Drop-off Location:', booking.dropoffLocation)}
+        ${row('Pickup Date:', booking.pickupDate)}
+        ${row('Return Date:', booking.returnDate)}
+        ${booking.passengers !== null ? row('Passengers:', booking.passengers) : ''}
+        ${row('Estimated Total:', `Rs. ${booking.totalAmount.toLocaleString()}`)}
+      </table>
+      ${
+        booking.specialRequests
+          ? `
+      <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid #e2e8f0;">
+        <p style="color: #64748b; font-weight: 500; margin: 0 0 8px;">Special Requests:</p>
+        <p style="color: #0f172a; margin: 0;">${escapeHtml(booking.specialRequests).replace(/\n/g, '<br>')}</p>
+      </div>`
+          : ''
+      }
+    </div>
+
+    <div style="background: #ecfdf5; border: 1px solid #10b981; border-radius: 8px; padding: 16px; margin: 24px 0;">
+      <p style="margin: 0; color: #065f46;"><strong>What happens next?</strong></p>
+      <ul style="margin: 12px 0 0; color: #065f46; padding-left: 20px;">
+        <li>Please have your booking reference ready when you arrive.</li>
+        <li>Our team will contact you if anything about the schedule needs to change.</li>
+        <li>Questions? Reply to this email or contact us using the details below.</li>
+      </ul>
+    </div>
+
+    <div style="text-align: center; margin: 32px 0;">
+      <a href="${SITE_URL}/booking/success/${encodeURIComponent(booking.bookingNumber)}" style="display: inline-block; background: #d80000; color: white; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: 600;">View Booking Status</a>
+    </div>`;
+
+  return renderEmailLayout({
+    title: `Booking Confirmed - ${booking.bookingNumber}`,
+    heading: 'Booking Confirmed',
+    accent: '#15803d',
+    content: details,
+  });
+}
+
 interface AdminBookingEmailData extends BookingEmailData {
   customerEmail: string;
   customerPhone: string;

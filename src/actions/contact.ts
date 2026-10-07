@@ -5,6 +5,7 @@ import { requireStaffAccess, requireAdminAccess } from '@/lib/admin-auth';
 import { prisma } from '@/lib/prisma';
 import { contactSchema, inquirySchema, ContactInput, InquiryInput } from '@/lib/validations';
 import { sendEmail, generateContactEmailHtml, generateContactAcknowledgementHtml } from '@/lib/email';
+import { createNotification } from '@/lib/notifications';
 import { getSetting } from '@/lib/settings';
 import { clientIpFromHeaders } from '@/lib/rate-limit';
 import { rateLimitShared } from '@/lib/rate-limit-db';
@@ -56,10 +57,11 @@ export async function submitContactForm(data: ContactInput): Promise<ContactActi
     };
   }
 
+  let createdId: string;
   try {
     // Persist first: this is the single source of truth the admin inbox
     // (/admin/messages) reads from.
-    await prisma.contactMessage.create({
+    const created = await prisma.contactMessage.create({
       data: {
         name: contactData.name,
         email: contactData.email,
@@ -68,10 +70,23 @@ export async function submitContactForm(data: ContactInput): Promise<ContactActi
         message: contactData.message,
       },
     });
+    createdId = created.id;
   } catch (error) {
     console.error('Contact form persistence error:', error);
     return { success: false, error: 'Failed to submit your message. Please try again.' };
   }
+
+  // In-app real-time alert for Admin/Staff - issued after the row exists and
+  // before outbound email, matching database -> live alert -> email. Never
+  // allowed to fail the submission.
+  await createNotification({
+    type: 'NEW_CONTACT_MESSAGE',
+    title: 'New Contact Message',
+    message: `${contactData.subject} · from ${contactData.name}`,
+    link: `/admin/messages/${createdId}`,
+    contactMessageId: createdId,
+    meta: { subject: contactData.subject },
+  });
 
   // Best-effort notifications — the message is already saved, so an SMTP
   // failure must never turn this into an error response.
@@ -137,7 +152,7 @@ export async function submitInquiry(data: InquiryInput): Promise<ContactActionRe
 
   try {
     // Stored in the shared ContactMessage inbox (/admin/messages).
-    await prisma.contactMessage.create({
+    const created = await prisma.contactMessage.create({
       data: {
         name: inquiryData.name,
         email: inquiryData.email,
@@ -145,6 +160,16 @@ export async function submitInquiry(data: InquiryInput): Promise<ContactActionRe
         subject: inquiryData.subject,
         message: inquiryData.message,
       },
+    });
+
+    // Same live alert as the contact form - it lands in the same admin inbox.
+    await createNotification({
+      type: 'NEW_CONTACT_MESSAGE',
+      title: 'New Inquiry',
+      message: `${inquiryData.subject} · from ${inquiryData.name}`,
+      link: `/admin/messages/${created.id}`,
+      contactMessageId: created.id,
+      meta: { subject: inquiryData.subject },
     });
 
     const adminEmail = (await getSetting('admin_email')) || process.env.ADMIN_EMAIL;

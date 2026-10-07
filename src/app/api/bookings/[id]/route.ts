@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
-import { canTransition } from '@/lib/booking-status';
+import { updateBookingStatus } from '@/actions/booking';
 import type { BookingStatus } from '@prisma/client';
 
 const VALID_STATUSES: BookingStatus[] = [
@@ -54,30 +54,24 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
       return NextResponse.json({ error: 'Invalid booking status' }, { status: 400 });
     }
 
-    const current = await prisma.booking.findUnique({
-      where: { id: params.id },
-      select: { status: true },
-    });
-    if (!current) return NextResponse.json({ error: 'Not found' }, { status: 404 });
+    // Delegate to the exact same implementation the admin panel calls.
+    // Status changes must have ONE code path: otherwise a change made through
+    // this route would skip the in-app notification and the customer
+    // confirmation email that the admin UI sends, and the two would drift.
+    const result = await updateBookingStatus(params.id, status);
 
-    if (!canTransition(current.status, status)) {
-      return NextResponse.json(
-        { error: `Cannot change status from ${current.status} to ${status}` },
-        { status: 409 }
-      );
+    if (!result.success) {
+      const message = result.error || 'Internal Server Error';
+      const code =
+        message === 'Booking not found'
+          ? 404
+          : message.startsWith('Booking is already') || message.startsWith('Invalid status change') || message.includes('changed by someone else')
+            ? 409
+            : 500;
+      return NextResponse.json({ error: message }, { status: code });
     }
 
-    const data: Record<string, unknown> = { status };
-    if (status === 'CONFIRMED') data.confirmedAt = new Date();
-    if (status === 'COMPLETED') data.completedAt = new Date();
-    if (status === 'CANCELLED') data.cancelledAt = new Date();
-
-    const booking = await prisma.booking.update({
-      where: { id: params.id },
-      data,
-      select: { id: true, status: true },
-    });
-    return NextResponse.json({ booking });
+    return NextResponse.json({ booking: { id: params.id, status: result.status } });
   } catch (error) {
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }

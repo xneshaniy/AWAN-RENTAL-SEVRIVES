@@ -13,8 +13,12 @@
     "db:migrate": "prisma migrate dev",
     "db:studio": "prisma studio",
     "db:seed": "tsx prisma/seed.ts",
-    "test": "npm run test:whatsapp && npm run test:google-reviews && npm run test:availability && npm run test:cloudinary && npm run test:availability:db",
+    "test": "npm run test:whatsapp && npm run test:google-reviews && npm run test:availability && npm run test:cloudinary && npm run test:availability:db && npm run test:notifications && npm run test:email && npm run test:gallery",
     "test:whatsapp": "node --env-file-if-exists=.env --import tsx tests/whatsapp.test.ts",
+    "test:notifications": "node --env-file-if-exists=.env --import tsx tests/notifications.test.ts",
+    "test:email": "node --env-file-if-exists=.env --import tsx tests/email-confirmed.test.ts",
+    "test:gallery": "node --env-file-if-exists=.env --import tsx tests/gallery.test.ts",
+    "test:e2e": "playwright test tests/e2e/a11y.spec.ts --output=test-results/a11y && playwright test tests/e2e/notifications.spec.ts --output=test-results/notifications && playwright test tests/e2e/responsive.spec.ts --output=test-results/responsive && playwright test tests/e2e/gallery.spec.ts --output=test-results/gallery",
     "test:google-reviews": "node --env-file-if-exists=.env --import tsx tests/google-reviews.test.ts",
     "test:availability": "node --env-file-if-exists=.env --import tsx tests/availability.test.ts",
     "test:cloudinary": "node --env-file-if-exists=.env --import tsx tests/cloudinary.test.ts",
@@ -46,6 +50,8 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.13.0",
+    "@playwright/test": "^1.63.0",
     "@types/bcryptjs": "2.4.6",
     "@types/node": "20.14.10",
     "@types/nodemailer": "6.4.15",

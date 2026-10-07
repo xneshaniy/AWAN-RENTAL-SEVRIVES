@@ -142,7 +142,9 @@ export default async function AdminCustomerDetailPage({ params }: { params: { em
         </Card>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-3">
+      {/* `min-w-0`: without it the bookings table's min-content width makes
+          this grid wider than a phone screen (same rule as the dashboard). */}
+      <div className="grid gap-6 lg:grid-cols-3 [&>*]:min-w-0">
         {/* Profile */}
         <Card variant="default" padding="md">
           <CardHeader>

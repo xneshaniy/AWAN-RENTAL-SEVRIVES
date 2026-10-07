@@ -17,6 +17,7 @@ import {
 } from '@/lib/email';
 import { getBookingWhatsAppMessage, getWhatsAppUrl } from '@/lib/whatsapp';
 import { getSetting } from '@/lib/settings';
+import { createNotification } from '@/lib/notifications';
 
 export interface BookingRequestResult {
   success: boolean;
@@ -199,6 +200,7 @@ export async function processBookingRequest(input: unknown): Promise<BookingRequ
     // serializes concurrent submissions for the same vehicle, so the
     // server-side availability check can never race a parallel insert.
     let bookingNumber: string | null = null;
+    let bookingId: string | null = null;
     let replayReference: string | null = null;
     let unavailable: AvailabilityDecision | null = null;
 
@@ -285,7 +287,7 @@ export async function processBookingRequest(input: unknown): Promise<BookingRequ
               },
             });
 
-            return { kind: 'created' as const, bookingNumber: created.bookingNumber };
+            return { kind: 'created' as const, bookingNumber: created.bookingNumber, bookingId: created.id };
           },
           { timeout: 10_000 } // allows waiting behind a concurrent vehicle lock
         );
@@ -296,6 +298,7 @@ export async function processBookingRequest(input: unknown): Promise<BookingRequ
           replayReference = outcome.bookingNumber;
         } else {
           bookingNumber = outcome.bookingNumber;
+          bookingId = outcome.bookingId;
         }
       } catch (error) {
         if (!isUniqueViolation(error)) throw error;
@@ -332,6 +335,22 @@ export async function processBookingRequest(input: unknown): Promise<BookingRequ
     if (!bookingNumber) {
       throw new Error('Could not allocate a unique booking reference');
     }
+
+    /* ------------- 7b. In-app notification (Admin/Staff, real-time) -------- */
+    // Runs strictly AFTER the row is committed and BEFORE the notification
+    // emails: database first, then the live alert, then outbound email.
+    // The duplicate-submission path above already returned early, so a replayed
+    // submission can never announce the same booking twice. `createNotification`
+    // swallows its own failures - a broken notification must never fail a
+    // customer's booking.
+    await createNotification({
+      type: 'NEW_BOOKING',
+      title: `New Booking ${bookingNumber}`,
+      message: `${bookingData.customerName} booked ${vehicle.name} - pickup ${bookingData.pickupLocation} on ${formatDate(bookingData.pickupDate)}`,
+      link: bookingId ? `/admin/bookings/${bookingId}` : '/admin/bookings',
+      bookingId,
+      meta: { bookingNumber },
+    });
 
     /* ------------------ 8. Best-effort notification emails ---------------- */
     // Both sends run in parallel with short SMTP timeouts; any failure is

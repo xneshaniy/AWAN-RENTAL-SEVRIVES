@@ -45,15 +45,60 @@ There is **no `vercel.json`** and no framework-specific config beyond `next.conf
 
 ### Admin dashboard (`/admin`)
 
-Requires an `ADMIN` or `STAFF` session. Eleven sections:
+Requires an `ADMIN` or `STAFF` session. Twelve sections:
 
-Dashboard · Bookings · Vehicles · Services · **FAQ** · Blog · Customers · Messages · Site Settings · SEO Settings · Admin Users
+Dashboard · Bookings · Vehicles · **Gallery** · Services · **FAQ** · Blog · Customers · Messages · Site Settings · SEO Settings · Admin Users
 
 - **Vehicles** — full CRUD, archive/restore, feature toggles, per-vehicle gallery categories, security deposit
+- **Gallery** — `/admin/gallery`, every photo and clip across the live fleet with the vehicle it belongs to. Photos live in `Vehicle.images` (there is no photo table), so this is a read-only overview; media is added on the vehicle edit screen.
 - **Photo upload** — signed Cloudinary upload from the vehicle form (JPEG/PNG/WebP/AVIF/GIF, 8 MB); the button appears only when the three `CLOUDINARY_*` variables are set, otherwise URL pasting remains the path
 - **Bookings** — list, filter, status workflow transitions
 - **FAQ** — create / edit / hide / delete questions (`src/components/admin/FaqManager.tsx`); edits go live on `/faq` and `/self-drive` immediately
 - **Settings** — business info, WhatsApp, social links, SEO, booking config
+- **Live notifications** — see [Admin notifications](#admin-notifications-real-time)
+
+### Admin notifications (real-time)
+
+Server-Sent Events, not polling. One `EventSource` is opened per admin tab by
+`NotificationProvider` and shared by the header bell and the dashboard
+counters.
+
+- **Database is the source of truth.** The stream is a low-latency wake-up
+  call that also carries the new row. On every connect and reconnect the client
+  re-reads `/api/notifications`, so a tab that was offline still catches up and
+  a reconnect can never invent a duplicate.
+- **Network loss is reported honestly.** An idle SSE socket stays structurally
+  "established" after the machine goes offline — there is nothing left to
+  write, so nothing ever fails — which would leave the header claiming *Live*
+  while every new event silently went nowhere. The provider listens for the
+  browser's own `offline` / `online` events: `offline` flips the indicator to
+  *Reconnecting* straight away, and `online` reopens the stream and re-reads
+  the database immediately rather than waiting out EventSource's retry timer.
+  This is event-driven, not a poll; no timer is added.
+- **Events** — `NEW_BOOKING`, `BOOKING_STATUS_CHANGED`, `NEW_CONTACT_MESSAGE`.
+- **Read state** is per user (`NotificationRead`, composite key
+  `notificationId + userId`); no row means unread, so it survives a refresh and
+  never leaks between an ADMIN and a STAFF account.
+- **Authorization is server-side.** `/api/notifications` and
+  `/api/notifications/stream` return `401` to anyone without an `ADMIN` or
+  `STAFF` session, and the stream closes when the session ends.
+- **Migrations** — `prisma/migrations/20261008120000_add_notifications` and
+  `20261008130000_add_notification_fks` must be applied with
+  `npx prisma migrate deploy`.
+
+> **WhatsApp is click-to-chat only.** There is no server-side WhatsApp sending:
+> the app builds `https://wa.me/<number>?text=...` links (booking reference and
+> details in the message) and the visitor presses send. No WhatsApp Business
+> API, no paid gateway, no background delivery — never describe it as
+> automatic.
+
+### Email delivery
+
+`sendEmail()` never throws. When `SMTP_HOST` / `SMTP_USER` / `SMTP_PASSWORD`
+are absent it logs `Email not configured (SMTP missing)` and returns `false`;
+a send failure is logged and also returns `false`. Data is always persisted
+first, so email being unavailable can never fail a booking, a contact message
+or a booking status change.
 
 ---
 
@@ -144,10 +189,47 @@ npm run test:google-reviews   # reviews fallback + link-only mode
 npm run test:availability     # pure date-overlap logic
 npm run test:cloudinary       # upload signing + file validation (no network)
 npm run test:availability:db  # ⚠️ writes fixture rows, then deletes them
-npm run test                  # all five
+npm run test:notifications    # notification store: dedup, per-user read, cascade
+npm run test:email            # booking email templates (request vs confirmed)
+npm run test:gallery          # /gallery is not prerendered + admin gallery view
+npm run test                  # all of the above, in order
 ```
 
 > ⚠️ `test:availability:db` performs real inserts and deletes against `DATABASE_URL`. Point it at a development database, never production.
+
+### Browser E2E (Playwright)
+
+```bash
+npm run build                 # the suite runs the standalone production output
+npm run test:e2e              # real Chrome, 38 tests
+```
+
+`playwright.config.ts` starts `.next/standalone/server.js` on port 3000 with
+`.env.e2e` — a git-ignored copy of `.env` in which every `SMTP_*` **value is
+blanked rather than the key deleted**. That distinction matters: the standalone
+server re-loads `.env` at runtime, so merely removing the keys let dotenv
+silently re-inject them, and one early run did reach the real SMTP server and
+was turned away with `554 5.7.1 Recipient domain is reserved for
+documentation (RFC 2606)` — nothing was delivered, but it proved the gap.
+dotenv never overwrites a key that already exists, so an empty value is what
+actually guarantees a run transmits nothing; the server logs
+`Email not configured (SMTP missing)` instead. Port 3000 is not arbitrary:
+`NEXTAUTH_URL` in that file is `http://localhost:3000`, and next-auth validates
+the origin on the callback.
+
+Four spec files:
+
+| File | Covers |
+| --- | --- |
+| `tests/e2e/notifications.spec.ts` | Tests 1–10 (login, bell, badge, open/close, Escape, focus return, mark-read persistence, two-browser isolation, unauthorized APIs), plus live badge/counter updates, click-through, status change, contact form, offline→reconnect recovery, mark-all and the `wa.me` link |
+| `tests/e2e/a11y.spec.ts` | Tab reachability, `aria-label` / `aria-expanded`, visible focus ring, Enter/Space/Escape, accessible names inside the panel, axe-core WCAG A/AA scan with the dropdown open |
+| `tests/e2e/responsive.spec.ts` | The bell and dropdown at 375×812, 390×844, 412×915, 768, 1024, 1280 and 1440 |
+| `tests/e2e/gallery.spec.ts` | The whole media flow: upload from the vehicle form → Cloudinary → database → `/admin/gallery` → public `/gallery` → hard reload, plus anonymous 401s on the upload endpoint |
+
+Global setup creates a throw-away `STAFF` and `CUSTOMER` account and a
+`.data.json` marker; global teardown deletes them plus every booking, message,
+notification and `E2E Gallery Probe*` vehicle the run created. None of the four
+ever touches the eight production vehicle records.
 
 ### Quality gate
 
@@ -166,24 +248,48 @@ npm test
 
 Production: **https://awanrentalservice.org/**
 
-Two supported paths — Vercel remains the rollback target for a Hostinger move.
+### Actual production platform — Hostinger, standalone Node.js
 
-### Vercel
+The original brief names Vercel, but **production is not on Vercel**. That is
+verified from the repository configuration and the hosting control panel, not
+assumed. Read this table before changing anything about how the app ships.
+
+| | |
+| --- | --- |
+| Expected platform (brief) | Vercel |
+| **Actual platform** | **Hostinger Node.js app**, running the Next.js standalone bundle |
+| How the app is deployed | `npm ci` → `npm run build` → the process is started from `.next/standalone/server.js` |
+| Why standalone | `next.config.js` sets `output: 'standalone'`, and `postbuild` (`scripts/copy-standalone.mjs`) copies `public/` and `.next/static/` into `.next/standalone/`. There is no `vercel.json`. |
+| Where environment variables live | Hostinger control panel → Node.js app → *Environment variables*. **15** are configured in production. Saving that list **replaces** it — any key omitted from the payload is deleted. |
+| How Prisma migration is executed | `npx prisma migrate deploy` run locally against the production `DATABASE_URL`. Never `prisma db push`, never `prisma migrate reset`. |
+| Safe restart | `POST /nodejs/server/restart` — reloads the process without touching the database. `POST /nodejs/builds` is **not** the deploy path and is destructive. |
+| Node | 22 |
+
+Pushing to `main` does **not** deploy anything by itself. The Hostinger build
+must be triggered explicitly, and the migration must be applied separately
+before the new code runs.
+
+### Vercel (alternative / rollback only)
 
 1. Push to GitHub
 2. Import the repo
 3. Add the **required** environment variables above (mark `DATABASE_URL` sensitive)
 4. Deploy
 
-### Hostinger Node.js app
+Vercel remains available as a rollback target. It is not the current
+production platform, and no part of the deployment procedure depends on it.
 
-Build settings: framework `next` · Node `22` · build `npm run build` · output `.next` · install `npm ci` · entry *(empty)* · domain `awanrentalservice.org`.
+### Production database schema
 
-Enter the same 19 environment variables as Vercel. The DNS for the domain already points at Hostinger.
+`prisma/migrations/` is committed and is the only reproducible description of
+the production schema. Applying it to production is always:
 
-### CI note
+```bash
+npx prisma migrate deploy
+```
 
-> ⚠️ Pushes to `main` trigger a **production** Vercel deployment. Always confirm with the project owner before pushing to `main`.
+`prisma db push` is banned in this project: it skips the migration history and
+drifts from production.
 
 ---
 
@@ -193,7 +299,7 @@ Enter the same 19 environment variables as Vercel. The DNS for the domain alread
 src/
 ├── app/                  # App Router pages and API routes
 │   ├── api/              # REST handlers (bookings, contact, vehicles, auth, admin)
-│   ├── admin/            # Login + dashboard (11 sections)
+│   ├── admin/            # Login + dashboard (12 sections)
 │   ├── vehicles/         # Listing and [slug] detail
 │   ├── blog/             # Index and [slug] posts
 │   ├── faq/              # Public FAQ page

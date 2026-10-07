@@ -328,6 +328,7 @@ export const ADMIN_NAV = [
   { label: 'Dashboard', href: '/admin', icon: 'layout-dashboard' },
   { label: 'Bookings', href: '/admin/bookings', icon: 'calendar' },
   { label: 'Vehicles', href: '/admin/vehicles', icon: 'car' },
+  { label: 'Gallery', href: '/admin/gallery', icon: 'images' },
   { label: 'Services', href: '/admin/services', icon: 'list' },
   { label: 'Blog', href: '/admin/blog', icon: 'file-text' },
   { label: 'FAQ', href: '/admin/faq', icon: 'help-circle' },

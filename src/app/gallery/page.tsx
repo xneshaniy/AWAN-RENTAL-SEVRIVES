@@ -13,6 +13,23 @@ export const metadata: Metadata = {
   alternates: { canonical: '/gallery' },
 };
 
+/**
+ * Rendered per request instead of being baked at build time.
+ *
+ * This page previously had no route segment config and used no dynamic API,
+ * so Next.js statically prerendered it: the fleet was frozen into
+ * `.next/server/app/gallery.html` and `initialRevalidateSeconds` was `false`,
+ * meaning it NEVER revalidated. A photo uploaded in the admin panel was
+ * written to PostgreSQL but the public Gallery kept serving the build-time
+ * snapshot until the next deploy - which is exactly the reported symptom
+ * ("gallery uploads are not appearing").
+ *
+ * `force-dynamic` makes every request read the current rows, so an upload is
+ * visible as soon as the vehicle is saved. The query is one indexed read over
+ * the fleet, so the cost is negligible next to being silently wrong.
+ */
+export const dynamic = 'force-dynamic';
+
 /** A stored category is only trusted when it is one the gallery knows. */
 function readCategory(value: string | undefined): GalleryCategory {
   return value && (GALLERY_CATEGORIES as readonly string[]).includes(value)

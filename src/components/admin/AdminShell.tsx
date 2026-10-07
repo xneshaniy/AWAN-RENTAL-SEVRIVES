@@ -8,6 +8,7 @@ import {
   LayoutDashboard,
   Calendar,
   Car,
+  Images,
   List,
   Users,
   Mail,
@@ -23,6 +24,8 @@ import {
   type LucideIcon,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { NotificationProvider } from '@/components/admin/NotificationProvider';
+import { NotificationBell } from '@/components/admin/NotificationBell';
 
 interface NavEntry {
   label: string;
@@ -40,6 +43,7 @@ const ICONS_BY_HREF: Record<string, LucideIcon> = {
   '/admin': LayoutDashboard,
   '/admin/bookings': Calendar,
   '/admin/vehicles': Car,
+  '/admin/gallery': Images,
   '/admin/services': List,
   '/admin/blog': FileText,
   '/admin/faq': HelpCircle,
@@ -158,6 +162,9 @@ export function AdminShell({ nav, user, unreadMessages = 0, children }: AdminShe
   );
 
   return (
+    // One provider per admin session owns the single SSE connection shared by
+    // the bell and the live dashboard counters - never one socket per widget.
+    <NotificationProvider>
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Mobile drawer backdrop */}
       {drawerOpen && (
@@ -215,6 +222,7 @@ export function AdminShell({ nav, user, unreadMessages = 0, children }: AdminShe
               <span className="rounded-full bg-primary-100 px-3 py-1 text-xs font-medium text-primary-700 dark:bg-primary-900/30 dark:text-primary-300">
                 {user.role}
               </span>
+              <NotificationBell />
             </div>
           </div>
         </header>
@@ -222,5 +230,6 @@ export function AdminShell({ nav, user, unreadMessages = 0, children }: AdminShe
         <main id="main-content" className="flex-1 p-4 sm:p-6">{children}</main>
       </div>
     </div>
+    </NotificationProvider>
   );
 }

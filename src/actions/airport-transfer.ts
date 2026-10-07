@@ -3,6 +3,7 @@
 import { prisma } from '@/lib/prisma';
 import { airportTransferSchema, AirportTransferInput } from '@/lib/validations';
 import { sendEmail, generateContactEmailHtml } from '@/lib/email';
+import { createNotification } from '@/lib/notifications';
 import { getSetting } from '@/lib/settings';
 import {
   AIRPORT_OPTIONS,
@@ -72,7 +73,7 @@ export async function submitAirportTransferRequest(
   const details = composeRequestDetails(request);
 
   try {
-    await prisma.contactMessage.create({
+    const created = await prisma.contactMessage.create({
       data: {
         name: request.customerName,
         // The form collects a WhatsApp number instead of an email address;
@@ -82,6 +83,16 @@ export async function submitAirportTransferRequest(
         subject: 'Airport Transfer Request',
         message: details,
       },
+    });
+
+    // Same live Admin/Staff alert as every other writer into this inbox.
+    await createNotification({
+      type: 'NEW_CONTACT_MESSAGE',
+      title: 'New Airport Transfer Request',
+      message: `${request.customerName} · ${request.whatsapp}`,
+      link: `/admin/messages/${created.id}`,
+      contactMessageId: created.id,
+      meta: { subject: 'Airport Transfer Request' },
     });
 
     // Best-effort admin notification — persistence above already succeeded,

@@ -125,3 +125,9 @@ jspm_packages/
 .pnp.*
 .vercel
 .env*
+
+# Playwright browser test artifacts
+/test-results
+/playwright-report
+/playwright/.cache/
+tests/e2e/.data.json
