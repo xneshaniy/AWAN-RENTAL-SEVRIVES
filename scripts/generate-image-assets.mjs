@@ -21,6 +21,7 @@ import { readFileSync, mkdirSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import sharp from 'sharp';
+import { recolourBrandSource } from './recolour-brand.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 /** Single source of truth for the brand artwork. */
@@ -50,9 +51,9 @@ const ogSvg = Buffer.from(
     '<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">',
     '<defs>',
     '<linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">',
-    '<stop offset="0%" stop-color="#b80000"/>',
-    '<stop offset="55%" stop-color="#d80000"/>',
-    '<stop offset="100%" stop-color="#7d0000"/>',
+    '<stop offset="0%" stop-color="#116932"/>',
+    '<stop offset="55%" stop-color="#15803d"/>',
+    '<stop offset="100%" stop-color="#0c4b23"/>',
     '</linearGradient>',
     '<linearGradient id="shine" x1="0" y1="0" x2="1" y2="0">',
     '<stop offset="0%" stop-color="#ffffff" stop-opacity="0.14"/>',
@@ -93,7 +94,7 @@ const mask = Buffer.from(
   `<svg xmlns="http://www.w3.org/2000/svg" width="${BOX}" height="${BOX}">` +
     `<rect width="${BOX}" height="${BOX}" rx="34" fill="#ffffff"/></svg>`
 );
-const plate = await sharp(LOGO)
+const plate = await sharp(await recolourBrandSource(LOGO))
   .resize(BOX, BOX, { fit: 'cover' })
   .composite([{ input: mask, blend: 'dest-in' }])
   .png()

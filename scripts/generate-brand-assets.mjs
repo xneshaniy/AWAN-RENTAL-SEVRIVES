@@ -22,6 +22,7 @@
  */
 import sharp from 'sharp';
 import { mkdirSync } from 'node:fs';
+import { recolourRaw } from './recolour-brand.mjs';
 
 const SRC = 'Logo/logo.png';
 const OUT_DIR = 'public';
@@ -46,6 +47,16 @@ const { data, info } = await sharp(SRC)
   .flatten({ background: { r: 255, g: 255, b: 255 } })
   .raw()
   .toBuffer({ resolveWithObject: true });
+
+/*
+ * Map the source red onto the primary green before a single pixel is read, so
+ * the bbox, the flood and both output assets all agree on the new colour.
+ * Logo/logo.png is never modified on disk - see scripts/recolour-brand.mjs.
+ */
+const recoloured = recolourRaw(data, info.channels);
+if (recoloured === 0) {
+  throw new Error(`${SRC}: no brand-red pixels found - recolour would silently do nothing`);
+}
 
 const W = info.width;
 const H = info.height;
@@ -252,5 +263,6 @@ console.log(
     `seam y=${seam}`,
     `brand-mark.png  ${markW}x${markH}  transparent ${markClearPct.toFixed(1)}%`,
     `brand-logo.png  ${plateW}x${plateH}  transparent ${lockupClearPct.toFixed(1)}%  margin ${PLATE_PADDING}px`,
+    `recoloured ${recoloured} red pixel(s) -> primary green`,
   ].join('\n'),
 );

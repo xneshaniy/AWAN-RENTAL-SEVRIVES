@@ -23,6 +23,7 @@ import sharp from 'sharp';
 import { readdir, writeFile, readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { recolourBrandSource } from './recolour-brand.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const LOGO_DIR = path.join(ROOT, 'Logo');
@@ -31,8 +32,10 @@ const SRC_APP = path.join(ROOT, 'src', 'app');
 const SOURCE_EXTS = ['.svg', '.png', '.jpg', '.jpeg', '.webp'];
 const COVER = 0.86; // logo occupies 86% of the square, so it never touches the edge
 
-/** Brand colour from globals.css `--primary: 0 100% 42.4%` (HSL) -> #D80000 */
-const THEME_COLOR = '#d80000';
+/** Brand colour: matches `primary.600` in tailwind.config.ts and --primary in
+ *  globals.css (`142.4 72.3% 29.2%` HSL) -> #15803D. Drives the webmanifest
+ *  theme_color, i.e. the mobile browser chrome. */
+const THEME_COLOR = '#15803d';
 
 async function findSource() {
   const arg = process.argv[2];
@@ -60,7 +63,8 @@ async function findSource() {
  * apple touch icon, which iOS composites onto a white page anyway).
  */
 async function square(source, size, { background = null } = {}) {
-  const buf = await readFile(source);
+  // `source` may already be a recoloured buffer rather than a path on disk.
+  const buf = Buffer.isBuffer(source) ? source : await readFile(source);
   const meta = await sharp(buf).metadata();
 
   // SVG without intrinsic dimensions: rasterise at 1024 wide first.
@@ -137,15 +141,26 @@ function buildIco(pngs) {
 }
 
 async function main() {
-  const source = await findSource();
-  const name = path.basename(source);
+  const sourcePath = await findSource();
+  const name = path.basename(sourcePath);
   console.log(`Source: ${name}`);
+
+  // Every icon is rasterised from the logo, so recolour it once up front and
+  // let all of them - including the ICO - share the same green artwork.
+  const source = await recolourBrandSource(sourcePath);
 
   const jobs = [
     ['favicon-16x16.png', 16, PUBLIC],
     ['favicon-32x32.png', 32, PUBLIC],
     ['icon-192.png', 192, PUBLIC],
     ['icon-512.png', 512, PUBLIC],
+    // Legacy PWA names. site.webmanifest points at icon-*.png above, but these
+    // two were committed by hand from an older generator and were a raw copy of
+    // the red Logo/logo.png. Regenerating them here keeps every PWA icon in
+    // public/ on the same green artwork - and keeps the names from rotting if
+    // an installed manifest or a cached URL still asks for them.
+    ['android-chrome-192x192.png', 192, PUBLIC],
+    ['android-chrome-512x512.png', 512, PUBLIC],
     ['apple-touch-icon.png', 180, PUBLIC, { background: { r: 255, g: 255, b: 255, alpha: 1 } }],
     ['icon.png', 512, SRC_APP], // replaces src/app/icon.svg
     ['apple-icon.png', 180, SRC_APP, { background: { r: 255, g: 255, b: 255, alpha: 1 } }],
