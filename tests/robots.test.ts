@@ -1,5 +1,8 @@
 import assert from 'node:assert/strict';
 import { describe, test } from 'node:test';
+import { readdirSync, readFileSync } from 'node:fs';
+import { spawnSync } from 'node:child_process';
+import path from 'node:path';
 import type { MetadataRoute } from 'next';
 import robots from '@/app/robots';
 import { SITE_URL } from '@/config/site';
@@ -104,5 +107,51 @@ describe('robots.txt policy', () => {
       declared.length,
       `duplicate user-agent entries: ${declared.filter((a, i) => declared.indexOf(a) !== i).join(', ')}`,
     );
+  });
+});
+
+/**
+ * The IndexNow helper runs straight through Node (`npm run indexnow`), with no
+ * tsx loader, so TypeScript syntax in it is a parse error at run time rather
+ * than a compile error - which is exactly how it shipped once. These guard the
+ * parts a test can check offline.
+ */
+describe('IndexNow submission tooling', () => {
+  const script = path.join(process.cwd(), 'scripts', 'submit-indexnow.mjs');
+
+  test('the script is JavaScript Node can actually parse', () => {
+    const result = spawnSync(process.execPath, ['--check', script], { encoding: 'utf8' });
+    assert.equal(
+      result.status,
+      0,
+      `node --check rejected scripts/submit-indexnow.mjs (a .mjs file run without tsx must be plain JS):\n${result.stderr}`,
+    );
+  });
+
+  test('package.json exposes both entry points', () => {
+    const pkg = JSON.parse(readFileSync(path.join(process.cwd(), 'package.json'), 'utf8'));
+    assert.equal(pkg.scripts?.indexnow, 'node scripts/submit-indexnow.mjs');
+    assert.equal(pkg.scripts?.['test:robots'], 'node --env-file-if-exists=.env --import tsx tests/robots.test.ts');
+  });
+
+  test('the published key file matches the URL it is served under', () => {
+    const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\.txt$/i;
+    const keys = readdirSync(path.join(process.cwd(), 'public')).filter((file) => uuid.test(file));
+
+    assert.equal(keys.length, 1, `expected exactly one IndexNow key file in public/, found ${keys.length}`);
+
+    const expected = keys[0].replace(/\.txt$/i, '');
+    const actual = readFileSync(path.join(process.cwd(), 'public', keys[0]), 'utf8').trim();
+
+    // IndexNow verifies ownership by comparing the file body with the filename,
+    // so a mismatch here means every submission would be rejected with 403.
+    assert.equal(actual.toLowerCase(), expected.toLowerCase(), 'key file body must equal its filename minus .txt');
+  });
+
+  test('the script only sends public data to the public endpoint', () => {
+    const source = readFileSync(script, 'utf8');
+    assert.match(source, /https:\/\/api\.indexnow\.org\/indexnow/, 'must target the public IndexNow endpoint');
+    assert.doesNotMatch(source, /process\.env/, 'must not read credentials - the key is published on purpose');
+    assert.doesNotMatch(source, /DATABASE_URL|API_TOKEN|SMTP_PASSWORD/, 'must not touch any secret');
   });
 });

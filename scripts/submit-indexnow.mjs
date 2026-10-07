@@ -10,6 +10,11 @@
  * Nothing sent here is secret: the key is published on purpose and the payload
  * is public sitemap URLs only. No credentials, no paid service, no accounts.
  *
+ * This is plain JavaScript on purpose - it is run by `npm run indexnow`
+ * straight through Node, with no tsx loader, so TypeScript syntax here would
+ * fail at parse time. tests/robots.test.ts imports findKey() to keep it that
+ * way.
+ *
  * Usage:
  *   npm run indexnow                 # submit the production sitemap
  *   npm run indexnow -- --dry-run    # list the URLs without submitting
@@ -17,6 +22,7 @@
  */
 import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { pathToFileURL } from 'node:url';
 
 const DEFAULT_BASE_URL = 'https://awanrentalservice.org';
 const ENDPOINT = 'https://api.indexnow.org/indexnow';
@@ -31,16 +37,16 @@ const baseUrl = (args.find((arg) => !arg.startsWith('--')) ?? DEFAULT_BASE_URL).
  * the key, and its contents must match. Deriving it here means the key can
  * never drift between the file IndexNow fetches and the file we sign with.
  */
-function findKey(): { key: string; keyFile: string } {
+export function findKey({ dir = PUBLIC_DIR } = {}) {
   const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\.txt$/i;
-  const keyFile = readdirSync(PUBLIC_DIR).find((file) => uuid.test(file));
+  const keyFile = readdirSync(dir).find((file) => uuid.test(file));
 
   if (!keyFile) {
-    throw new Error(`No IndexNow key file (a <uuid>.txt) found in ${PUBLIC_DIR}/ - cannot sign a submission.`);
+    throw new Error(`No IndexNow key file (a <uuid>.txt) found in ${dir}/ - cannot sign a submission.`);
   }
 
   const key = keyFile.replace(/\.txt$/i, '');
-  const contents = readFileSync(join(PUBLIC_DIR, keyFile), 'utf8').trim();
+  const contents = readFileSync(join(dir, keyFile), 'utf8').trim();
 
   if (contents.toLowerCase() !== key.toLowerCase()) {
     throw new Error(`${keyFile}: contents must equal the filename minus ".txt", found "${contents}".`);
@@ -49,8 +55,8 @@ function findKey(): { key: string; keyFile: string } {
   return { key, keyFile };
 }
 
-/** Pulls every `<loc>` out of a sitemap, following a sitemap index if that is what we got. */
-async function collectUrls(): Promise<string[]> {
+/** Pulls every <loc> out of a sitemap, following a sitemap index if that is what we got. */
+async function collectUrls() {
   const sitemapUrl = `${baseUrl}/sitemap.xml`;
   const res = await fetch(sitemapUrl);
 
@@ -59,25 +65,24 @@ async function collectUrls(): Promise<string[]> {
   }
 
   const xml = await res.text();
-  const locs = (pattern: RegExp) => [...xml.matchAll(pattern)].map((match) => match[1].trim());
+  const locs = (text) => [...text.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1].trim());
 
   if (/<sitemapindex[\s>]/i.test(xml)) {
-    const children = locs(/<loc>([^<]+)<\/loc>/g);
-    const nested: string[][] = [];
+    const nested = [];
 
-    for (const child of children) {
+    for (const child of locs(xml)) {
       const childRes = await fetch(child);
       if (!childRes.ok) throw new Error(`GET ${child} -> HTTP ${childRes.status}`);
-      nested.push([...(await childRes.text()).matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1].trim()));
+      nested.push(locs(await childRes.text()));
     }
 
     return nested.flat();
   }
 
-  return locs(/<loc>([^<]+)<\/loc>/g);
+  return locs(xml);
 }
 
-async function main(): Promise<void> {
+async function main() {
   const { key, keyFile } = findKey();
   const urls = await collectUrls();
 
@@ -113,14 +118,17 @@ async function main(): Promise<void> {
   if (detail) console.log(detail);
 
   if (!ok) {
-    console.error(
-      `Submission rejected. Check that ${payload.keyLocation} is publicly reachable and returns text/plain.`,
-    );
+    console.error(`Submission rejected. Check that ${payload.keyLocation} is publicly reachable.`);
     process.exitCode = 1;
   }
 }
 
-main().catch((error: unknown) => {
-  console.error(`IndexNow failed: ${error instanceof Error ? error.message : String(error)}`);
-  process.exitCode = 1;
-});
+// Only run when executed directly - tests import findKey() from this module.
+const invokedDirectly = process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href;
+
+if (invokedDirectly) {
+  main().catch((error) => {
+    console.error(`IndexNow failed: ${error instanceof Error ? error.message : String(error)}`);
+    process.exitCode = 1;
+  });
+}
