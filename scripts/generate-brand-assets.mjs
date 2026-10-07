@@ -3,10 +3,16 @@
  *
  *   public/brand-mark.png   car + swoosh only (the wordmark cropped off),
  *                           transparent background - used in the header.
- *   public/brand-logo.png   full lockup on its own white plate with an even
- *                           margin - used in the footer and the 404 page,
- *                           where the dark surroundings would otherwise eat
- *                           the black "Rental Service" wordmark.
+ *   public/brand-logo.png   full lockup, also transparent, with an even
+ *                           margin - used in the footer and the 404 page.
+ *
+ * BOTH assets are transparent. The lockup used to be composited onto a solid
+ * white plate, which meant the image itself decided where a white rectangle
+ * appeared - impossible to place on anything but a white surface, and a
+ * jarring box on the dark footer. The plate is gone; the background is now
+ * flooded away exactly as it is for the mark, and any surface dark enough to
+ * swallow the black wordmark supplies its own light card in CSS instead (see
+ * Footer and not-found.tsx).
  *
  * The header shows the mark next to the company name as real text, so the
  * name is never baked into pixels there. The footer and the 404 show the
@@ -20,10 +26,21 @@ import { mkdirSync } from 'node:fs';
 const SRC = 'Logo/logo.png';
 const OUT_DIR = 'public';
 
-/** Margin, in source pixels, around the full lockup's white plate. */
+/** Margin, in source pixels, around the full lockup. Now transparent, so it
+ *  doubles as the breathing room a caller's CSS card needs. */
 const PLATE_PADDING = 44;
-/** Near-white is treated as background when flooding the mark's plate away. */
+/** Near-white is treated as background when measuring the artwork's bbox. */
 const WHITE_THRESHOLD = 246;
+/**
+ * Floods are deliberately a little more tolerant than the bbox scan.
+ *
+ * The source art sits on white, so every edge pixel is a blend of artwork and
+ * white. Stopping at 246 leaves a band of 200-245 pixels opaque, which reads
+ * as a white fringe the moment the transparent asset lands on a dark surface.
+ * 232 eats that band without reaching any artwork: the outline that separates
+ * plate from art is near-black, so there is no bridge to cross.
+ */
+const FLOOD_THRESHOLD = 232;
 
 const { data, info } = await sharp(SRC)
   .flatten({ background: { r: 255, g: 255, b: 255 } })
@@ -144,7 +161,7 @@ function floodBackground(src, sw, sh) {
     const p = y * sw + x;
     if (seen[p]) return;
     const i = p * 3;
-    if (src[i] < WHITE_THRESHOLD || src[i + 1] < WHITE_THRESHOLD || src[i + 2] < WHITE_THRESHOLD) return;
+    if (src[i] < FLOOD_THRESHOLD || src[i + 1] < FLOOD_THRESHOLD || src[i + 2] < FLOOD_THRESHOLD) return;
     seen[p] = 1;
     stack.push(p);
   };
@@ -191,7 +208,7 @@ if (markClearPct < 35 || markClearPct > 85) {
   throw new Error(`${SRC}: mark transparency ${markClearPct.toFixed(1)}% looks wrong - flood fill leaked or stalled`);
 }
 
-// --- public/brand-logo.png : full lockup on a white plate -----------------
+// --- public/brand-logo.png : full lockup, transparent background -----------
 const contentW = maxX - minX + 1;
 const contentH = maxY - minY + 1;
 const plateW = contentW + PLATE_PADDING * 2;
@@ -207,11 +224,26 @@ for (let y = 0; y < contentH; y++) {
   }
 }
 
+/*
+ * Flood the same way the mark does. The plate is seeded as white so the flood
+ * can enter from every side, and only background-CONNECTED white clears -
+ * white inside the artwork (the car's body panels, the space enclosed by the
+ * swoosh) stays solid, which is what keeps the lockup readable when it is not
+ * sitting on a white page.
+ */
+const lockup = floodBackground(plate, plateW, plateH);
+const lockupClearPct = (lockup.cleared / lockup.total) * 100;
+if (lockupClearPct < 35 || lockupClearPct > 97) {
+  throw new Error(
+    `${SRC}: lockup transparency ${lockupClearPct.toFixed(1)}% looks wrong - flood fill leaked or stalled`
+  );
+}
+
 mkdirSync(OUT_DIR, { recursive: true });
 await sharp(mark.out, { raw: { width: markW, height: markH, channels: 4 } })
   .png({ compressionLevel: 9 })
   .toFile(`${OUT_DIR}/brand-mark.png`);
-await sharp(plate, { raw: { width: plateW, height: plateH, channels: 3 } })
+await sharp(lockup.out, { raw: { width: plateW, height: plateH, channels: 4 } })
   .png({ compressionLevel: 9 })
   .toFile(`${OUT_DIR}/brand-logo.png`);
 
@@ -219,6 +251,6 @@ console.log(
   [
     `seam y=${seam}`,
     `brand-mark.png  ${markW}x${markH}  transparent ${markClearPct.toFixed(1)}%`,
-    `brand-logo.png  ${plateW}x${plateH}  plate ${PLATE_PADDING}px margin`,
+    `brand-logo.png  ${plateW}x${plateH}  transparent ${lockupClearPct.toFixed(1)}%  margin ${PLATE_PADDING}px`,
   ].join('\n'),
 );

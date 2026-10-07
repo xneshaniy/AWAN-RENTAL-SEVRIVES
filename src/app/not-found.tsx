@@ -21,11 +21,18 @@ export default async function NotFound() {
         aria-labelledby="notfound-title"
       >
         <div className="w-full max-w-md text-center">
-          <Logo
-            className="mx-auto mb-6 block h-36 w-auto animate-fade-in"
-            title="Awan Rental Service"
-            priority
-          />
+          {/*
+            No card in light mode - the page is already light and the asset is
+            transparent, so nothing shows behind the artwork. Dark mode gets
+            one because the black wordmark would otherwise disappear into it.
+          */}
+          <span className="mx-auto mb-6 flex w-fit rounded-2xl dark:bg-white">
+            <Logo
+              className="h-36 w-auto animate-fade-in"
+              title="Awan Rental Service"
+              priority
+            />
+          </span>
 
           <p
             className="mb-2 animate-slide-up text-8xl font-bold leading-none text-primary-600/20 dark:text-primary-400/20"

@@ -74,8 +74,18 @@ export function Footer({ businessInfo }: FooterProps) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
           <div className="lg:col-span-1">
-            <Link href="/" className="mb-4 inline-flex" aria-label={`${companyName} Home`}>
-              <Logo className="h-32 w-auto rounded-2xl" />
+            {/*
+              The footer is always dark and the lockup's wordmark is black, so
+              the light surface lives here in CSS rather than baked into the
+              PNG. The image keeps its own 44px transparent margin, which is
+              what reads as padding inside this card.
+            */}
+            <Link
+              href="/"
+              className="mb-4 inline-flex rounded-2xl bg-white"
+              aria-label={`${companyName} Home`}
+            >
+              <Logo className="h-32 w-auto" />
             </Link>
             <p className="text-gray-400 text-sm leading-relaxed mb-6">
               Your trusted partner for car rental and ground transportation services across Pakistan.

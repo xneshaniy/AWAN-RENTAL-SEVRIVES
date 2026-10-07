@@ -2,14 +2,15 @@ import Image from 'next/image';
 
 /**
  * The full Awan Rental Service lockup - the car plus the "Awan Rental
- * Service" wordmark - cropped out of Logo/logo.png onto its own white plate
- * with an even margin. Built by scripts/generate-brand-assets.mjs into
- * public/brand-logo.png.
+ * Service" wordmark - cropped out of Logo/logo.png with its background
+ * flooded away and an even transparent margin. Built by
+ * scripts/generate-brand-assets.mjs into public/brand-logo.png.
  *
  * Used where the layout has room for the wordmark to stay legible: the
- * footer and the 404 page. The white plate is not decoration - the footer
- * sits on #111827 and the wordmark is black, so dropping the lockup straight
- * onto that surface would make "Rental Service" disappear.
+ * footer and the 404 page. The PNG carries NO background of its own, so it
+ * can be dropped on any light surface without showing a rectangle. Because
+ * the wordmark is black, a surface dark enough to swallow it supplies a light
+ * card in CSS instead - see Footer and not-found.tsx.
  *
  * The header uses @/components/common/BrandMark instead: the mark alone,
  * paired with the company name as real text.
