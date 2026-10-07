@@ -175,7 +175,7 @@ export function BookingForm({
             <p className="text-gray-600 dark:text-gray-400 mb-6">
               Thank you for contacting Awan Rental Service. We have received your booking request.
             </p>
-            <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4 mb-6 text-left">
+            <div className="bg-cream-100 dark:bg-gray-800 rounded-xl p-4 mb-6 text-left">
               <p className="font-medium text-gray-900 dark:text-white">
                 Booking Reference:{' '}
                 <span className="text-primary-600 dark:text-primary-400">{submittedData.bookingNumber}</span>
@@ -309,7 +309,7 @@ export function BookingForm({
                       <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
                         Selected Vehicle
                       </label>
-                      <div className="px-4 py-2.5 rounded-xl border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 flex items-center gap-3 h-[46px]">
+                      <div className="px-4 py-2.5 rounded-xl border border-gray-300 dark:border-gray-600 bg-cream-100 dark:bg-gray-800 flex items-center gap-3 h-[46px]">
                         <Car className="w-5 h-5 text-primary-600" aria-hidden="true" />
                         <span className="font-medium text-gray-900 dark:text-white">{vehicleName}</span>
                       </div>

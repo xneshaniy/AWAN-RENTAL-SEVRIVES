@@ -85,7 +85,7 @@ function LoginForm() {
   const error = formError || urlError;
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12 dark:bg-gray-900">
+    <div className="flex min-h-screen items-center justify-center bg-cream-100 px-4 py-12 dark:bg-gray-900">
       <div className="w-full max-w-md">
         <div className="mb-8 text-center">
           <Link href="/" className="mb-6 inline-flex items-center gap-2">
@@ -175,7 +175,7 @@ export default function AdminLoginPage() {
     <Suspense
       fallback={
         <div
-          className="flex min-h-screen items-center justify-center bg-gray-50 dark:bg-gray-900"
+          className="flex min-h-screen items-center justify-center bg-cream-100 dark:bg-gray-900"
           aria-busy="true"
         >
           <span className="sr-only">Loading login form...</span>

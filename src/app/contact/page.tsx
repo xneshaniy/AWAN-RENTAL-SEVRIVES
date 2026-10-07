@@ -33,7 +33,7 @@ export default async function ContactPage() {
 
   return (
     <Layout businessInfo={businessInfo}>
-      <section className="py-16 sm:py-24 bg-gray-50 dark:bg-gray-900/50" aria-labelledby="contact-title">
+      <section className="py-16 sm:py-24 bg-cream-100 dark:bg-gray-900/50" aria-labelledby="contact-title">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto mb-12">
             <h1 id="contact-title" className="font-heading font-bold text-3xl sm:text-4xl lg:text-5xl text-gray-900 dark:text-white mb-4">
@@ -154,8 +154,8 @@ export default async function ContactPage() {
                 <Card variant="default" padding="lg" hover>
                   <CardHeader>
                     <div className="flex items-start gap-3">
-                      <div className="w-12 h-12 bg-primary-100 dark:bg-primary-900/30 rounded-xl flex items-center justify-center flex-shrink-0">
-                        <MapPinIcon className="w-6 h-6 text-primary-600 dark:text-primary-400" />
+                      <div className="w-12 h-12 bg-secondary-100 dark:bg-secondary-900/30 rounded-xl flex items-center justify-center flex-shrink-0">
+                        <MapPinIcon className="w-6 h-6 text-secondary-600 dark:text-secondary-400" />
                       </div>
                       <div>
                         <h3 className="font-heading font-semibold text-lg text-gray-900 dark:text-white">{SITE_NAME}</h3>
@@ -180,8 +180,8 @@ export default async function ContactPage() {
                 <Card variant="default" padding="lg" hover>
                   <CardHeader>
                     <div className="flex items-start gap-3">
-                      <div className="w-12 h-12 bg-primary-100 dark:bg-primary-900/30 rounded-xl flex items-center justify-center flex-shrink-0">
-                        <Clock className="w-6 h-6 text-primary-600 dark:text-primary-400" />
+                      <div className="w-12 h-12 bg-secondary-100 dark:bg-secondary-900/30 rounded-xl flex items-center justify-center flex-shrink-0">
+                        <Clock className="w-6 h-6 text-secondary-600 dark:text-secondary-400" />
                       </div>
                       <div>
                         <h3 className="font-heading font-semibold text-lg text-gray-900 dark:text-white">Business Hours</h3>
@@ -195,8 +195,8 @@ export default async function ContactPage() {
                 <Card variant="default" padding="lg" hover>
                   <CardHeader>
                     <div className="flex items-start gap-3">
-                      <div className="w-12 h-12 bg-primary-100 dark:bg-primary-900/30 rounded-xl flex items-center justify-center flex-shrink-0">
-                        <Globe className="w-6 h-6 text-primary-600" />
+                      <div className="w-12 h-12 bg-secondary-100 dark:bg-secondary-900/30 rounded-xl flex items-center justify-center flex-shrink-0">
+                        <Globe className="w-6 h-6 text-secondary-600" />
                       </div>
                       <div>
                         <h3 className="font-heading font-semibold text-lg text-gray-900 dark:text-white">Service Areas</h3>

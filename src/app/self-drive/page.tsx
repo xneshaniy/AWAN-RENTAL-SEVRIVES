@@ -230,9 +230,9 @@ export default async function SelfDrivePage() {
             {RENTAL_PERIODS.map((period) => (
               <Card key={period.title} padding="lg" hover className="h-full">
                 <CardHeader>
-                  <div className="w-12 h-12 bg-primary-100 dark:bg-primary-900/30 rounded-xl flex items-center justify-center mb-4">
+                  <div className="w-12 h-12 bg-secondary-100 dark:bg-secondary-900/30 rounded-xl flex items-center justify-center mb-4">
                     <period.icon
-                      className="w-6 h-6 text-primary-600 dark:text-primary-400"
+                      className="w-6 h-6 text-secondary-600 dark:text-secondary-400"
                       aria-hidden="true"
                     />
                   </div>
@@ -291,7 +291,7 @@ export default async function SelfDrivePage() {
 
       {/* 2. Vehicle selection */}
       <section
-        className="py-16 sm:py-24 bg-gray-50 dark:bg-gray-900/50"
+        className="py-16 sm:py-24 bg-cream-100 dark:bg-gray-900/50"
         aria-labelledby="selection-title"
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -351,9 +351,9 @@ export default async function SelfDrivePage() {
       <div className="py-16 sm:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-2 gap-12 items-start">
           <section aria-labelledby="pickup-title">
-            <div className="w-12 h-12 bg-primary-100 dark:bg-primary-900/30 rounded-xl flex items-center justify-center mb-4">
+            <div className="w-12 h-12 bg-secondary-100 dark:bg-secondary-900/30 rounded-xl flex items-center justify-center mb-4">
               <MapPin
-                className="w-6 h-6 text-primary-600 dark:text-primary-400"
+                className="w-6 h-6 text-secondary-600 dark:text-secondary-400"
                 aria-hidden="true"
               />
             </div>
@@ -372,9 +372,9 @@ export default async function SelfDrivePage() {
                   key={point}
                   className="flex items-start gap-4 p-4 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700"
                 >
-                  <div className="flex-shrink-0 w-10 h-10 bg-primary-100 dark:bg-primary-900/30 rounded-xl flex items-center justify-center">
+                  <div className="flex-shrink-0 w-10 h-10 bg-secondary-100 dark:bg-secondary-900/30 rounded-xl flex items-center justify-center">
                     <CheckCircle
-                      className="w-5 h-5 text-primary-600 dark:text-primary-400"
+                      className="w-5 h-5 text-secondary-600 dark:text-secondary-400"
                       aria-hidden="true"
                     />
                   </div>
@@ -386,9 +386,9 @@ export default async function SelfDrivePage() {
 
           {/* 4. Delivery options */}
           <section aria-labelledby="delivery-title">
-            <div className="w-12 h-12 bg-primary-100 dark:bg-primary-900/30 rounded-xl flex items-center justify-center mb-4">
+            <div className="w-12 h-12 bg-secondary-100 dark:bg-secondary-900/30 rounded-xl flex items-center justify-center mb-4">
               <Truck
-                className="w-6 h-6 text-primary-600 dark:text-primary-400"
+                className="w-6 h-6 text-secondary-600 dark:text-secondary-400"
                 aria-hidden="true"
               />
             </div>
@@ -407,9 +407,9 @@ export default async function SelfDrivePage() {
                   key={point}
                   className="flex items-start gap-4 p-4 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700"
                 >
-                  <div className="flex-shrink-0 w-10 h-10 bg-primary-100 dark:bg-primary-900/30 rounded-xl flex items-center justify-center">
+                  <div className="flex-shrink-0 w-10 h-10 bg-secondary-100 dark:bg-secondary-900/30 rounded-xl flex items-center justify-center">
                     <CheckCircle
-                      className="w-5 h-5 text-primary-600 dark:text-primary-400"
+                      className="w-5 h-5 text-secondary-600 dark:text-secondary-400"
                       aria-hidden="true"
                     />
                   </div>
@@ -423,14 +423,14 @@ export default async function SelfDrivePage() {
 
       {/* 5. Rental requirements */}
       <section
-        className="py-16 sm:py-24 bg-gray-50 dark:bg-gray-900/50"
+        className="py-16 sm:py-24 bg-cream-100 dark:bg-gray-900/50"
         aria-labelledby="requirements-title"
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-2 gap-12 items-start">
           <div>
-            <div className="w-12 h-12 bg-primary-100 dark:bg-primary-900/30 rounded-xl flex items-center justify-center mb-4">
+            <div className="w-12 h-12 bg-secondary-100 dark:bg-secondary-900/30 rounded-xl flex items-center justify-center mb-4">
               <ClipboardCheck
-                className="w-6 h-6 text-primary-600 dark:text-primary-400"
+                className="w-6 h-6 text-secondary-600 dark:text-secondary-400"
                 aria-hidden="true"
               />
             </div>
@@ -449,9 +449,9 @@ export default async function SelfDrivePage() {
               <ul className="space-y-4" role="list">
                 {requirements.map((requirement) => (
                   <li key={requirement} className="flex items-start gap-4">
-                    <div className="flex-shrink-0 w-10 h-10 bg-primary-100 dark:bg-primary-900/30 rounded-xl flex items-center justify-center">
+                    <div className="flex-shrink-0 w-10 h-10 bg-secondary-100 dark:bg-secondary-900/30 rounded-xl flex items-center justify-center">
                       <CheckCircle
-                        className="w-5 h-5 text-primary-600 dark:text-primary-400"
+                        className="w-5 h-5 text-secondary-600 dark:text-secondary-400"
                         aria-hidden="true"
                       />
                     </div>

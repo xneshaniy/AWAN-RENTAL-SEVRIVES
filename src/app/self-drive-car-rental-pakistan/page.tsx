@@ -140,8 +140,8 @@ export default async function SelfDriveCarRentalPakistanPage() {
             {STEPS.map((step, index) => (
               <Card key={step.title} variant="default" padding="lg" className="h-full text-center">
                 <CardHeader>
-                  <div className="w-14 h-14 bg-primary-100 dark:bg-primary-900/30 rounded-xl flex items-center justify-center mx-auto mb-4">
-                    <step.icon className="w-7 h-7 text-primary-600 dark:text-primary-400" aria-hidden="true" />
+                  <div className="w-14 h-14 bg-secondary-100 dark:bg-secondary-900/30 rounded-xl flex items-center justify-center mx-auto mb-4">
+                    <step.icon className="w-7 h-7 text-secondary-600 dark:text-secondary-400" aria-hidden="true" />
                   </div>
                   <p className="text-xs font-semibold uppercase tracking-wide text-primary-600 dark:text-primary-400">
                     Step {index + 1}
@@ -157,7 +157,7 @@ export default async function SelfDriveCarRentalPakistanPage() {
         </div>
       </section>
 
-      <section className="py-16 sm:py-24 bg-gray-50 dark:bg-gray-900/50" aria-labelledby="why-title">
+      <section className="py-16 sm:py-24 bg-cream-100 dark:bg-gray-900/50" aria-labelledby="why-title">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div>

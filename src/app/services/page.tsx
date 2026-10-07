@@ -158,8 +158,8 @@ export default async function ServicesPage() {
               className="rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-10 sm:p-14 text-center"
               role="status"
             >
-              <div className="w-14 h-14 bg-primary-100 dark:bg-primary-900/30 rounded-xl flex items-center justify-center mx-auto mb-5">
-                <ListChecks className="w-7 h-7 text-primary-600 dark:text-primary-400" aria-hidden="true" />
+              <div className="w-14 h-14 bg-secondary-100 dark:bg-secondary-900/30 rounded-xl flex items-center justify-center mx-auto mb-5">
+                <ListChecks className="w-7 h-7 text-secondary-600 dark:text-secondary-400" aria-hidden="true" />
               </div>
               <h3 className="font-heading font-semibold text-xl text-gray-900 dark:text-white mb-3">
                 Our service list is being updated
@@ -206,7 +206,7 @@ export default async function ServicesPage() {
       </section>
 
       <section
-        className="py-16 sm:py-24 bg-gray-50 dark:bg-gray-900/50"
+        className="py-16 sm:py-24 bg-cream-100 dark:bg-gray-900/50"
         aria-labelledby="why-choose-title"
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -221,8 +221,8 @@ export default async function ServicesPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {WHY_CHOOSE.map((item) => (
               <div key={item.title} className="text-center p-6">
-                <div className="w-16 h-16 bg-primary-100 dark:bg-primary-900/30 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                  <item.icon className="w-8 h-8 text-primary-600 dark:text-primary-400" aria-hidden="true" />
+                <div className="w-16 h-16 bg-secondary-100 dark:bg-secondary-900/30 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                  <item.icon className="w-8 h-8 text-secondary-600 dark:text-secondary-400" aria-hidden="true" />
                 </div>
                 <h3 className="font-heading font-semibold text-xl text-gray-900 dark:text-white mb-2">
                   {item.title}

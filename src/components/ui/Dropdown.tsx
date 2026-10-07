@@ -65,7 +65,7 @@ export function Dropdown({
       {label && (
         <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
           {label}
-          {error && <span className="text-red-500 ml-1" aria-hidden="true">*</span>}
+          {error && <span className="text-red-700 dark:text-red-400 ml-1" aria-hidden="true">*</span>}
         </label>
       )}
       <div className="relative">

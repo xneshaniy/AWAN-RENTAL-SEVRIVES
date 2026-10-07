@@ -647,7 +647,7 @@ export function VehicleForm({ mode, vehicleId, initial }: VehicleFormProps) {
           </CardHeader>
           <CardContent className="space-y-3">
             {uploadStatus === 'unavailable' && (
-              <p className="rounded-lg bg-gray-50 px-3 py-2 text-xs leading-relaxed text-gray-500 dark:bg-gray-800 dark:text-gray-400">
+              <p className="rounded-lg bg-cream-100 px-3 py-2 text-xs leading-relaxed text-gray-500 dark:bg-gray-800 dark:text-gray-400">
                 Photo upload from this device isn&apos;t turned on for this site yet, so paste
                 an image link instead. The &quot;Upload Photo&quot; button appears here as
                 soon as it is.
@@ -741,7 +741,7 @@ export function VehicleForm({ mode, vehicleId, initial }: VehicleFormProps) {
           </CardHeader>
           <CardContent className="space-y-3">
             {uploadStatus === 'unavailable' && (
-              <p className="rounded-lg bg-gray-50 px-3 py-2 text-xs leading-relaxed text-gray-500 dark:bg-gray-800 dark:text-gray-400">
+              <p className="rounded-lg bg-cream-100 px-3 py-2 text-xs leading-relaxed text-gray-500 dark:bg-gray-800 dark:text-gray-400">
                 Video upload isn&apos;t turned on for this site yet, so clips can&apos;t be
                 added from this device. The &quot;Upload Video&quot; button appears here
                 as soon as it is.

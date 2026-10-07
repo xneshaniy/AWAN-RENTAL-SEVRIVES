@@ -94,8 +94,8 @@ export default async function BookingPage() {
                   {index + 1}
                 </div>
                 <CardHeader className="pt-8">
-                  <div className="w-14 h-14 bg-primary-100 dark:bg-primary-900/30 rounded-xl flex items-center justify-center mx-auto mb-4">
-                    <step.icon className="w-7 h-7 text-primary-600 dark:text-primary-400" aria-hidden="true" />
+                  <div className="w-14 h-14 bg-secondary-100 dark:bg-secondary-900/30 rounded-xl flex items-center justify-center mx-auto mb-4">
+                    <step.icon className="w-7 h-7 text-secondary-600 dark:text-secondary-400" aria-hidden="true" />
                   </div>
                   <CardTitle>{step.title}</CardTitle>
                 </CardHeader>
@@ -108,7 +108,7 @@ export default async function BookingPage() {
         </div>
       </section>
 
-      <section className="py-16 sm:py-24 bg-gray-50 dark:bg-gray-900/50" aria-labelledby="featured-title">
+      <section className="py-16 sm:py-24 bg-cream-100 dark:bg-gray-900/50" aria-labelledby="featured-title">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-10">
             <div>

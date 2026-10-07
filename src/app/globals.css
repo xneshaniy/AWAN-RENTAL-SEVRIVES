@@ -10,9 +10,9 @@
     --card-foreground: 222.2 84% 4.9%;
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
-    /* Brand red sampled from Logo/logo.png (#d80000 = hsl(0 100% 42.4%)).
-       White labels on it reach 5.36:1, clearing the 4.5:1 WCAG AA minimum. */
-    --primary: 0 100% 42.4%;
+    /* Action green (#15803d = hsl(142.4 72.3% 29.2%)). White labels on it
+       reach 5.02:1, clearing the 4.5:1 WCAG AA minimum. */
+    --primary: 142.4 72.3% 29.2%;
     --primary-foreground: 210 40% 98%;
     --secondary: 210 40% 96.1%;
     --secondary-foreground: 222.2 47.4% 11.2%;
@@ -24,7 +24,7 @@
     --destructive-foreground: 210 40% 98%;
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 0 100% 42.4%;
+    --ring: 142.4 72.3% 29.2%;
     --radius: 0.75rem;
   }
 
@@ -35,8 +35,8 @@
     --card-foreground: 210 40% 98%;
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
-    /* Lifted to 65% so the near-black dark-mode label on it reaches 5.26:1. */
-    --primary: 0 100% 65%;
+    /* Lifted to 55% so the near-black dark-mode label on it reaches 10.9:1. */
+    --primary: 142 72% 55%;
     --primary-foreground: 222.2 47.4% 11.2%;
     --secondary: 217.2 32.6% 17.5%;
     --secondary-foreground: 210 40% 98%;
@@ -48,7 +48,7 @@
     --destructive-foreground: 210 40% 98%;
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
-    --ring: 0 100% 65%;
+    --ring: 142 72% 55%;
   }
 }
 

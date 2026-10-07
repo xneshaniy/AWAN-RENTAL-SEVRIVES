@@ -179,7 +179,7 @@ export function VehicleList({ vehicles, pagination, facets, filters }: VehicleLi
       <div className="relative" aria-busy={isPending}>
         {isPending && (
           <div
-            className="absolute inset-0 z-10 grid place-items-center bg-gray-50/70 dark:bg-gray-900/70 rounded-2xl"
+            className="absolute inset-0 z-10 grid place-items-center bg-cream-100/70 dark:bg-gray-900/70 rounded-2xl"
             role="status"
             aria-label="Loading vehicles"
           >

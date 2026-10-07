@@ -18,22 +18,34 @@ const config: Config = {
         primary: {
           DEFAULT: 'hsl(var(--primary))',
           foreground: 'hsl(var(--primary-foreground))',
-          // Brand scale sampled from Logo/logo.png. 600 is the logo red
-          // #d80000 (hsl 0 100% 42.4%); the ramp keeps the same lightness
-          // steps as the old sky scale so gradients and tints still read the
-          // same way, just in red. 100 stays pale (#ffebeb) so text-primary-700
-          // on it, and text-primary-100 on primary-600, both clear 4.5:1.
-          50: '#fff5f5',
-          100: '#ffebeb',
-          200: '#ffcccc',
-          300: '#ffadad',
-          400: '#ff7a7a',
-          500: '#ff4242',
-          600: '#d80000',
-          700: '#b80000',
-          800: '#990000',
-          900: '#7d0000',
-          950: '#470000',
+          // Action green - the colour every button, link, badge and active
+          // state uses. 600 is #15803d: white labels on it reach 5.02:1 and
+          // text-primary-100 (#dcfce7) on it reaches 4.57:1, both clearing
+          // the 4.5:1 WCAG AA minimum. Stock green-600 #16a34a only reaches
+          // 3.29:1 against white, so it is parked at 500 where it is used
+          // only for rings and borders (needs 3:1 for WCAG 1.4.11, gets
+          // 3.30:1). 100 stays pale so text-primary-700 on it clears 4.5:1.
+          50: '#f0fdf4',
+          100: '#dcfce7',
+          200: '#bbf7d0',
+          300: '#86efac',
+          400: '#4ade80',
+          500: '#16a34a',
+          600: '#15803d',
+          700: '#166534',
+          800: '#14532d',
+          900: '#0a3d1f',
+          950: '#052e16',
+        },
+        // Warm off-white section band - the cream the page bands use instead
+        // of the cool #f9fafb grey. Held at #f7f6f2 rather than a deeper
+        // cream so text-gray-500 (#6b7280) laid straight on it still measures
+        // 4.53:1 and the axe colour-contrast gate stays green.
+        cream: {
+          50: '#faf9f6',
+          100: '#f7f6f2',
+          200: '#efece4',
+          300: '#e3dfd5',
         },
         // WhatsApp green. Darkened one step from Tailwind's stock green so
         // white button labels clear the 4.5:1 contrast minimum (stock

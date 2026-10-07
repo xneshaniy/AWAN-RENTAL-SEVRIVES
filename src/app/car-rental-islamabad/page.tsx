@@ -95,8 +95,8 @@ export default async function IslamabadCarRentalPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <Card variant="default" padding="lg" hover className="h-full text-center">
               <CardHeader>
-                <div className="w-14 h-14 bg-primary-100 dark:bg-primary-900/30 rounded-xl flex items-center justify-center mx-auto mb-4">
-                  <Car className="w-7 h-7 text-primary-600 dark:text-primary-400" />
+                <div className="w-14 h-14 bg-secondary-100 dark:bg-secondary-900/30 rounded-xl flex items-center justify-center mx-auto mb-4">
+                  <Car className="w-7 h-7 text-secondary-600 dark:text-secondary-400" />
                 </div>
                 <CardTitle>Self-Drive Rental</CardTitle>
               </CardHeader>
@@ -107,8 +107,8 @@ export default async function IslamabadCarRentalPage() {
             </Card>
             <Card variant="default" padding="lg" hover className="h-full text-center">
               <CardHeader>
-                <div className="w-14 h-14 bg-primary-100 dark:bg-primary-900/30 rounded-xl flex items-center justify-center mx-auto mb-4">
-                  <User className="w-7 h-7 text-primary-600 dark:text-primary-400" />
+                <div className="w-14 h-14 bg-secondary-100 dark:bg-secondary-900/30 rounded-xl flex items-center justify-center mx-auto mb-4">
+                  <User className="w-7 h-7 text-secondary-600 dark:text-secondary-400" />
                 </div>
                 <CardTitle>Chauffeur Service</CardTitle>
               </CardHeader>
@@ -119,8 +119,8 @@ export default async function IslamabadCarRentalPage() {
             </Card>
             <Card variant="default" padding="lg" hover className="h-full text-center">
               <CardHeader>
-                <div className="w-14 h-14 bg-primary-100 dark:bg-primary-900/30 rounded-xl flex items-center justify-center mx-auto mb-4">
-                  <Plane className="w-7 h-7 text-primary-600 dark:text-primary-400" />
+                <div className="w-14 h-14 bg-secondary-100 dark:bg-secondary-900/30 rounded-xl flex items-center justify-center mx-auto mb-4">
+                  <Plane className="w-7 h-7 text-secondary-600 dark:text-secondary-400" />
                 </div>
                 <CardTitle>Airport Transfers</CardTitle>
               </CardHeader>
@@ -131,8 +131,8 @@ export default async function IslamabadCarRentalPage() {
             </Card>
             <Card variant="default" padding="lg" hover className="h-full text-center">
               <CardHeader>
-                <div className="w-14 h-14 bg-primary-100 dark:bg-primary-900/30 rounded-xl flex items-center justify-center mx-auto mb-4">
-                  <Building2 className="w-7 h-7 text-primary-600 dark:text-primary-400" />
+                <div className="w-14 h-14 bg-secondary-100 dark:bg-secondary-900/30 rounded-xl flex items-center justify-center mx-auto mb-4">
+                  <Building2 className="w-7 h-7 text-secondary-600 dark:text-secondary-400" />
                 </div>
                 <CardTitle>Corporate Travel</CardTitle>
               </CardHeader>
@@ -152,7 +152,7 @@ export default async function IslamabadCarRentalPage() {
         viewAllHref="/vehicles?location=Islamabad"
       />
 
-      <section className="py-16 sm:py-24 bg-gray-50 dark:bg-gray-900/50" aria-labelledby="areas-title">
+      <section className="py-16 sm:py-24 bg-cream-100 dark:bg-gray-900/50" aria-labelledby="areas-title">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-12">
             <div>
@@ -187,8 +187,8 @@ export default async function IslamabadCarRentalPage() {
                   <Card key={index} variant="outlined" padding="md">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-primary-100 dark:bg-primary-900/30 rounded-xl flex items-center justify-center">
-                          <MapPin className="w-5 h-5 text-primary-600 dark:text-primary-400" />
+                        <div className="w-10 h-10 bg-secondary-100 dark:bg-secondary-900/30 rounded-xl flex items-center justify-center">
+                          <MapPin className="w-5 h-5 text-secondary-600 dark:text-secondary-400" />
                         </div>
                         <div>
                           <p className="font-medium text-gray-900 dark:text-white">{route.from} → {route.to}</p>

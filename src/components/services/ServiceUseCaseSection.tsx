@@ -44,14 +44,14 @@ export function ServiceUseCaseSection({
   return (
     <section
       aria-labelledby={`${id}-title`}
-      className={cn('py-16 sm:py-24', tone === 'muted' && 'bg-gray-50 dark:bg-gray-900/50')}
+      className={cn('py-16 sm:py-24', tone === 'muted' && 'bg-cream-100 dark:bg-gray-900/50')}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
           <div className={reversed ? 'lg:order-2' : undefined}>
-            <div className="w-12 h-12 bg-primary-100 dark:bg-primary-900/30 rounded-xl flex items-center justify-center mb-4">
+            <div className="w-12 h-12 bg-secondary-100 dark:bg-secondary-900/30 rounded-xl flex items-center justify-center mb-4">
               <Icon
-                className="w-6 h-6 text-primary-600 dark:text-primary-400"
+                className="w-6 h-6 text-secondary-600 dark:text-secondary-400"
                 aria-hidden="true"
               />
             </div>
@@ -83,9 +83,9 @@ export function ServiceUseCaseSection({
                   key={point}
                   className="flex items-start gap-4 p-4 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700"
                 >
-                  <div className="flex-shrink-0 w-10 h-10 bg-primary-100 dark:bg-primary-900/30 rounded-xl flex items-center justify-center">
+                  <div className="flex-shrink-0 w-10 h-10 bg-secondary-100 dark:bg-secondary-900/30 rounded-xl flex items-center justify-center">
                     <CheckCircle
-                      className="w-5 h-5 text-primary-600 dark:text-primary-400"
+                      className="w-5 h-5 text-secondary-600 dark:text-secondary-400"
                       aria-hidden="true"
                     />
                   </div>

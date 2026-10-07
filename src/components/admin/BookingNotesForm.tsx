@@ -48,7 +48,7 @@ export function BookingNotesForm({ bookingId, existingNotes }: BookingNotesFormP
   return (
     <div className="space-y-4">
       {existingNotes ? (
-        <div className="rounded-xl bg-gray-50 p-4 dark:bg-gray-800/60">
+        <div className="rounded-xl bg-cream-100 p-4 dark:bg-gray-800/60">
           <pre className="whitespace-pre-wrap font-sans text-sm text-gray-700 dark:text-gray-300">
             {existingNotes}
           </pre>

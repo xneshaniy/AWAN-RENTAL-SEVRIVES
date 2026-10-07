@@ -34,9 +34,9 @@ export function ServiceCard({ service }: ServiceCardProps) {
       )}
 
       <div className="flex flex-1 flex-col p-5 sm:p-6">
-        <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-primary-100 dark:bg-primary-900/30 transition-colors group-hover:bg-primary-600 group-hover:dark:bg-primary-600">
+        <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-secondary-100 dark:bg-secondary-900/30 transition-colors group-hover:bg-secondary-600 group-hover:dark:bg-secondary-600">
           <Icon
-            className="h-6 w-6 text-primary-600 dark:text-primary-400 transition-colors group-hover:text-white group-hover:dark:text-white"
+            className="h-6 w-6 text-secondary-600 dark:text-secondary-400 transition-colors group-hover:text-white group-hover:dark:text-white"
             aria-hidden="true"
           />
         </div>

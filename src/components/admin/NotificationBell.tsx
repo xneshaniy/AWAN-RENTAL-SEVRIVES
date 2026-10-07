@@ -345,7 +345,7 @@ export function NotificationBell() {
           </div>
 
           {notifications.length > 0 && unread === 0 && (
-            <div className="flex items-center justify-center gap-1.5 border-t border-gray-200 bg-gray-50 px-4 py-2 text-[11px] text-gray-500 dark:border-gray-700 dark:bg-gray-800/50 dark:text-gray-400">
+            <div className="flex items-center justify-center gap-1.5 border-t border-gray-200 bg-cream-100 px-4 py-2 text-[11px] text-gray-500 dark:border-gray-700 dark:bg-gray-800/50 dark:text-gray-400">
               <BellOff className="h-3 w-3" aria-hidden={true} />
               No unread notifications
             </div>

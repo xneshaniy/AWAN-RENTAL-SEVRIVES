@@ -34,7 +34,7 @@ export default function GlobalError({
           padding: '2rem 1rem',
           fontFamily:
             "ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
-          background: '#f9fafb',
+          background: '#f7f6f2',
           color: '#111827',
         }}
       >
@@ -92,7 +92,7 @@ export default function GlobalError({
                 gap: '0.5rem',
                 border: 'none',
                 borderRadius: '0.75rem',
-                background: '#d80000',
+                background: '#15803d',
                 color: '#ffffff',
                 padding: '0.75rem 1.25rem',
                 fontSize: '0.95rem',
@@ -112,8 +112,8 @@ export default function GlobalError({
                 gap: '0.5rem',
                 borderRadius: '0.75rem',
                 background: 'transparent',
-                color: '#d80000',
-                border: '1px solid #d80000',
+                color: '#15803d',
+                border: '1px solid #15803d',
                 padding: '0.75rem 1.25rem',
                 fontSize: '0.95rem',
                 fontWeight: 600,

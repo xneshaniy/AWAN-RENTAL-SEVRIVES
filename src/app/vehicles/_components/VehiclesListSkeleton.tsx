@@ -37,7 +37,7 @@ function SkeletonCard() {
  */
 export function VehiclesListSkeleton() {
   return (
-    <div className="py-16 sm:py-24 bg-gray-50 dark:bg-gray-900/50" role="status" aria-label="Loading vehicles">
+    <div className="py-16 sm:py-24 bg-cream-100 dark:bg-gray-900/50" role="status" aria-label="Loading vehicles">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-3xl mx-auto mb-12 space-y-4">
           <div className="h-10 w-72 bg-gray-200 dark:bg-gray-700 rounded mx-auto animate-pulse" />

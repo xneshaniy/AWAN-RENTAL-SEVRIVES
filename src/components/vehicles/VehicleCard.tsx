@@ -171,9 +171,9 @@ export function VehicleCard({
           <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 mb-4">
             <MapPin className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
             <span>{vehicle.location}</span>
-            <span className="text-gray-300 dark:text-gray-600" aria-hidden="true">•</span>
+            <span aria-hidden="true">•</span>
             <span>{vehicle.doors} Doors</span>
-            <span className="text-gray-300 dark:text-gray-600" aria-hidden="true">•</span>
+            <span aria-hidden="true">•</span>
             <span>{vehicle.luggageCapacity} Bags</span>
           </div>
 

@@ -15,7 +15,7 @@ export const metadata: Metadata = {
  */
 export default function AdminUnauthorizedPage() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12 dark:bg-gray-900">
+    <div className="flex min-h-screen items-center justify-center bg-cream-100 px-4 py-12 dark:bg-gray-900">
       <div className="w-full max-w-md rounded-2xl border border-gray-200 bg-white p-8 text-center shadow-lg dark:border-gray-700 dark:bg-gray-800">
         <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-amber-100 dark:bg-amber-900/30">
           <ShieldAlert className="h-8 w-8 text-amber-600 dark:text-amber-400" aria-hidden="true" />

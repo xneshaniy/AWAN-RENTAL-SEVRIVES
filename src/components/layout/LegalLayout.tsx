@@ -73,7 +73,7 @@ export async function LegalLayout({
   return (
     <Layout businessInfo={businessInfo}>
       <section
-        className="py-16 sm:py-24 bg-gray-50 dark:bg-gray-900/50"
+        className="py-16 sm:py-24 bg-cream-100 dark:bg-gray-900/50"
         aria-labelledby="legal-title"
       >
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -122,7 +122,7 @@ export async function LegalLayout({
       </section>
 
       <section
-        className="py-12 sm:py-16 bg-gray-50 dark:bg-gray-900/50"
+        className="py-12 sm:py-16 bg-cream-100 dark:bg-gray-900/50"
         aria-labelledby="legal-related-title"
       >
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">

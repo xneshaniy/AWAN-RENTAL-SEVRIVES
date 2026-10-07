@@ -208,7 +208,7 @@ export function AirportTransferForm() {
         <fieldset className="m-0 border-0 p-0">
           <legend className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300">
             Arrival / Departure
-            <span className="ml-1 text-red-500" aria-hidden="true">
+            <span className="ml-1 text-red-700 dark:text-red-400" aria-hidden="true">
               *
             </span>
           </legend>

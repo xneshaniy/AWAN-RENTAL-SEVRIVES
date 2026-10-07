@@ -82,7 +82,7 @@ function ReviewCard({ review }: { review: GoogleReview }) {
 /** State 2: no live data yet, but we know where the listing lives. */
 function ReviewsLinkCard({ mapsUrl }: { mapsUrl: string }) {
   return (
-    <section className="bg-gray-50 py-12 dark:bg-gray-900/50 sm:py-16" aria-labelledby="google-reviews-title">
+    <section className="bg-cream-100 py-12 dark:bg-gray-900/50 sm:py-16" aria-labelledby="google-reviews-title">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <Card className="flex flex-col items-start gap-6 sm:flex-row sm:items-center sm:justify-between">
           <div>
@@ -123,7 +123,7 @@ function LiveReviews({
 
   return (
     <section
-      className="bg-gray-50 py-16 dark:bg-gray-900/50 sm:py-24"
+      className="bg-cream-100 py-16 dark:bg-gray-900/50 sm:py-24"
       aria-labelledby="google-reviews-title"
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">

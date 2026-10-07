@@ -106,7 +106,7 @@ interface LayoutOptions {
   content: string;
 }
 
-function renderEmailLayout({ title, heading, accent = '#d80000', content }: LayoutOptions): string {
+function renderEmailLayout({ title, heading, accent = '#15803d', content }: LayoutOptions): string {
   const year = new Date().getFullYear();
   return `
 <!DOCTYPE html>
@@ -210,7 +210,7 @@ export function generateBookingEmailHtml(booking: BookingEmailData): string {
     </div>
 
     <div style="text-align: center; margin: 32px 0;">
-      <a href="${SITE_URL}/booking/success/${encodeURIComponent(booking.bookingNumber)}" style="display: inline-block; background: #d80000; color: white; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: 600;">View Booking Status</a>
+      <a href="${SITE_URL}/booking/success/${encodeURIComponent(booking.bookingNumber)}" style="display: inline-block; background: #15803d; color: white; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: 600;">View Booking Status</a>
     </div>`;
 
   return renderEmailLayout({
@@ -271,7 +271,7 @@ export function generateBookingConfirmedEmailHtml(
     </div>
 
     <div style="text-align: center; margin: 32px 0;">
-      <a href="${SITE_URL}/booking/success/${encodeURIComponent(booking.bookingNumber)}" style="display: inline-block; background: #d80000; color: white; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: 600;">View Booking Status</a>
+      <a href="${SITE_URL}/booking/success/${encodeURIComponent(booking.bookingNumber)}" style="display: inline-block; background: #15803d; color: white; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: 600;">View Booking Status</a>
     </div>`;
 
   return renderEmailLayout({
@@ -346,7 +346,7 @@ export function generateContactEmailHtml(contact: ContactEmailData): string {
   return renderEmailLayout({
     title: `New Message: ${contact.subject}`,
     heading: 'New Contact Message',
-    accent: '#d80000',
+    accent: '#15803d',
     content: details,
   });
 }

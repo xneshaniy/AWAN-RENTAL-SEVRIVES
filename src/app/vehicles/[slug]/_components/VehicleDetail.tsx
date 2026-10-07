@@ -304,20 +304,20 @@ export function VehicleDetail({ vehicle, similarVehicles }: VehicleDetailProps) 
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-3">
-                    <div className="flex items-center justify-between gap-2 p-3 rounded-xl bg-gray-50 dark:bg-gray-800">
+                    <div className="flex items-center justify-between gap-2 p-3 rounded-xl bg-cream-100 dark:bg-gray-800">
                       <span className="text-gray-600 dark:text-gray-400">Self Drive</span>
                       <Badge variant={vehicle.selfDriveAvailable ? 'success' : 'danger'} size="sm">
                         {vehicle.selfDriveAvailable ? 'Available' : 'Not available'}
                       </Badge>
                     </div>
-                    <div className="flex items-center justify-between gap-2 p-3 rounded-xl bg-gray-50 dark:bg-gray-800">
+                    <div className="flex items-center justify-between gap-2 p-3 rounded-xl bg-cream-100 dark:bg-gray-800">
                       <span className="text-gray-600 dark:text-gray-400">With Driver</span>
                       <Badge variant={vehicle.chauffeurAvailable ? 'success' : 'danger'} size="sm">
                         {vehicle.chauffeurAvailable ? 'Available' : 'Not available'}
                       </Badge>
                     </div>
                     {kilometerLabel && (
-                      <div className="flex items-center justify-between gap-2 p-3 rounded-xl bg-gray-50 dark:bg-gray-800">
+                      <div className="flex items-center justify-between gap-2 p-3 rounded-xl bg-cream-100 dark:bg-gray-800">
                         <span className="text-gray-600 dark:text-gray-400">Kilometres</span>
                         <span className="text-sm font-medium text-gray-900 dark:text-white text-right">
                           {kilometerLabel}
@@ -411,7 +411,7 @@ export function VehicleDetail({ vehicle, similarVehicles }: VehicleDetailProps) 
                         {periods.map((period, index) => (
                           <li
                             key={`${period.start}-${index}`}
-                            className="flex items-start justify-between gap-2 text-sm p-3 rounded-xl bg-gray-50 dark:bg-gray-800"
+                            className="flex items-start justify-between gap-2 text-sm p-3 rounded-xl bg-cream-100 dark:bg-gray-800"
                           >
                             <span className="text-gray-700 dark:text-gray-300">
                               {formatVehicleDateRange(period.start, period.end)}
@@ -561,7 +561,7 @@ export function VehicleDetail({ vehicle, similarVehicles }: VehicleDetailProps) 
                     { label: 'Fuel', value: humanizeEnum(vehicle.fuelType) },
                     { label: 'Air Conditioning', value: vehicle.ac ? 'Yes' : 'No' },
                   ].map((item) => (
-                    <div key={item.label} className="p-3 rounded-xl bg-gray-50 dark:bg-gray-800">
+                    <div key={item.label} className="p-3 rounded-xl bg-cream-100 dark:bg-gray-800">
                       <p className="text-xs text-gray-500 dark:text-gray-400">{item.label}</p>
                       <p className="font-medium text-gray-900 dark:text-white">{item.value}</p>
                     </div>

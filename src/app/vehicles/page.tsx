@@ -98,7 +98,7 @@ async function VehiclesResults({ searchParams }: { searchParams: SearchParams })
   ]);
 
   return (
-    <section className="py-16 sm:py-24 bg-gray-50 dark:bg-gray-900/50" aria-labelledby="vehicles-title">
+    <section className="py-16 sm:py-24 bg-cream-100 dark:bg-gray-900/50" aria-labelledby="vehicles-title">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-3xl mx-auto mb-12">
           <h1

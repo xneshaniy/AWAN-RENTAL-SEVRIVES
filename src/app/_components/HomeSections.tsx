@@ -74,8 +74,8 @@ export function SectionServices() {
           {SERVICES.map((service, index) => (
             <Card key={index} variant="default" padding="lg" hover className="h-full group">
               <CardHeader>
-                <div className="w-14 h-14 bg-primary-100 dark:bg-primary-900/30 rounded-xl flex items-center justify-center mb-4 group-hover:bg-primary-600 group-hover:text-white transition-colors">
-                  <service.icon className="w-7 h-7 text-primary-600 dark:text-primary-400 group-hover:text-white" aria-hidden="true" />
+                <div className="w-14 h-14 bg-secondary-100 dark:bg-secondary-900/30 rounded-xl flex items-center justify-center mb-4 group-hover:bg-secondary-600 group-hover:text-white transition-colors">
+                  <service.icon className="w-7 h-7 text-secondary-600 dark:text-secondary-400 group-hover:text-white" aria-hidden="true" />
                 </div>
                 <CardTitle className="text-xl">{service.title}</CardTitle>
               </CardHeader>
@@ -99,7 +99,7 @@ export function SectionServices() {
 
 export function SectionTrust() {
   return (
-    <section className="py-16 sm:py-24 bg-gray-50 dark:bg-gray-900/50" aria-labelledby="trust-title">
+    <section className="py-16 sm:py-24 bg-cream-100 dark:bg-gray-900/50" aria-labelledby="trust-title">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-3xl mx-auto mb-16">
           <h2 id="trust-title" className="font-heading font-bold text-3xl sm:text-4xl text-gray-900 dark:text-white mb-4">
@@ -112,8 +112,8 @@ export function SectionTrust() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
           {TRUST_POINTS.map((point, index) => (
             <Card key={index} variant="default" padding="lg" hover className="h-full text-center">
-              <div className="w-14 h-14 bg-primary-100 dark:bg-primary-900/30 rounded-xl flex items-center justify-center mx-auto mb-4">
-                <point.icon className="w-7 h-7 text-primary-600 dark:text-primary-400" aria-hidden="true" />
+              <div className="w-14 h-14 bg-secondary-100 dark:bg-secondary-900/30 rounded-xl flex items-center justify-center mx-auto mb-4">
+                <point.icon className="w-7 h-7 text-secondary-600 dark:text-secondary-400" aria-hidden="true" />
               </div>
               <h3 className="font-heading font-semibold text-lg text-gray-900 dark:text-white mb-2">
                 {point.title}

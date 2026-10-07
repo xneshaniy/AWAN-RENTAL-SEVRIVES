@@ -165,7 +165,7 @@ export function AdminShell({ nav, user, unreadMessages = 0, children }: AdminShe
     // One provider per admin session owns the single SSE connection shared by
     // the bell and the live dashboard counters - never one socket per widget.
     <NotificationProvider>
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-cream-100 dark:bg-gray-900">
       {/* Mobile drawer backdrop */}
       {drawerOpen && (
         <button
