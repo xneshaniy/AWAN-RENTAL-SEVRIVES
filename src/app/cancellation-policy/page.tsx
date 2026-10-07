@@ -28,7 +28,7 @@ const SECTIONS = [
   { id: 'in-short', heading: 'In short' },
   { id: 'how-to-cancel', heading: 'How to cancel or change' },
   { id: 'when-it-takes-effect', heading: 'When it takes effect' },
-  { id: 'no-online-payment', heading: 'No online payment' },
+  { id: 'no-online-payment', heading: 'Online payments and refunds' },
   { id: 'refunds', heading: 'Refunds' },
   { id: 'changes-and-no-shows', heading: 'Changes and no-shows' },
   { id: 'if-we-cannot-provide', heading: 'If we cannot provide' },
@@ -48,10 +48,10 @@ export default function CancellationPolicyPage() {
       <LegalNote>
         <p>
           To cancel or change a booking, contact us on WhatsApp or by phone and
-          we will help you. No payment is taken through this website, so there is
-          nothing to refund through the site. Any terms that apply to your
-          specific booking are the ones we confirmed with you when the booking
-          was agreed.
+          we will help you. If you paid a deposit online we refund it as
+          described under Refunds below, and anything else is settled directly
+          with us. Any terms that apply to your specific booking are the ones we
+          confirmed with you when the booking was agreed.
         </p>
       </LegalNote>
 
@@ -93,17 +93,26 @@ export default function CancellationPolicyPage() {
         arrangement is available.
       </LegalP>
 
-      <LegalH2 id="no-online-payment">No payment is taken on this website</LegalH2>
+      <LegalH2 id="no-online-payment">Online payments and refunds</LegalH2>
       <LegalP>
-        This website does not take payments. There is no checkout, no card form
-        and no deposit collected online. Payment terms are agreed with you
-        directly once we have contacted you about your request.
+        The only payment this website collects is an optional deposit on your
+        booking receipt page, paid through SafePay&apos;s hosted checkout. Your
+        card details are entered on SafePay&apos;s pages and never on this
+        website. No other payment is taken online - terms for any balance are
+        agreed with you directly once we have contacted you about your request.
+      </LegalP>
+      <LegalP>
+        Paying a deposit does not confirm the rental on its own. We still check
+        availability and contact you, and if we cannot provide the vehicle we
+        refund you as described below.
       </LegalP>
 
       <LegalH2 id="refunds">Refunds</LegalH2>
       <LegalP>
-        Because no money is collected through this website, there is no online
-        refund process here and no refund can be issued through the site.
+        If you paid a deposit online, it is refunded to the card you paid with.
+        We issue that refund through our payment provider rather than from this
+        website, so there is no refund button here - contact us and we will
+        process it and tell you what applies before we do.
       </LegalP>
       <LegalP>
         If you have paid us directly, any refund is handled under the payment and

@@ -277,6 +277,9 @@ enum PaymentMethod {
   EASYPAISA
   STRIPE
   PAYPAL
+  // Hosted SafePay checkout (deposit taken at booking time). Card data never
+  // touches this server - the shopper pays on Safepay's own pages.
+  SAFEPAY
 }
 
 model Payment {
@@ -292,8 +295,50 @@ model Payment {
   paidAt       DateTime @default(now())
   createdAt    DateTime @default(now())
 
+  // ---- Safepay deposit tracking (null for cash / manual payments) ----------
+  // Safepay tracker token for the checkout attempt this row represents. Unique,
+  // so a retried webhook can never create a second row or double-count the
+  // deposit: the transition UNPAID -> PAID is the idempotency guard.
+  tracker   String? @unique
+  // ISO-4217 code reported by Safepay when the payment settles ("PKR").
+  currency  String? @db.VarChar(3)
+  // Raw event token (evt_...) that first marked this payment as settled.
+  settledBy String?
+
   @@index([bookingId])
   @@map("payments")
+}
+
+// Append-only audit trail of everything Safepay told us. Deliberately has no
+// foreign keys: an event must survive a booking or payment being removed, so
+// the identifiers are denormalised plain columns instead of relations.
+model PaymentEvent {
+  id        String   @id @default(cuid())
+  // Safepay event token (evt_...). Retries of the same delivery repeat it.
+  token     String
+  // payment.succeeded | payment.failed | payment.refunded | authorization.* ...
+  type      String
+  version   String?
+  tracker   String?
+  state     String?
+  // Amount in the lowest denomination (PKR -> paisa), when the event carries one.
+  amount    Int?
+  currency  String?
+  // Safepay's own merchant key, so a mis-routed endpoint is visible in the log.
+  merchantApiKey String?
+  // Full verified payload exactly as received, for reconciliation and support.
+  raw       Json     @db.JsonB
+  paymentId String?
+  bookingId String?
+  // APPLIED | DUPLICATE | IGNORED | UNMATCHED | ERROR - what we did with it.
+  outcome   String
+  createdAt DateTime @default(now())
+
+  @@index([tracker])
+  @@index([type])
+  @@index([bookingId])
+  @@index([createdAt])
+  @@map("payment_events")
 }
 
 model BookingDocument {

@@ -100,6 +100,74 @@ a send failure is logged and also returns `false`. Data is always persisted
 first, so email being unavailable can never fail a booking, a contact message
 or a booking status change.
 
+### Online deposits (SafePay)
+
+A customer can secure a booking request by paying a deposit through SafePay's
+hosted checkout. The balance is collected offline as before, and paying the
+deposit does **not** confirm the rental — booking status changes stay under
+staff control.
+
+**Flow**
+
+1. `/booking/success/[reference]` computes the deposit entirely server-side
+   from the booking's own total and the deposit settings, then mints a
+   short-lived (6 h) HMAC token bound to that booking. The token is passed to
+   the button as a prop, never placed in the URL, so it cannot leak through
+   `Referer` or a bookmarked link.
+2. The pay button calls the `startSafePayDeposit` server action (POST-only,
+   origin-checked by Next.js, rate limited per IP + booking). The action
+   re-verifies the token, the booking status and the amount — nothing about the
+   price is ever read from the browser — then creates a tracker at SafePay and
+   stores a `payments` row with `status: UNPAID` and a **unique** `tracker`.
+3. The browser is redirected to SafePay's hosted pages. Card details are typed
+   there and never reach this server, which keeps the integration in PCI SAQ A.
+4. SafePay calls `POST /api/payments/safepay/webhook`. The HMAC-SHA512 signature
+   in `X-SFPY-SIGNATURE` is checked against the **raw request bytes** with
+   `timingSafeEqual` before anything is written; an event that fails
+   verification gets `401` and is never stored, because an unauthenticated
+   caller must never cause a database row.
+5. Settlement recomputes `paidAmount` / `paymentStatus` from the sum of settled
+   payments inside one transaction rather than incrementing them, so replaying
+   an event any number of times yields the same result. `payments.tracker`
+   being `UNIQUE` is the idempotency guard — a duplicate delivery resolves to
+   `DUPLICATE`, never a second charge. Booking **status** is left untouched:
+   only `paidAmount` and `paymentStatus` change.
+6. Every event is appended to `payment_events` with the outcome
+   (`APPLIED` / `DUPLICATE` / `IGNORED` / `UNMATCHED` / `ERROR`), so a webhook
+   that cannot be tied to a booking is still on record for a human to
+   reconcile. A `5xx` is returned only when settlement failed, which is safe to
+   retry precisely because settlement is idempotent.
+7. Independent fallback: SafePay redirects back with `?tracker=…`, and the
+   receipt page re-reads that tracker from SafePay **using our own secret**
+   before displaying a result. The browser supplies the lookup key, never the
+   outcome, and the tracker must belong to the booking reference in the URL.
+
+**Failure behaviour.** Missing credentials do not throw — the deposit offer
+simply does not render and the booking flow is byte-for-byte unchanged.
+`SAFEPAY_ENV` defaults to `sandbox`, and only the exact value `production`
+leaves it, so a typo cannot start charging real cards. The webhook secret is
+required even though only the public key and API secret are needed to *create*
+a checkout: we refuse to take money we would have no way to confirm.
+
+**Files:** `src/lib/safepay.ts` (HTTP client, checkout URL, signature
+verification), `src/lib/deposit.ts` (settings, amount, authorisation token),
+`src/lib/safepay-settlement.ts` (idempotent apply, refund, return path),
+`src/app/api/payments/safepay/webhook/route.ts`, `src/actions/deposit.ts`,
+`src/components/booking/DepositOffer.tsx`, `tests/safepay.test.ts`.
+
+**Going live**
+
+1. Set the four environment variables — `.env.example` says where each comes
+   from. Sandbox and live secrets are different keys; never reuse one for the
+   other.
+2. In the SafePay dashboard: *Developers → Endpoints* → add
+   `https://awanrentalservice.org/api/payments/safepay/webhook`, subscribe to
+   the `2.0.0` payment events, then copy the shared secret.
+3. `npx prisma migrate deploy` against production, then push (the build starts
+   automatically — see *Deployment*).
+4. Flip `SAFEPAY_ENV="production"` **last**, and run one real transaction end
+   to end, watching `/admin/bookings` for the `payment_events` row.
+
 ---
 
 ## Search & AI visibility (AEO)
@@ -197,10 +265,18 @@ Copy `.env.example` — it is the authoritative list. Summary:
 | `NEXT_PUBLIC_GA_ID` | ⬜ | Google Analytics 4 — component renders nothing when unset |
 | `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION` | ⬜ | Google Search Console meta tag |
 | `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | ⬜ | Google sign-in (only if both are set) |
-| `STRIPE_*` (3) | ⬜ | Reserved — no Stripe code exists yet |
-| `CLOUDINARY_*` (3) | ⬜ | Reserved — no upload code exists yet |
+| `SAFEPAY_API_KEY` | ⬜ | Public SafePay account key (`sec_…`). Deposits stay **off** until all four are set |
+| `SAFEPAY_API_SECRET` | ⬜ | Authenticates server-side SafePay calls (`X-SFPY-MERCHANT-SECRET`) |
+| `SAFEPAY_WEBHOOK_SECRET` | ⬜ | HMAC-SHA512 key for `X-SFPY-SIGNATURE`. Comma-separated = key rotation |
+| `SAFEPAY_ENV` | ⬜ | `sandbox` (default) or `production`. Anything other than `production` = sandbox |
+| `CLOUDINARY_*` (3) | ⬜ | Image/video upload — code implemented in `src/lib/cloudinary.ts`, no production credentials yet |
+| `STRIPE_*` (3) | ⬜ | Reserved — no Stripe code exists |
 
 **Never commit `.env`.** Never paste secrets into chat or issues.
+
+> Deposit rule (`deposit_enabled` / `deposit_type` / `deposit_value`) is **not** an environment
+> variable — it is edited in the admin panel under *Site Settings → Deposits & payments*, with
+> code defaults (`PERCENTAGE`, `20`) when the rows do not exist yet.
 
 > Email status: `isEmailConfigured()` in `src/lib/email.ts` requires `SMTP_HOST` **and** `SMTP_USER` **and** `SMTP_PASSWORD`. If any is missing the contact/booking routes still succeed (they use `Promise.allSettled`) but **no email leaves the server**.
 
@@ -316,9 +392,21 @@ assumed. Read this table before changing anything about how the app ships.
 | Safe restart | `POST /nodejs/server/restart` — reloads the process without touching the database. `POST /nodejs/builds` is **not** the deploy path and is destructive. |
 | Node | 22 |
 
-Pushing to `main` does **not** deploy anything by itself. The Hostinger build
-must be triggered explicitly, and the migration must be applied separately
-before the new code runs.
+Pushing to `main` **does** start a Hostinger build. The site is connected to
+this repository through Hostinger's GitHub integration: pushing `f9cd54c`
+produced build `01a1182c-c659-733a-8666-5a5205a4780b` whose
+`source_options.commit.hash` was that commit, with no call made to the Hostinger
+API from our side. `host-trigger-build.ps1` exists but has never been needed.
+
+Pushing does **not** apply the database migration. `POST /nodejs/builds` is still
+never the deploy path — it is destructive. The safe order for a change that adds
+a column is:
+
+1. `npx prisma migrate deploy` against the production `DATABASE_URL`
+2. push to `main` (the build then starts against a schema that already has the column)
+
+A migration that only adds nullable/defaulted columns is safe to apply while the
+old code is still serving, so step 1 before step 2 costs nothing.
 
 ### Vercel (alternative / rollback only)
 
@@ -396,6 +484,11 @@ tests/                    # node:test suites
 - Rate limiting on login, booking, contact and enquiry
   - `src/lib/rate-limit.ts` — in-process, also the only gate available on the edge runtime (`middleware.ts`)
   - `src/lib/rate-limit-db.ts` — durable, cross-instance counter in the `rate_limits` table; **fails open** so a limiter fault never blocks a real customer
+- SafePay payment webhook
+  - HMAC-SHA512 verified over the raw body with `timingSafeEqual` *before* any database write; a failed verification returns `401` and stores nothing
+  - `payments.tracker` is `UNIQUE`, so a replayed or concurrent delivery becomes a `DUPLICATE` rather than a second charge
+  - deposit amounts are recomputed from the booking's own total on the server; no client-supplied figure is ever read
+  - the deposit authorisation token is an HMAC bound to one booking with a 6 h expiry, and it never appears in a URL
 - `src/lib/seo.ts` never fabricates ratings or review counts
 
 ---
@@ -410,8 +503,8 @@ Semantic HTML, ARIA labels and roles, keyboard navigation, focus management, WCA
 
 Tracked openly so nothing is mistaken for finished work:
 
-- The canonical domain currently serves a Hostinger placeholder until the app is deployed there (all canonicals, the sitemap and `og:image` already point at `https://awanrentalservice.org`).
-- Stripe payment code and Cloudinary image upload are **not implemented** — only their environment variables exist.
+- Cloudinary image upload is implemented (`src/lib/cloudinary.ts`, wired through `/api/admin/upload`) but has **no production credentials**, so it only works where `CLOUDINARY_*` is set.
+- Stripe payment code is **not implemented** — only its environment variables exist. Online payment is handled by SafePay instead (see *Online deposits (SafePay)* below), which is built and tested but **not yet taking payments**: it needs its four environment variables and a live webhook endpoint before a real card can be charged.
 - No admin UI for editing the root JSON-LD graph beyond the SEO settings form.
 
 ---

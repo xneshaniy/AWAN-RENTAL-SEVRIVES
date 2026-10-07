@@ -161,7 +161,7 @@ export default async function BookingPage() {
             </h2>
             <div className="space-y-4">
               {[
-                { q: 'Do I need to pay upfront to book?', a: 'No payment is taken through this website. Payment terms are confirmed when we contact you after your request.' },
+                { q: 'Do I need to pay upfront to book?', a: 'No. You can book without paying anything. A deposit may be offered on your confirmation page to secure the request online, but it is optional, and the balance is agreed when we contact you.' },
                 { q: 'Can I modify or cancel my booking?', a: 'Contact us via WhatsApp or phone and we will help with changes or cancellation. Terms are confirmed with your booking.' },
                 { q: 'What documents do I need for self-drive?', a: 'Document requirements are confirmed with your booking - keep a valid driving licence and CNIC ready.' },
                 { q: 'Is insurance included?', a: 'Insurance terms are confirmed with your booking - ask our team when you make your request.' },

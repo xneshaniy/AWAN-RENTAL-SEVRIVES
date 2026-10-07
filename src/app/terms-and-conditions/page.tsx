@@ -29,7 +29,7 @@ const SECTIONS = [
   { id: 'who-we-are', heading: 'Who we are' },
   { id: 'what-the-site-is-for', heading: 'What this website is for' },
   { id: 'booking-requests', heading: 'Booking requests' },
-  { id: 'no-online-payment', heading: 'No online payment' },
+  { id: 'no-online-payment', heading: 'Online payments' },
   { id: 'documents', heading: 'Driver eligibility and documents' },
   { id: 'prices', heading: 'Prices and charges' },
   { id: 'your-responsibilities', heading: 'Your responsibilities' },
@@ -100,10 +100,19 @@ export default function TermsAndConditionsPage() {
         or if we cannot reach you to confirm the details.
       </LegalP>
 
-      <LegalH2 id="no-online-payment">No online payment</LegalH2>
+      <LegalH2 id="no-online-payment">Online payments</LegalH2>
       <LegalP>
-        No payment is taken through this website. There is no online checkout and
-        no card details are collected here.
+        A deposit may be offered on your booking receipt page so you can secure
+        your request online. That deposit is paid on SafePay&apos;s own hosted
+        checkout pages: your card details are entered there and never on this
+        website, so we never see or store them.
+      </LegalP>
+      <LegalP>
+        Paying a deposit does not by itself confirm a rental. We still check
+        availability and contact you first, and the balance of any rental price
+        is agreed with you and paid offline. If you would rather not pay online,
+        simply leave the deposit unpaid and everything can be settled when we
+        speak to you.
       </LegalP>
       <LegalP>
         Payment terms are explained and agreed with you when we contact you after

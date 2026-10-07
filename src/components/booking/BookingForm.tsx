@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -11,6 +12,7 @@ import { Car, Calendar, Clock, MapPin, User, Mail, Phone, MessageCircle, Luggage
 import { toast } from 'react-hot-toast';
 import { createBooking } from '@/actions/booking';
 import { WhatsAppButton } from '@/components/common/WhatsAppButton';
+import { DepositOffer } from '@/components/booking/DepositOffer';
 
 interface BookingFormVehicle {
   id: string;
@@ -75,7 +77,11 @@ export function BookingForm({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
   const [submissionId, setSubmissionId] = useState<string>(() => createSubmissionId());
-  const [submittedData, setSubmittedData] = useState<{ bookingNumber: string; whatsappUrl: string | null } | null>(null);
+  const [submittedData, setSubmittedData] = useState<{
+    bookingNumber: string;
+    whatsappUrl: string | null;
+    deposit?: { depositPaisa: number; rule: string; token: string } | null;
+  } | null>(null);
 
   const {
     register,
@@ -129,6 +135,7 @@ export function BookingForm({
         const successData = {
           bookingNumber: result.bookingNumber!,
           whatsappUrl: result.whatsappUrl ?? null,
+          deposit: result.deposit ?? null,
         };
         // The key is consumed - the next submission is a new request.
         setSubmissionId(createSubmissionId());
@@ -188,6 +195,20 @@ export function BookingForm({
                 We&apos;ll review your request and contact you to confirm availability.
               </p>
             </div>
+
+            {/* Present only when the server could build an offer: SafePay
+                configured, deposits switched on, booking payable. Absent
+                otherwise, so the confirmation never promises a payment that
+                cannot be taken. */}
+            {submittedData.deposit?.token && (
+              <DepositOffer
+                bookingNumber={submittedData.bookingNumber}
+                token={submittedData.deposit.token}
+                depositPaisa={submittedData.deposit.depositPaisa}
+                rule={submittedData.deposit.rule}
+              />
+            )}
+
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <WhatsAppButton
                 url={submittedData.whatsappUrl}
@@ -199,6 +220,14 @@ export function BookingForm({
                 Make Another Booking
               </Button>
             </div>
+            <p className="mt-4 text-sm text-gray-500 dark:text-gray-400">
+              <Link
+                href={`/booking/success/${encodeURIComponent(submittedData.bookingNumber)}`}
+                className="underline underline-offset-4 hover:text-primary-600 dark:hover:text-primary-400"
+              >
+                View your booking receipt
+              </Link>
+            </p>
           </div>
         </Card>
       </div>

@@ -5,6 +5,7 @@ import { requireStaffAccess, requireAdminAccess } from '@/lib/admin-auth';
 import { prisma } from '@/lib/prisma';
 import type { BookingInput } from '@/lib/validations';
 import { processBookingRequest } from '@/lib/booking';
+import { getDepositOffer } from '@/lib/deposit';
 import { canTransition } from '@/lib/booking-status';
 import { formatDate, getBookingStatusLabel, pickSortBy, pickSortOrder } from '@/lib/utils';
 import { rentalTypeLabel } from '@/lib/whatsapp';
@@ -24,6 +25,14 @@ interface BookingActionResult {
   bookingNumber?: string;
   /** Pre-built WhatsApp deep link, or null when WhatsApp is not configured. */
   whatsappUrl?: string | null;
+  /**
+   * Deposit the customer can pay straight away, or null when there is nothing
+   * to offer (SafePay not configured, deposits switched off, booking not
+   * payable). Resolved here rather than in the client so the confirmation the
+   * customer actually sees presents it without a second round trip — the
+   * receipt page reached from the email link builds the very same offer.
+   */
+  deposit?: { depositPaisa: number; rule: string; token: string } | null;
   message?: string;
   error?: string;
   fieldErrors?: Record<string, string[]>;
@@ -46,7 +55,24 @@ export async function createBooking(data: BookingInput): Promise<BookingActionRe
       error: 'Too many booking attempts from your network. Please try again later.',
     };
   }
-  return processBookingRequest(data);
+
+  const result = await processBookingRequest(data);
+  if (!result.success || !result.bookingNumber) return result;
+
+  // The booking is already stored, so nothing about the deposit offer may undo
+  // it: any failure here just means the offer is absent and the customer is
+  // back where they were before this block ran.
+  try {
+    const offer = await getDepositOffer(result.bookingNumber);
+    const deposit =
+      offer?.depositPaisa && offer.token
+        ? { depositPaisa: offer.depositPaisa, rule: offer.rule, token: offer.token }
+        : null;
+    return { ...result, deposit };
+  } catch (error) {
+    console.error('[deposit] could not build an offer for', result.bookingNumber, error);
+    return { ...result, deposit: null };
+  }
 }
 
 export async function getBookingByReference(bookingNumber: string) {

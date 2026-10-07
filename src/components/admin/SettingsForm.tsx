@@ -26,6 +26,12 @@ interface FieldDef {
   hint?: string;
   required?: boolean;
   options?: Array<{ value: string; label: string }>;
+  /**
+   * Value shown when no SiteSettings row exists yet. Without it a brand-new
+   * checkbox would render unticked while the code default is "on", telling the
+   * admin the opposite of what the site actually does.
+   */
+  default?: string;
 }
 
 interface SectionDef {
@@ -147,6 +153,37 @@ export const SETTINGS_SECTIONS: SectionDef[] = [
     ],
   },
   {
+    id: 'payments',
+    title: 'Deposits & payments',
+    description:
+      'Deposit a customer can pay online through SafePay hosted checkout to secure a booking. The balance is collected offline.',
+    fields: [
+      {
+        key: 'deposit_enabled',
+        input: 'checkbox',
+        default: 'true',
+        hint: 'Offer a deposit on the booking receipt page. The offer is hidden automatically until SafePay credentials are configured, so ticking this before setup changes nothing.',
+      },
+      {
+        key: 'deposit_type',
+        input: 'select',
+        default: 'PERCENTAGE',
+        options: [
+          { value: 'PERCENTAGE', label: 'Percentage of the booking total' },
+          { value: 'FIXED_AMOUNT', label: 'Fixed amount in PKR' },
+        ],
+        hint: 'How the deposit amount is calculated.',
+      },
+      {
+        key: 'deposit_value',
+        input: 'number',
+        default: '20',
+        placeholder: 'e.g. 20',
+        hint: 'Percentage (1-100) or fixed PKR amount, matching the choice above. A deposit is never offered at or above the booking total.',
+      },
+    ],
+  },
+  {
     id: 'whatsapp',
     title: 'WhatsApp',
     description: 'Messages used when WhatsApp links are built from settings.',
@@ -224,7 +261,9 @@ export function SettingsForm({ settings, sections }: SettingsFormProps) {
   const initial: Record<string, string> = {};
   visibleSections.forEach((section) =>
     section.fields.forEach((field) => {
-      initial[field.key] = current.get(field.key) ?? '';
+      // Stored value wins; otherwise the field's own default, so the form shows
+      // the value the site is actually using rather than an empty control.
+      initial[field.key] = current.get(field.key) ?? field.default ?? '';
     })
   );
 

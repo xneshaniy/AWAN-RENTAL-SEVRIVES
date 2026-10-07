@@ -123,8 +123,9 @@ export default function PrivacyPolicyPage() {
       <LegalUl>
         <li>We do not sell, rent or trade your personal information.</li>
         <li>
-          We do not collect payment card details on this website. There is no
-          online checkout and no online payment.
+          We do not collect payment card details on this website. If you choose
+          to pay a deposit, you enter your card on SafePay&apos;s hosted
+          checkout pages and those details never reach our servers.
         </li>
         <li>
           We do not run advertising trackers or advertising cookies on this

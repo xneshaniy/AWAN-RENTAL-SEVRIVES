@@ -116,8 +116,9 @@ export default function RentalTermsPage() {
       </LegalP>
       <LegalP>
         Every charge that will apply to your rental is explained to you before
-        you agree to the booking. No payment of any kind is taken through this
-        website.
+        you agree to the booking. The only payment this website takes is an
+        optional deposit through our payment provider&apos;s hosted checkout
+        pages; every other charge is agreed with you and settled offline.
       </LegalP>
 
       <LegalH2 id="delivery">Delivery and pickup</LegalH2>
