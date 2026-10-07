@@ -70,7 +70,7 @@ export default async function BookingPage() {
               </div>
             </div>
             <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-6 border border-white/20">
-              <h3 className="font-heading font-semibold text-xl mb-4 text-center">Quick Booking</h3>
+              <h2 className="font-heading font-semibold text-xl mb-4 text-center">Quick Booking</h2>
               <BookingForm vehicles={bookableVehicles} />
             </div>
           </div>

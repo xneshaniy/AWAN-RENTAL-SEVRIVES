@@ -15,9 +15,20 @@ interface VehicleCardProps {
   vehicle: VehicleDTO;
   variant?: 'default' | 'compact' | 'featured';
   showBookingCTA?: boolean;
+  /**
+   * Heading level for the vehicle name. Defaults to h3 (correct beneath an
+   * existing section h2); the /vehicles listing passes 2 because its cards
+   * sit directly under the page h1, where an h3 would skip a level.
+   */
+  titleLevel?: 2 | 3;
 }
 
-export function VehicleCard({ vehicle, variant = 'default', showBookingCTA = true }: VehicleCardProps) {
+export function VehicleCard({
+  vehicle,
+  variant = 'default',
+  showBookingCTA = true,
+  titleLevel = 3,
+}: VehicleCardProps) {
   const thumbnail = vehicle.thumbnail || vehicle.images[0] || '/placeholder-vehicle.png';
   const hasPrice = hasConfiguredPrice(vehicle);
   const weeklyRate = vehicle.weeklyRate ?? null;
@@ -34,6 +45,7 @@ export function VehicleCard({ vehicle, variant = 'default', showBookingCTA = tru
   ];
 
   const isCompact = variant === 'compact';
+  const TitleTag = titleLevel === 2 ? 'h2' : 'h3';
 
   const priceBlock = hasPrice ? (
     <div className="flex items-start justify-between gap-4">
@@ -139,9 +151,9 @@ export function VehicleCard({ vehicle, variant = 'default', showBookingCTA = tru
             <p className="text-xs font-medium text-primary-600 dark:text-primary-400 uppercase tracking-wide">
               {getVehicleCategoryLabel(vehicle.category)}
             </p>
-            <h3 className="font-heading font-semibold text-lg text-gray-900 dark:text-white mt-1 line-clamp-1">
+            <TitleTag className="font-heading font-semibold text-lg text-gray-900 dark:text-white mt-1 line-clamp-1">
               {vehicle.name}
-            </h3>
+            </TitleTag>
             <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
               {vehicle.brand} {vehicle.model} · {vehicle.year}
             </p>
@@ -178,9 +190,9 @@ export function VehicleCard({ vehicle, variant = 'default', showBookingCTA = tru
             <p className="text-xs font-medium text-primary-600 dark:text-primary-400 uppercase tracking-wide mb-1">
               {getVehicleCategoryLabel(vehicle.category)}
             </p>
-            <h3 className="font-heading font-semibold text-base text-gray-900 dark:text-white truncate mb-1">
+            <TitleTag className="font-heading font-semibold text-base text-gray-900 dark:text-white truncate mb-1">
               {vehicle.name}
-            </h3>
+            </TitleTag>
             <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
               {vehicle.brand} {vehicle.model} · {vehicle.year}
             </p>

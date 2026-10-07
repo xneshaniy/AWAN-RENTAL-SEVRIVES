@@ -215,7 +215,9 @@ export function VehicleList({ vehicles, pagination, facets, filters }: VehicleLi
             )}
           >
             {vehicles.map((vehicle) => (
-              <VehicleCard key={vehicle.id} vehicle={vehicle} />
+              // This grid sits directly under the /vehicles page h1, so the card
+              // titles are its immediate children: h2, not h3.
+              <VehicleCard key={vehicle.id} vehicle={vehicle} titleLevel={2} />
             ))}
           </div>
         )}

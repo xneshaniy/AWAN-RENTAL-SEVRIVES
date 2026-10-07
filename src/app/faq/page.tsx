@@ -79,7 +79,7 @@ export default async function FaqPage() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <Card variant="default" padding="lg">
             <CardHeader>
-              <CardTitle id="faq-contact-title" className="text-2xl">
+              <CardTitle id="faq-contact-title" level={2} className="text-2xl">
                 Still have a question?
               </CardTitle>
             </CardHeader>

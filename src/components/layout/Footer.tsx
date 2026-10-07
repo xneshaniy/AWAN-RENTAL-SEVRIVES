@@ -100,7 +100,7 @@ export function Footer({ businessInfo }: FooterProps) {
           </div>
 
           <div>
-            <h3 className="font-heading font-semibold text-white mb-4">Quick Links</h3>
+            <h2 className="font-heading font-semibold text-white mb-4">Quick Links</h2>
             <ul className="space-y-3" role="list">
               {footerLinks.quick.map((link) => (
                 <li key={link.href}>
@@ -116,7 +116,7 @@ export function Footer({ businessInfo }: FooterProps) {
           </div>
 
           <div>
-            <h3 className="font-heading font-semibold text-white mb-4">Our Services</h3>
+            <h2 className="font-heading font-semibold text-white mb-4">Our Services</h2>
             <ul className="space-y-3" role="list">
               {footerLinks.services.map((link) => (
                 <li key={link.href}>
@@ -132,7 +132,7 @@ export function Footer({ businessInfo }: FooterProps) {
           </div>
 
           <div>
-            <h3 className="font-heading font-semibold text-white mb-4">Contact Us</h3>
+            <h2 className="font-heading font-semibold text-white mb-4">Contact Us</h2>
             <ul className="space-y-3" role="list">
               {footerLinks.contact.map((link) => (
                 <li key={link.label}>

@@ -54,12 +54,41 @@ export const CardHeader = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivEleme
 
 CardHeader.displayName = 'CardHeader';
 
-export const CardTitle = forwardRef<HTMLHeadingElement, HTMLAttributes<HTMLHeadingElement>>(
-  ({ className, children, ...props }, ref) => (
-    <h3 ref={ref} className={cn('text-xl font-semibold text-gray-900 dark:text-gray-100', className)} {...props}>
-      {children}
-    </h3>
-  )
+interface CardTitleProps extends HTMLAttributes<HTMLHeadingElement> {
+  /**
+   * Heading level for this card title. Defaults to h3 so every existing nested
+   * usage keeps its outline; pass 2 when the card sits directly under the
+   * page's h1, which is where an h3 would skip a level.
+   */
+  level?: 2 | 3 | 4;
+}
+
+export const CardTitle = forwardRef<HTMLHeadingElement, CardTitleProps>(
+  ({ className, children, level = 3, ...props }, ref) => {
+    const cls = cn('text-xl font-semibold text-gray-900 dark:text-gray-100', className);
+
+    // Each branch keeps the exact same classes, so the rendered size, weight
+    // and spacing are identical whatever level is chosen.
+    if (level === 2) {
+      return (
+        <h2 ref={ref} className={cls} {...props}>
+          {children}
+        </h2>
+      );
+    }
+    if (level === 4) {
+      return (
+        <h4 ref={ref} className={cls} {...props}>
+          {children}
+        </h4>
+      );
+    }
+    return (
+      <h3 ref={ref} className={cls} {...props}>
+        {children}
+      </h3>
+    );
+  }
 );
 
 CardTitle.displayName = 'CardTitle';

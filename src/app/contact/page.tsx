@@ -48,7 +48,7 @@ export default async function ContactPage() {
             <div className="space-y-8">
               <Card variant="default" padding="lg">
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
+                  <CardTitle level={2} className="flex items-center gap-2">
                     <MessageCircle className="w-6 h-6 text-green-600" />
                     WhatsApp Us
                   </CardTitle>
@@ -79,7 +79,7 @@ export default async function ContactPage() {
 
               <Card variant="default" padding="lg">
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
+                  <CardTitle level={2} className="flex items-center gap-2">
                     <Phone className="w-6 h-6 text-primary-600" />
                     Call Us
                   </CardTitle>
@@ -109,7 +109,7 @@ export default async function ContactPage() {
 
               <Card variant="default" padding="lg">
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
+                  <CardTitle level={2} className="flex items-center gap-2">
                     <Mail className="w-6 h-6 text-secondary-600" />
                     Email Us
                   </CardTitle>
@@ -126,7 +126,7 @@ export default async function ContactPage() {
             <div>
               <Card variant="default" padding="lg">
                 <CardHeader>
-                  <CardTitle>Send Us a Message</CardTitle>
+                  <CardTitle level={2}>Send Us a Message</CardTitle>
                   <p className="text-gray-600 dark:text-gray-400 mt-1">Fill out the form and we&apos;ll get back to you as soon as we can.</p>
                 </CardHeader>
                 <CardContent>
