@@ -396,17 +396,25 @@ Pushing to `main` **does** start a Hostinger build. The site is connected to
 this repository through Hostinger's GitHub integration: pushing `f9cd54c`
 produced build `01a1182c-c659-733a-8666-5a5205a4780b` whose
 `source_options.commit.hash` was that commit, with no call made to the Hostinger
-API from our side. `host-trigger-build.ps1` exists but has never been needed.
+API from our side. Nothing in this repository triggers a build, and nothing
+needs to.
 
-Pushing does **not** apply the database migration. `POST /nodejs/builds` is still
-never the deploy path — it is destructive. The safe order for a change that adds
-a column is:
+Pushing does **not** apply the database migration, and pushing *before* it is
+applied is not safe. `prisma/migrations/20261008140000_add_safepay_deposits`
+adds the `SAFEPAY` value to the `PaymentMethod` enum, and
+`/booking/success/[reference]` filters `payments` on `method = 'SAFEPAY'`. On a
+database that does not have that value yet PostgreSQL rejects the cast, so that
+public page would return 500 in production. `POST /nodejs/builds` is still
+never the deploy path — it is destructive. The safe order for a change that
+adds a column or an enum value is:
 
 1. `npx prisma migrate deploy` against the production `DATABASE_URL`
-2. push to `main` (the build then starts against a schema that already has the column)
+2. push to `main` (the build then starts against a schema the new code can
+   actually query)
 
-A migration that only adds nullable/defaulted columns is safe to apply while the
-old code is still serving, so step 1 before step 2 costs nothing.
+The added columns and the added enum value are purely additive, so step 1
+before step 2 costs nothing: it is safe to apply while the old code is still
+serving.
 
 ### Vercel (alternative / rollback only)
 
