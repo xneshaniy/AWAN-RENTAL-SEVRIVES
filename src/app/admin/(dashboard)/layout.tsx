@@ -19,6 +19,11 @@ export const metadata: Metadata = {
     statusBarStyle: 'default',
     title: 'ARS Admin',
   },
+  icons: {
+    apple: '/admin-apple-touch-icon.png',
+    icon: '/admin-icon-192.png',
+    shortcut: '/admin-icon-192.png',
+  },
 };
 
 export default async function AdminDashboardLayout({
