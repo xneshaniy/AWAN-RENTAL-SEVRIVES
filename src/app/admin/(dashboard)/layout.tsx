@@ -2,8 +2,24 @@ import { redirect } from 'next/navigation';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
-import { ADMIN_NAV } from '@/types';
-import { AdminShell } from '@/components/admin/AdminShell';
+import { AdminShell, ADMIN_NAV } from '@/components/admin/AdminShell';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: {
+    default: 'Admin Dashboard',
+    template: '%s | Awan Rental Admin',
+  },
+  description: 'Admin dashboard for Awan Rental Service - manage bookings, vehicles, customers, and settings.',
+  robots: 'noindex, nofollow',
+  manifest: '/admin-manifest.webmanifest',
+  themeColor: '#15803d',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'ARS Admin',
+  },
+};
 
 export default async function AdminDashboardLayout({
   children,
