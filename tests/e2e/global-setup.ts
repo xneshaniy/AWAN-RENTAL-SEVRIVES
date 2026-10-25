@@ -29,13 +29,14 @@ export const STAFF_PASSWORD = 'E2eStaff!2026';
 export const CUSTOMER_EMAIL = 'e2e-customer@example.com';
 export const CUSTOMER_PASSWORD = 'E2eCustomer!2026';
 
-/** The committed development seed password from `prisma/seed.ts`. Local only. */
-const ADMIN_PASSWORD = 'admin123';
-
 export default async function globalSetup(): Promise<void> {
   const adminEmail = process.env.ADMIN_EMAIL;
   if (!adminEmail) {
     throw new Error('ADMIN_EMAIL is not set - create .env.e2e before running the E2E suite.');
+  }
+  const adminPassword = process.env.ADMIN_PASSWORD;
+  if (!adminPassword) {
+    throw new Error('ADMIN_PASSWORD is not set - create .env.e2e before running the E2E suite.');
   }
 
   const prisma = new PrismaClient();
@@ -149,7 +150,7 @@ export default async function globalSetup(): Promise<void> {
       JSON.stringify(
         {
           adminEmail,
-          adminPassword: ADMIN_PASSWORD,
+          adminPassword,
           staffEmail: STAFF_EMAIL,
           staffPassword: STAFF_PASSWORD,
           customerEmail: CUSTOMER_EMAIL,

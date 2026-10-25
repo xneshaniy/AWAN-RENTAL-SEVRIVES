@@ -11,6 +11,20 @@ const COMPANY_WHATSAPP = '+923056846811';
 const COMPANY_EMAIL = 'info@awanrentalservice.org';
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || COMPANY_EMAIL;
 
+function getAdminPassword(): string {
+  const adminPassword = process.env.ADMIN_PASSWORD;
+  if (!adminPassword) {
+    throw new Error(
+      'ADMIN_PASSWORD is required to seed the admin account. Set ADMIN_PASSWORD in your environment and re-run the seed.'
+    );
+  }
+  if (adminPassword.length < 8) {
+    throw new Error('ADMIN_PASSWORD must be at least 8 characters long.');
+  }
+
+  return adminPassword;
+}
+
 async function main() {
   console.log('🌱 Seeding database...');
 
@@ -22,7 +36,7 @@ async function main() {
   }
 
   // Create admin user (email comes from ADMIN_EMAIL so it matches .env)
-  const adminPassword = await bcrypt.hash('admin123', 12);
+  const adminPassword = await bcrypt.hash(getAdminPassword(), 12);
   const admin = await prisma.user.upsert({
     where: { email: ADMIN_EMAIL },
     update: {},
