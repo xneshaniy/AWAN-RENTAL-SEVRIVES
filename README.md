@@ -258,6 +258,7 @@ Copy `.env.example` — it is the authoritative list. Summary:
 | `NEXTAUTH_URL` | ✅ | Exact origin of the deployment |
 | `NEXT_PUBLIC_WHATSAPP_NUMBER` | ✅ | `wa.me` deep links |
 | `ADMIN_EMAIL` | ✅ | Admin notification recipient |
+| `ADMIN_PASSWORD` | ✅ | Seed-time admin login password (`npm run db:seed`), minimum 8 characters |
 | `SMTP_HOST` / `SMTP_PORT` | 🟡 | Without these **no mail is sent at all** |
 | `SMTP_USER` / `SMTP_PASSWORD` | 🟡 | Mailbox credentials — required for `isEmailConfigured()` to pass |
 | `GOOGLE_PLACES_API_KEY` | ⬜ | Live Google reviews (server-only) |
