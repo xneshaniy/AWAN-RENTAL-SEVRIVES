@@ -12,6 +12,28 @@ import { SITE_NAME, WHATSAPP_NUMBER } from '@/config/site';
 const reactCache = (React as unknown as { cache?: <T>(fn: T) => T }).cache;
 const cache: <T>(fn: T) => T = reactCache ?? ((fn) => fn);
 
+function isSettingsReadConfigError(error: unknown): boolean {
+  if (!(error instanceof Error)) return false;
+  return (
+    error.message.includes('Environment variable not found: DATABASE_URL') ||
+    error.message.includes("Can't reach database server") ||
+    error.message.includes('Prisma Client could not locate the Query Engine')
+  );
+}
+
+async function safeSettingsRead<T>(operation: () => Promise<T>, fallback: T): Promise<T> {
+  try {
+    return await operation();
+  } catch (error) {
+    if (isSettingsReadConfigError(error)) {
+      const details = error instanceof Error ? error.message : String(error);
+      console.warn('Settings read fallback in use:', details);
+      return fallback;
+    }
+    throw error;
+  }
+}
+
 /**
  * Settings readers are memoized with React `cache`, so the root layout,
  * the page and any components on the same request share one query instead
@@ -19,28 +41,40 @@ const cache: <T>(fn: T) => T = reactCache ?? ((fn) => fn);
  * scoped: the next request after an admin save reads fresh values.
  */
 export const getSetting = cache(async (key: string): Promise<string | null> => {
-  const setting = await prisma.setting.findUnique({
-    where: { key },
-  });
+  const setting = await safeSettingsRead(
+    () =>
+      prisma.setting.findUnique({
+        where: { key },
+      }),
+    null
+  );
   return setting?.value ?? null;
 });
 
 /** Batch-read several settings in one query instead of one query per key. */
 async function getSettingsMap(keys: string[]): Promise<Record<string, string>> {
-  const rows = await prisma.setting.findMany({
-    where: { key: { in: keys } },
-    select: { key: true, value: true },
-  });
+  const rows = await safeSettingsRead(
+    () =>
+      prisma.setting.findMany({
+        where: { key: { in: keys } },
+        select: { key: true, value: true },
+      }),
+    []
+  );
   const map: Record<string, string> = {};
   for (const row of rows) map[row.key] = row.value;
   return map;
 }
 
 export const getPublicSettings = cache(async (): Promise<Record<string, string>> => {
-  const settings = await prisma.setting.findMany({
-    where: { isPublic: true },
-    select: { key: true, value: true },
-  });
+  const settings = await safeSettingsRead(
+    () =>
+      prisma.setting.findMany({
+        where: { isPublic: true },
+        select: { key: true, value: true },
+      }),
+    []
+  );
   return settings.reduce((acc, setting) => {
     acc[setting.key] = setting.value;
     return acc;
@@ -48,9 +82,13 @@ export const getPublicSettings = cache(async (): Promise<Record<string, string>>
 });
 
 export async function getSettingsByGroup(group: string): Promise<Record<string, { value: string; type: SettingType; label: string; description?: string | null }>> {
-  const settings = await prisma.setting.findMany({
-    where: { group },
-  });
+  const settings = await safeSettingsRead(
+    () =>
+      prisma.setting.findMany({
+        where: { group },
+      }),
+    []
+  );
   return settings.reduce((acc, setting) => {
     acc[setting.key] = {
       value: setting.value,

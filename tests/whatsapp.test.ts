@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { describe, test } from 'node:test';
+import { after, before, describe, test } from 'node:test';
 import {
   WHATSAPP_CONFIG_HINT,
   generateBookingWhatsAppMessage,
@@ -26,6 +26,21 @@ function parseWaMe(url: string): { number: string; text: string | null } {
   assert.ok(match, `not a valid wa.me link: ${url}`);
   return { number: match[1], text: match[2] ?? null };
 }
+
+const TEST_WHATSAPP_NUMBER = '+92 300 123 4567';
+const originalWhatsAppNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER;
+
+before(() => {
+  process.env.NEXT_PUBLIC_WHATSAPP_NUMBER = TEST_WHATSAPP_NUMBER;
+});
+
+after(() => {
+  if (originalWhatsAppNumber === undefined) {
+    delete process.env.NEXT_PUBLIC_WHATSAPP_NUMBER;
+    return;
+  }
+  process.env.NEXT_PUBLIC_WHATSAPP_NUMBER = originalWhatsAppNumber;
+});
 
 describe('link generation', () => {
   test('builds a digits-only wa.me link with a URL-encoded message', () => {

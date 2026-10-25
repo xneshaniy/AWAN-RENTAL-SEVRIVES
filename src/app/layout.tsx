@@ -1,5 +1,5 @@
 import { Metadata } from 'next';
-import { Inter, Poppins } from 'next/font/google';
+import Script from 'next/script';
 import './globals.css';
 import { Providers } from './providers';
 import { Toaster } from 'react-hot-toast';
@@ -8,9 +8,6 @@ import { getSEOConfig, getBusinessInfo } from '@/lib/settings';
 import { buildStructuredDataGraph } from '@/lib/seo';
 import { getContentSecurityPolicy } from '@/config/security-headers';
 import { GoogleAnalytics } from '@/components/common/GoogleAnalytics';
-
-const inter = Inter({ subsets: ['latin'], display: 'swap', variable: '--font-inter' });
-const poppins = Poppins({ subsets: ['latin'], display: 'swap', variable: '--font-poppins', weight: ['400', '500', '600', '700'] });
 
 const GOOGLE_SITE_VERIFICATION = process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION;
 
@@ -80,7 +77,7 @@ export default async function RootLayout({
   const structuredData = buildStructuredDataGraph(businessInfo);
 
   return (
-    <html lang="en" className={`${inter.variable} ${poppins.variable} antialiased`}>
+    <html lang="en" className="antialiased">
       <head>
         {/*
           The same Content-Security-Policy that next.config.js puts on the
@@ -116,7 +113,9 @@ export default async function RootLayout({
             that must be warmed up. */}
         <link rel="preconnect" href="https://www.googletagmanager.com" />
         {/* Google Tag Manager */}
-        <script
+        <Script
+          id="gtm-loader"
+          strategy="afterInteractive"
           dangerouslySetInnerHTML={{
             __html: `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
 new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
@@ -126,7 +125,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
           }}
         />
         {/* Apollo.io Website Tracker */}
-        <script
+        <Script
+          id="apollo-tracker"
+          strategy="afterInteractive"
           dangerouslySetInnerHTML={{
             __html: `function initApollo(){var n=Math.random().toString(36).substring(7),o=document.createElement("script");
 o.src="https://assets.apollo.io/micro/website-tracker/tracker.iife.js?nocache="+n,o.async=!0,o.defer=!0,
@@ -134,8 +135,10 @@ o.onload=function(){window.trackingFunctions.onLoad({appId:"6acb54920fd5510010c0
 document.head.appendChild(o)}initApollo();`,
           }}
         />
-        <script
+        <Script
+          id="site-structured-data"
           type="application/ld+json"
+          strategy="beforeInteractive"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
         />
       </head>

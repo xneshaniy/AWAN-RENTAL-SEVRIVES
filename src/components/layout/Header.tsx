@@ -15,6 +15,7 @@ interface HeaderProps {
 
 export function Header({ businessInfo }: HeaderProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [expandedMobileSection, setExpandedMobileSection] = useState<string | null>(null);
   const [isScrolled, setIsScrolled] = useState(false);
   const businessPhone = businessInfo?.companyPhone || '';
 
@@ -168,7 +169,10 @@ export function Header({ businessInfo }: HeaderProps) {
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => setIsMobileMenuOpen(false)}
+                onClick={() => {
+                  setIsMobileMenuOpen(false);
+                  setExpandedMobileSection(null);
+                }}
                 aria-label="Close navigation menu"
               >
                 <X className="w-6 h-6 text-gray-700 dark:text-gray-300" aria-hidden="true" />
@@ -181,17 +185,35 @@ export function Header({ businessInfo }: HeaderProps) {
                   <div key={item.href}>
                     {item.children ? (
                       <div className="space-y-1">
-                        <button className="w-full text-left px-4 py-3 rounded-xl font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center justify-between">
+                        <button
+                          className="w-full text-left px-4 py-3 rounded-xl font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center justify-between"
+                          onClick={() =>
+                            setExpandedMobileSection((current) =>
+                              current === item.href ? null : item.href
+                            )
+                          }
+                          aria-expanded={expandedMobileSection === item.href}
+                          aria-controls={`mobile-submenu-${item.href.replace(/\W+/g, '-')}`}
+                        >
                           {item.label}
                           <span className="w-5 h-5">▼</span>
                         </button>
-                        <div className="ml-4 space-y-1 mt-1">
+                        <div
+                          id={`mobile-submenu-${item.href.replace(/\W+/g, '-')}`}
+                          className={cn(
+                            'ml-4 space-y-1 mt-1',
+                            expandedMobileSection === item.href ? 'block' : 'hidden'
+                          )}
+                        >
                           {item.children?.map((child) => (
                             <Link
                               key={child.href}
                               href={child.href}
                               className="block px-4 py-2.5 rounded-lg text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-100 dark:hover:bg-gray-800 text-sm"
-                              onClick={() => setIsMobileMenuOpen(false)}
+                              onClick={() => {
+                                setIsMobileMenuOpen(false);
+                                setExpandedMobileSection(null);
+                              }}
                             >
                               {child.label}
                             </Link>
@@ -202,7 +224,10 @@ export function Header({ businessInfo }: HeaderProps) {
                       <Link
                         href={item.href}
                         className="block px-4 py-3 rounded-xl font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
-                        onClick={() => setIsMobileMenuOpen(false)}
+                        onClick={() => {
+                          setIsMobileMenuOpen(false);
+                          setExpandedMobileSection(null);
+                        }}
                       >
                         {item.label}
                       </Link>
@@ -227,10 +252,21 @@ export function Header({ businessInfo }: HeaderProps) {
                   fullWidth
                   label="WhatsApp Us"
                   ariaLabel="Chat with Awan Rental Service on WhatsApp"
-                  onClick={() => setIsMobileMenuOpen(false)}
+                  onClick={() => {
+                    setIsMobileMenuOpen(false);
+                    setExpandedMobileSection(null);
+                  }}
                 />
                 <Button size="lg" fullWidth asChild>
-                  <Link href="/booking" onClick={() => setIsMobileMenuOpen(false)}>Book a Car</Link>
+                  <Link
+                    href="/booking"
+                    onClick={() => {
+                      setIsMobileMenuOpen(false);
+                      setExpandedMobileSection(null);
+                    }}
+                  >
+                    Book a Car
+                  </Link>
                 </Button>
               </div>
             </nav>
