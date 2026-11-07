@@ -271,9 +271,6 @@ export async function getVehicles(filters: {
   const [vehicles, total] = await Promise.all([
     prisma.vehicle.findMany({
       where,
-      include: {
-        _count: { select: { bookings: true, reviews: true } },
-      },
       orderBy: { [safeSortBy]: safeSortOrder },
       skip: (safePage - 1) * safeLimit,
       take: safeLimit,
