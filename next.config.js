@@ -13,8 +13,10 @@ if (!process.env.NEXT_SWEC_WORKER_THREADS) {
 }
 // Limit Node.js heap memory for constrained hosts
 if (!process.env.NODE_OPTIONS) {
-  process.env.NODE_OPTIONS = '--max-old-space-size=512';
+  process.env.NODE_OPTIONS = '--max-old-space-size=192';
 }
+// Disable SWC entirely for build - use terser instead (less memory)
+process.env.SWC_DISABLE = '1';
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
