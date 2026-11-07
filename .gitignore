@@ -123,7 +123,6 @@ jspm_packages/
 .yarn/install-state.gz
 .pnp.*
 .vercel
-.env*
 
 # Playwright browser test artifacts
 /test-results
