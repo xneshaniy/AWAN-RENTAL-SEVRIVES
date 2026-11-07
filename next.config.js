@@ -31,6 +31,9 @@ const nextConfig = {
       },
     ],
     formats: ['image/avif', 'image/webp'],
+    // Disable image optimization during build to reduce SWC/sharp resource
+    // usage on resource-constrained hosts like Hostinger.
+    unoptimized: true,
     // The default width list jumps from 1200 straight to 1920. A 1335 CSS-px
     // desktop viewport therefore had to download a 1920px hero to fill 1335px,
     // and there was nothing between those two sizes to choose instead. The
