@@ -84,17 +84,25 @@ async function VehiclesResults({ searchParams }: { searchParams: SearchParams })
   const filters = { q, category, availability, featured, sort, page };
   const { sortBy, sortOrder } = SORT_OPTIONS[sort];
 
-  const vehiclesData = await getVehicles({
-    search: q || undefined,
-    category: category ? (category as VehicleCategory) : undefined,
-    isAvailable:
-      availability === 'available' ? true : availability === 'unavailable' ? false : undefined,
-    isFeatured: featured ? true : undefined,
-    sortBy,
-    sortOrder,
-    page,
-    limit: PAGE_SIZE,
-  });
+  // Vehicles are the core content of this page, but if the query fails we
+  // still render the page with an empty list so a database hiccup never
+  // produces a 500 error.
+  let vehiclesData: Awaited<ReturnType<typeof getVehicles>>;
+  try {
+    vehiclesData = await getVehicles({
+      search: q || undefined,
+      category: category ? (category as VehicleCategory) : undefined,
+      isAvailable:
+        availability === 'available' ? true : availability === 'unavailable' ? false : undefined,
+      isFeatured: featured ? true : undefined,
+      sortBy,
+      sortOrder,
+      page,
+      limit: PAGE_SIZE,
+    });
+  } catch {
+    vehiclesData = { data: [], pagination: { page, limit: PAGE_SIZE, total: 0, totalPages: 0 } };
+  }
 
   // Facets are non-critical: if they fail, render with empty facets so the
   // page still loads with vehicle listings instead of a 500 error.
