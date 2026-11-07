@@ -8,7 +8,7 @@ import { VehicleCarousel } from '@/components/vehicles/VehicleCard';
 import { WhatsAppFloat } from '@/components/common/WhatsAppFloat';
 import { GoogleReviews } from '@/components/common/GoogleReviews';
 import { Layout } from '@/components/layout/Layout';
-import { SectionTrust, SectionServices, SectionHowItWorks, SectionPakistanVisitor, SectionCTA } from './_components/HomeSections';
+import { SectionTrust, SectionServices, SectionHowItWorks, SectionPakistanVisitor, SectionCTA, SectionTestimonials } from './_components/HomeSections';
 
 export const metadata: Metadata = {
   title: 'Car Rental & Transportation in Pakistan',
@@ -22,19 +22,19 @@ function FeaturedVehiclesFallback() {
     <section className="py-16 sm:py-24" aria-labelledby="featured-title">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-3xl mx-auto">
-          <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 text-sm font-medium mb-6">
+          <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6">
             <Car className="w-4 h-4" aria-hidden="true" />
             Featured Vehicles
           </span>
-          <h2 id="featured-title" className="font-heading font-bold text-3xl sm:text-4xl text-gray-900 dark:text-white mb-4">
+          <h2 id="featured-title" className="font-heading font-bold text-3xl sm:text-4xl text-foreground mb-4">
             Explore Our Fleet
           </h2>
-          <p className="text-lg text-gray-600 dark:text-gray-400 mb-8">
+          <p className="text-lg text-muted-foreground mb-8">
             Browse the full range of vehicles available for self-drive, chauffeur service, airport transfers, and corporate travel.
           </p>
           <Link
             href="/vehicles"
-            className="inline-flex items-center justify-center px-6 py-3 rounded-xl bg-primary-600 text-white hover:bg-primary-700 font-medium transition-colors group"
+            className="inline-flex items-center justify-center px-6 py-3 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 font-medium transition-colors group"
           >
             View All Vehicles
             <ArrowRight className="w-5 h-5 ml-2 transition-transform group-hover:translate-x-1" aria-hidden="true" />
@@ -79,7 +79,10 @@ export default async function HomePage() {
       {/* 5. How it works */}
       <SectionHowItWorks />
 
-      {/* 6. Live Google reviews (server-fetched; hides itself when unconfigured) */}
+      {/* 6. Testimonials */}
+      <SectionTestimonials />
+
+      {/* 7. Live Google reviews (server-fetched; hides itself when unconfigured) */}
       <GoogleReviews fallbackMapsUrl={businessInfo.googleMapsUrl} />
 
       {/* 7. Final CTA */}

@@ -18,71 +18,50 @@ const config: Config = {
         primary: {
           DEFAULT: 'hsl(var(--primary))',
           foreground: 'hsl(var(--primary-foreground))',
-          // Action green - the colour every button, link, badge and active
-          // state uses. 600 is #15803d: white labels on it reach 5.02:1 and
-          // text-primary-100 (#dcfce7) on it reaches 4.57:1, both clearing
-          // the 4.5:1 WCAG AA minimum. Stock green-600 #16a34a only reaches
-          // 3.29:1 against white, so it is parked at 500 where it is used
-          // only for rings and borders (needs 3:1 for WCAG 1.4.11, gets
-          // 3.30:1). 100 stays pale so text-primary-700 on it clears 4.5:1.
-          50: '#f0fdf4',
-          100: '#dcfce7',
-          200: '#bbf7d0',
-          300: '#86efac',
-          400: '#4ade80',
-          500: '#16a34a',
-          600: '#15803d',
-          700: '#166534',
-          800: '#14532d',
-          900: '#0a3d1f',
-          950: '#052e16',
+          // Awan Navy - deep navy for trust and reliability
+          50: '#eff6ff',
+          100: '#dbeafe',
+          200: '#bfdbfe',
+          300: '#93c5fd',
+          400: '#60a5fa',
+          500: '#3b82f6',
+          600: '#2563eb',
+          700: '#1d4ed8',
+          800: '#1e40af',
+          900: '#1e3a8a',
+          950: '#172554',
         },
-        // Warm off-white section band - the cream the page bands use instead
-        // of the cool #f9fafb grey. Held at #f7f6f2 rather than a deeper
-        // cream so text-gray-500 (#6b7280) laid straight on it still measures
-        // 4.53:1 and the axe colour-contrast gate stays green.
-        cream: {
-          50: '#faf9f6',
-          100: '#f7f6f2',
-          200: '#efece4',
-          300: '#e3dfd5',
-        },
-        // WhatsApp green. Darkened one step from Tailwind's stock green so
-        // white button labels clear the 4.5:1 contrast minimum (stock
-        // green-600 #16a34a only reaches 3.29:1).
-        green: {
-          600: '#15803d',
-          700: '#166534',
-        },
+        // Awan Charcoal - professional neutral
         secondary: {
           DEFAULT: 'hsl(var(--secondary))',
           foreground: 'hsl(var(--secondary-foreground))',
-          50: '#fdf4ed',
-          100: '#fae8dd',
-          200: '#f6d6bc',
-          300: '#f0b88a',
-          400: '#e89156',
-          500: '#e07431',
-          600: '#b84418',
-          700: '#943519',
-          800: '#943519',
-          900: '#792e17',
-          950: '#41140b',
+          50: '#f8fafc',
+          100: '#f1f5f9',
+          200: '#e2e8f0',
+          300: '#cbd5e1',
+          400: '#94a3b8',
+          500: '#64748b',
+          600: '#475569',
+          700: '#334155',
+          800: '#1e293b',
+          900: '#0f172a',
+          950: '#020617',
         },
+        // Awan Elegant Gold - accent color for premium feel
         accent: {
           DEFAULT: 'hsl(var(--accent))',
           foreground: 'hsl(var(--accent-foreground))',
-          50: '#f0fdf4',
-          100: '#dcfce7',
-          200: '#bbf7d0',
-          300: '#86efac',
-          400: '#4ade80',
-          500: '#22c55e',
-          600: '#16a34a',
-          700: '#15803d',
-          800: '#166534',
-          900: '#14532d',
-          950: '#052e16',
+          50: '#fdfbf7',
+          100: '#fef3c7',
+          200: '#fde68a',
+          300: '#fcd34d',
+          400: '#fbbf24',
+          500: '#d4af37',
+          600: '#b8860b',
+          700: '#a16207',
+          800: '#854d0e',
+          900: '#713f12',
+          950: '#422006',
         },
         muted: {
           DEFAULT: 'hsl(var(--muted))',
@@ -91,6 +70,18 @@ const config: Config = {
         destructive: {
           DEFAULT: 'hsl(var(--destructive))',
           foreground: 'hsl(var(--destructive-foreground))',
+        },
+        success: {
+          DEFAULT: '#10b981',
+          foreground: '#ffffff',
+        },
+        card: {
+          DEFAULT: 'hsl(var(--card))',
+          foreground: 'hsl(var(--card-foreground))',
+        },
+        popover: {
+          DEFAULT: 'hsl(var(--popover))',
+          foreground: 'hsl(var(--popover-foreground))',
         },
       },
       fontFamily: {
@@ -108,11 +99,18 @@ const config: Config = {
           '2xl': '1400px',
         },
       },
+      borderRadius: {
+        lg: 'var(--radius)',
+        md: 'calc(var(--radius) - 2px)',
+        sm: 'calc(var(--radius) - 4px)',
+      },
       animation: {
-        'fade-in': 'fadeIn 0.5s ease-out',
+        'fade-in': 'fadeIn 0.6s ease-out',
         'slide-up': 'slideUp 0.5s ease-out',
         'slide-down': 'slideDown 0.3s ease-out',
         'pulse-soft': 'pulseSoft 2s infinite',
+        'float': 'float 6s ease-in-out infinite',
+        'slide-in': 'slideIn 0.3s ease-out',
       },
       keyframes: {
         fadeIn: {
@@ -127,10 +125,21 @@ const config: Config = {
           '0%': { opacity: '0', transform: 'translateY(-10px)' },
           '100%': { opacity: '1', transform: 'translateY(0)' },
         },
+        slideIn: {
+          '0%': { transform: 'translateX(-100%)' },
+          '100%': { transform: 'translateX(0)' },
+        },
         pulseSoft: {
           '0%, 100%': { opacity: '1' },
           '50%': { opacity: '0.7' },
         },
+        float: {
+          '0%, 100%': { transform: 'translateY(0px)' },
+          '50%': { transform: 'translateY(-20px)' },
+        },
+      },
+      backdropBlur: {
+        xs: '2px',
       },
     },
   },

@@ -39,7 +39,7 @@ export default async function BookingPage() {
 
   return (
     <Layout businessInfo={businessInfo}>
-      <section className="relative py-16 sm:py-24 bg-gradient-to-b from-primary-600 via-primary-700 to-primary-900 text-white overflow-hidden" aria-labelledby="booking-title">
+      <section className="relative py-16 sm:py-24 bg-gradient-to-b from-primary via-primary/90 to-secondary-900 text-white overflow-hidden" aria-labelledby="booking-title">
         <div className="absolute inset-0 bg-[url('/pattern.svg')] opacity-50" />
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
@@ -51,7 +51,7 @@ export default async function BookingPage() {
               <h1 id="booking-title" className="font-heading font-bold text-4xl sm:text-5xl lg:text-6xl mb-6 leading-tight">
                 Book Your Vehicle<br />in Minutes
               </h1>
-              <p className="text-lg sm:text-xl text-primary-100 mb-8 max-w-xl leading-relaxed">
+              <p className="text-lg sm:text-xl text-secondary-200 mb-8 max-w-xl leading-relaxed">
                 Simple, secure booking process. Choose your vehicle, set your dates, and confirm via WhatsApp. No hidden fees, no surprises.
               </p>
               <div className="flex flex-wrap gap-4">
@@ -60,7 +60,7 @@ export default async function BookingPage() {
                   <span className="text-sm">No Hidden Fees</span>
                 </div>
                 <div className="flex items-center gap-3 p-3 bg-white/10 rounded-xl">
-                  <CheckCircle className="w-5 h-5 text-green-400" />
+                  <CheckCircle className="w-5 h-5 text-accent" />
                   <span className="text-sm">Personal Follow-Up</span>
                 </div>
                 <div className="flex items-center gap-3 p-3 bg-white/10 rounded-xl">
@@ -80,27 +80,27 @@ export default async function BookingPage() {
       <section className="py-16 sm:py-24" aria-labelledby="steps-title">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto mb-16">
-            <h2 id="steps-title" className="font-heading font-bold text-3xl sm:text-4xl text-gray-900 dark:text-white mb-4">
+            <h2 id="steps-title" className="font-heading font-bold text-3xl sm:text-4xl text-foreground mb-4">
               How to Book
             </h2>
-            <p className="text-lg text-gray-600 dark:text-gray-400">
+            <p className="text-lg text-muted-foreground">
               Four simple steps to get you on the road.
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {BOOKING_STEPS.map((step, index) => (
               <Card key={index} variant="default" padding="lg" className="text-center h-full relative">
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-10 h-10 bg-primary-600 text-white rounded-full flex items-center justify-center font-bold text-xl z-10">
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-10 h-10 bg-primary text-primary-foreground rounded-full flex items-center justify-center font-bold text-xl z-10">
                   {index + 1}
                 </div>
                 <CardHeader className="pt-8">
-                  <div className="w-14 h-14 bg-secondary-100 dark:bg-secondary-900/30 rounded-xl flex items-center justify-center mx-auto mb-4">
-                    <step.icon className="w-7 h-7 text-secondary-600 dark:text-secondary-400" aria-hidden="true" />
+                  <div className="w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center mx-auto mb-4 group-hover:bg-accent group-hover:text-accent-foreground transition-colors">
+                    <step.icon className="w-7 h-7 text-primary group-hover:text-accent-foreground" aria-hidden="true" />
                   </div>
                   <CardTitle>{step.title}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-gray-600 dark:text-gray-400">{step.description}</p>
+                  <p className="text-muted-foreground">{step.description}</p>
                 </CardContent>
               </Card>
             ))}
@@ -108,14 +108,14 @@ export default async function BookingPage() {
         </div>
       </section>
 
-      <section className="py-16 sm:py-24 bg-cream-100 dark:bg-gray-900/50" aria-labelledby="featured-title">
+      <section className="py-16 sm:py-24 bg-secondary-50 dark:bg-secondary-900/30" aria-labelledby="featured-title">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-10">
             <div>
-              <h2 id="featured-title" className="font-heading font-bold text-3xl sm:text-4xl text-gray-900 dark:text-white">
+              <h2 id="featured-title" className="font-heading font-bold text-3xl sm:text-4xl text-foreground">
                 Popular Vehicles to Book
               </h2>
-              <p className="text-gray-600 dark:text-gray-400 mt-1">
+              <p className="text-muted-foreground mt-1">
                 Available for immediate booking
               </p>
             </div>
@@ -136,11 +136,11 @@ export default async function BookingPage() {
                   />
                 </div>
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium text-primary-600 dark:text-primary-400">{vehicle.category}</span>
-                  <span className="font-heading font-bold text-lg text-gray-900 dark:text-white">{formatCurrency(Number(vehicle.dailyRate))}/day</span>
+                  <span className="text-sm font-medium text-primary">{vehicle.category}</span>
+                  <span className="font-heading font-bold text-lg text-foreground">{formatCurrency(Number(vehicle.dailyRate))}/day</span>
                 </div>
-                <h3 className="font-heading font-semibold text-base text-gray-900 dark:text-white mb-2">{vehicle.name}</h3>
-                <div className="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400 mb-4">
+                <h3 className="font-heading font-semibold text-base text-foreground mb-2">{vehicle.name}</h3>
+                <div className="flex items-center gap-4 text-sm text-muted-foreground mb-4">
                   <span className="flex items-center gap-1"><User className="w-4 h-4" /> {vehicle.seats} seats</span>
                   <span className="flex items-center gap-1"><Car className="w-4 h-4" /> {vehicle.transmission}</span>
                 </div>
@@ -156,7 +156,7 @@ export default async function BookingPage() {
       <section className="py-16 sm:py-24" aria-labelledby="faq-title">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl mx-auto">
-            <h2 id="faq-title" className="font-heading font-bold text-3xl sm:text-4xl text-gray-900 dark:text-white mb-8 text-center">
+            <h2 id="faq-title" className="font-heading font-bold text-3xl sm:text-4xl text-foreground mb-8 text-center">
               Booking FAQs
             </h2>
             <div className="space-y-4">
@@ -168,8 +168,8 @@ export default async function BookingPage() {
                 { q: 'Do you offer one-way rentals?', a: 'One-way arrangements depend on availability. Contact us with your route and we will confirm what is possible.' },
               ].map((faq, index) => (
                 <Card key={index} variant="outlined" padding="md">
-                  <div className="font-medium text-gray-900 dark:text-white">{faq.q}</div>
-                  <div className="text-gray-600 dark:text-gray-400 text-sm mt-1">{faq.a}</div>
+                  <div className="font-medium text-foreground">{faq.q}</div>
+                  <div className="text-muted-foreground text-sm mt-1">{faq.a}</div>
                 </Card>
               ))}
             </div>

@@ -33,13 +33,13 @@ export default async function ContactPage() {
 
   return (
     <Layout businessInfo={businessInfo}>
-      <section className="py-16 sm:py-24 bg-cream-100 dark:bg-gray-900/50" aria-labelledby="contact-title">
+      <section className="py-16 sm:py-24 bg-secondary-50 dark:bg-secondary-900/30" aria-labelledby="contact-title">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto mb-12">
-            <h1 id="contact-title" className="font-heading font-bold text-3xl sm:text-4xl lg:text-5xl text-gray-900 dark:text-white mb-4">
+            <h1 id="contact-title" className="font-heading font-bold text-3xl sm:text-4xl lg:text-5xl text-foreground mb-4">
               Contact Us
             </h1>
-            <p className="text-lg text-gray-600 dark:text-gray-400">
+            <p className="text-lg text-muted-foreground">
               We&apos;d love to hear from you. Reach out for bookings, inquiries, or partnerships.
             </p>
           </div>
@@ -49,12 +49,12 @@ export default async function ContactPage() {
               <Card variant="default" padding="lg">
                 <CardHeader>
                   <CardTitle level={2} className="flex items-center gap-2">
-                    <MessageCircle className="w-6 h-6 text-green-600" />
+                    <MessageCircle className="w-6 h-6 text-accent" />
                     WhatsApp Us
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <p className="text-gray-600 dark:text-gray-400">
+                  <p className="text-muted-foreground">
                     The quickest way to reach us. Send a message and we&apos;ll get back to you
                     during business hours.
                   </p>
@@ -65,12 +65,12 @@ export default async function ContactPage() {
                     ariaLabel="Chat with Awan Rental Service on WhatsApp"
                   />
                   {(displayWhatsApp || businessInfo.businessHours) && (
-                    <div className="pt-4 border-t border-gray-200 dark:border-gray-700 space-y-1">
+                    <div className="pt-4 border-t border-border space-y-1">
                       {displayWhatsApp && (
-                        <p className="text-sm text-gray-500 dark:text-gray-400">WhatsApp: {displayWhatsApp}</p>
+                        <p className="text-sm text-muted-foreground">WhatsApp: {displayWhatsApp}</p>
                       )}
                       {businessInfo.businessHours && (
-                        <p className="text-sm text-gray-500 dark:text-gray-400 whitespace-pre-line">{businessInfo.businessHours}</p>
+                        <p className="text-sm text-muted-foreground whitespace-pre-line">{businessInfo.businessHours}</p>
                       )}
                     </div>
                   )}
@@ -80,27 +80,27 @@ export default async function ContactPage() {
               <Card variant="default" padding="lg">
                 <CardHeader>
                   <CardTitle level={2} className="flex items-center gap-2">
-                    <Phone className="w-6 h-6 text-primary-600" />
+                    <Phone className="w-6 h-6 text-primary" />
                     Call Us
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="space-y-2">
-                    <a href={`tel:${displayPhone.replace(/[^+\d]/g, '')}`} className="flex items-center gap-3 text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
-                      <Phone className="w-5 h-5 text-primary-600 flex-shrink-0" />
+                    <a href={`tel:${displayPhone.replace(/[^+\d]/g, '')}`} className="flex items-center gap-3 text-foreground hover:text-primary transition-colors">
+                      <Phone className="w-5 h-5 text-primary flex-shrink-0" />
                       <span className="font-medium">{displayPhone}</span>
                     </a>
                     <WhatsAppButton
                       variant="ghost"
                       size="sm"
-                      className="justify-start p-0 rounded-none font-normal hover:bg-transparent text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400"
-                      icon={<MessageCircle className="w-5 h-5 text-green-600 flex-shrink-0" aria-hidden="true" />}
+                      className="justify-start p-0 rounded-none font-normal hover:bg-transparent text-foreground hover:text-primary"
+                      icon={<MessageCircle className="w-5 h-5 text-accent flex-shrink-0" aria-hidden="true" />}
                       label={`${displayWhatsApp} (WhatsApp)`}
                       ariaLabel={`Chat on WhatsApp at ${displayWhatsApp}`}
                     />
                   </div>
                   {businessInfo.businessHours && (
-                    <p className="text-sm text-gray-500 dark:text-gray-400 whitespace-pre-line">
+                    <p className="text-sm text-muted-foreground whitespace-pre-line">
                       Business Hours: {businessInfo.businessHours}
                     </p>
                   )}
@@ -110,13 +110,13 @@ export default async function ContactPage() {
               <Card variant="default" padding="lg">
                 <CardHeader>
                   <CardTitle level={2} className="flex items-center gap-2">
-                    <Mail className="w-6 h-6 text-secondary-600" />
+                    <Mail className="w-6 h-6 text-secondary" />
                     Email Us
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-2">
-                  <a href={`mailto:${displayEmail}`} className="flex items-center gap-3 text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
-                    <Mail className="w-5 h-5 text-secondary-600 flex-shrink-0" />
+                  <a href={`mailto:${displayEmail}`} className="flex items-center gap-3 text-foreground hover:text-primary transition-colors">
+                    <Mail className="w-5 h-5 text-secondary flex-shrink-0" />
                     <span>{displayEmail}</span>
                   </a>
                 </CardContent>
@@ -127,7 +127,7 @@ export default async function ContactPage() {
               <Card variant="default" padding="lg">
                 <CardHeader>
                   <CardTitle level={2}>Send Us a Message</CardTitle>
-                  <p className="text-gray-600 dark:text-gray-400 mt-1">Fill out the form and we&apos;ll get back to you as soon as we can.</p>
+                  <p className="text-muted-foreground mt-1">Fill out the form and we&apos;ll get back to you as soon as we can.</p>
                 </CardHeader>
                 <CardContent>
                   <ContactForm />
@@ -142,10 +142,10 @@ export default async function ContactPage() {
         <section className="py-16 sm:py-24" aria-labelledby="locations-title">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center max-w-3xl mx-auto mb-12">
-              <h2 id="locations-title" className="font-heading font-bold text-3xl sm:text-4xl text-gray-900 dark:text-white mb-4">
+              <h2 id="locations-title" className="font-heading font-bold text-3xl sm:text-4xl text-foreground mb-4">
                 Visit Us
               </h2>
-              <p className="text-lg text-gray-600 dark:text-gray-400">
+              <p className="text-lg text-muted-foreground">
                 Reach out or visit us during business hours.
               </p>
             </div>
@@ -154,18 +154,18 @@ export default async function ContactPage() {
                 <Card variant="default" padding="lg" hover>
                   <CardHeader>
                     <div className="flex items-start gap-3">
-                      <div className="w-12 h-12 bg-secondary-100 dark:bg-secondary-900/30 rounded-xl flex items-center justify-center flex-shrink-0">
-                        <MapPinIcon className="w-6 h-6 text-secondary-600 dark:text-secondary-400" />
+                      <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center flex-shrink-0">
+                        <MapPinIcon className="w-6 h-6 text-primary" />
                       </div>
                       <div>
-                        <h3 className="font-heading font-semibold text-lg text-gray-900 dark:text-white">{SITE_NAME}</h3>
-                        <p className="text-sm text-gray-500 dark:text-gray-400 whitespace-pre-line">{businessInfo.companyAddress}</p>
+                        <h3 className="font-heading font-semibold text-lg text-foreground">{SITE_NAME}</h3>
+                        <p className="text-sm text-muted-foreground whitespace-pre-line">{businessInfo.companyAddress}</p>
                         {businessInfo.googleMapsUrl && (
                           <a
                             href={businessInfo.googleMapsUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="mt-2 inline-flex items-center gap-1.5 text-sm font-medium text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300"
+                            className="mt-2 inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:text-primary/90"
                           >
                             View on Google Maps
                             <ExternalLink className="w-3.5 h-3.5" aria-hidden="true" />
@@ -180,12 +180,12 @@ export default async function ContactPage() {
                 <Card variant="default" padding="lg" hover>
                   <CardHeader>
                     <div className="flex items-start gap-3">
-                      <div className="w-12 h-12 bg-secondary-100 dark:bg-secondary-900/30 rounded-xl flex items-center justify-center flex-shrink-0">
-                        <Clock className="w-6 h-6 text-secondary-600 dark:text-secondary-400" />
+                      <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center flex-shrink-0">
+                        <Clock className="w-6 h-6 text-primary" />
                       </div>
                       <div>
-                        <h3 className="font-heading font-semibold text-lg text-gray-900 dark:text-white">Business Hours</h3>
-                        <p className="text-sm text-gray-500 dark:text-gray-400 whitespace-pre-line">{businessInfo.businessHours}</p>
+                        <h3 className="font-heading font-semibold text-lg text-foreground">Business Hours</h3>
+                        <p className="text-sm text-muted-foreground whitespace-pre-line">{businessInfo.businessHours}</p>
                       </div>
                     </div>
                   </CardHeader>
@@ -195,16 +195,16 @@ export default async function ContactPage() {
                 <Card variant="default" padding="lg" hover>
                   <CardHeader>
                     <div className="flex items-start gap-3">
-                      <div className="w-12 h-12 bg-secondary-100 dark:bg-secondary-900/30 rounded-xl flex items-center justify-center flex-shrink-0">
-                        <Globe className="w-6 h-6 text-secondary-600" />
+                      <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center flex-shrink-0">
+                        <Globe className="w-6 h-6 text-primary" />
                       </div>
                       <div>
-                        <h3 className="font-heading font-semibold text-lg text-gray-900 dark:text-white">Service Areas</h3>
+                        <h3 className="font-heading font-semibold text-lg text-foreground">Service Areas</h3>
                         <div className="mt-1 flex flex-wrap gap-1.5">
                           {businessInfo.serviceAreas.map((area) => (
                             <span
                               key={area}
-                              className="rounded-full bg-gray-100 px-2.5 py-1 text-xs font-medium text-gray-700 dark:bg-gray-800 dark:text-gray-300"
+                              className="rounded-full bg-secondary-100 px-2.5 py-1 text-xs font-medium text-secondary-800 dark:bg-secondary-800 dark:text-secondary-200"
                             >
                               {area}
                             </span>
@@ -220,7 +220,7 @@ export default async function ContactPage() {
         </section>
       )}
 
-      <section className="py-16 sm:py-24 bg-primary-600 text-white" aria-labelledby="cta-title">
+      <section className="py-16 sm:py-24 bg-gradient-to-r from-primary to-accent text-white" aria-labelledby="cta-title">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 id="cta-title" className="font-heading font-bold text-3xl sm:text-4xl mb-4">
             Ready to Book Your Ride?
@@ -231,12 +231,10 @@ export default async function ContactPage() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <WhatsAppButton
               size="lg"
-              variant="secondary"
-              className="group"
               label="Book on WhatsApp"
               ariaLabel="Book a ride on WhatsApp"
             />
-            <Button size="lg" variant="outline" className="border-white/30 text-white hover:bg-white/10 dark:border-white/30 dark:text-white dark:hover:bg-white/10" asChild>
+            <Button size="lg" variant="outline" className="border-white/30 text-white hover:bg-white/10" asChild>
               <Link href="/booking">Book Online</Link>
             </Button>
           </div>

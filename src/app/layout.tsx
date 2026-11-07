@@ -9,6 +9,10 @@ import { buildStructuredDataGraph } from '@/lib/seo';
 import { getContentSecurityPolicy } from '@/config/security-headers';
 import { GoogleAnalytics } from '@/components/common/GoogleAnalytics';
 
+// Render all pages at request time (not build time) so they don't require
+// DATABASE_URL during `next build`. Database-dependent data is fetched per-request.
+export const dynamic = 'force-dynamic';
+
 const inter = Inter({ subsets: ['latin'], display: 'swap', variable: '--font-inter' });
 const poppins = Poppins({ subsets: ['latin'], display: 'swap', variable: '--font-poppins', weight: ['400', '500', '600', '700'] });
 

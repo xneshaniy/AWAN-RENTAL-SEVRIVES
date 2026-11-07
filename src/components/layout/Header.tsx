@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X, Phone } from 'lucide-react';
 import { BrandMark } from '@/components/common/BrandMark';
 import { cn } from '@/lib/utils';
@@ -20,20 +21,46 @@ export function Header({ businessInfo }: HeaderProps) {
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
+      setIsScrolled(window.scrollY > 50);
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Body scroll lock when mobile menu is open
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isMobileMenuOpen]);
+
+  // Escape key to close mobile menu
+  const handleKeyDown = useCallback((event: KeyboardEvent) => {
+    if (event.key === 'Escape' && isMobileMenuOpen) {
+      setIsMobileMenuOpen(false);
+    }
+  }, [isMobileMenuOpen]);
+
+  useEffect(() => {
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [handleKeyDown]);
+
   const navItems = MAIN_NAV.filter(item => item.href !== '/admin');
+
+  const closeMenu = () => setIsMobileMenuOpen(false);
 
   return (
     <header
       className={cn(
         'fixed top-0 left-0 right-0 z-50 transition-all duration-300',
         isScrolled
-          ? 'bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm shadow-sm'
+          ? 'bg-background/95 backdrop-blur-md border-b border-border shadow-sm'
           : 'bg-transparent'
       )}
     >
@@ -45,7 +72,7 @@ export function Header({ businessInfo }: HeaderProps) {
             aria-label="Awan Rental Service Home"
           >
             <BrandMark className="h-5 w-auto shrink-0 sm:h-8" />
-            <span className="min-w-0 truncate font-heading font-bold text-lg text-gray-900 dark:text-white sm:text-xl">
+            <span className="min-w-0 truncate font-heading font-bold text-lg text-foreground sm:text-xl tracking-tight">
               Awan Rental Service
             </span>
           </Link>
@@ -58,9 +85,9 @@ export function Header({ businessInfo }: HeaderProps) {
                     <div className="relative group">
                       <button
                         className={cn(
-                          'flex items-center gap-1.5 text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400',
+                          'flex items-center gap-1.5 text-foreground hover:text-primary hover:border-b-2 border-b-primary pb-1',
                           'font-medium text-sm transition-colors',
-                          'focus:outline-none focus:ring-2 focus:ring-primary-500 rounded-lg px-2 py-1'
+                          'focus:outline-none focus:ring-2 focus:ring-primary rounded-lg'
                         )}
                         role="menuitem"
                         aria-haspopup="true"
@@ -69,16 +96,16 @@ export function Header({ businessInfo }: HeaderProps) {
                         {item.label}
                         <span className="w-4 h-4" aria-hidden="true">▼</span>
                       </button>
-                      <div className="absolute top-full left-0 mt-2 w-56 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+                      <div className="absolute top-full left-0 mt-2 w-56 bg-card text-card-foreground rounded-xl shadow-xl border border-border py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300">
                         <ul className="py-1" role="menu">
                           {item.children?.map((child) => (
                             <li key={child.href} role="none">
                               <Link
                                 href={child.href}
                                 className={cn(
-                                  'block px-4 py-2.5 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700',
+                                  'block px-4 py-2.5 text-foreground hover:bg-accent hover:text-accent-foreground',
                                   'text-sm transition-colors',
-                                  'focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-700'
+                                  'focus:outline-none focus:bg-accent focus:text-accent-foreground'
                                 )}
                                 role="menuitem"
                               >
@@ -93,9 +120,9 @@ export function Header({ businessInfo }: HeaderProps) {
                     <Link
                       href={item.href}
                       className={cn(
-                        'text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400',
+                        'text-foreground hover:text-primary',
                         'font-medium text-sm transition-colors',
-                        'focus:outline-none focus:ring-2 focus:ring-primary-500 rounded-lg px-2 py-1'
+                        'focus:outline-none focus:ring-2 focus:ring-primary rounded-lg px-2 py-1'
                       )}
                       role="menuitem"
                     >
@@ -110,19 +137,19 @@ export function Header({ businessInfo }: HeaderProps) {
               {businessPhone && (
                 <a
                   href={`tel:${businessPhone}`}
-                  className="hidden sm:flex items-center gap-2 text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
+                  className="hidden lg:flex items-center gap-2 text-foreground hover:text-primary transition-colors"
                 >
                   <Phone className="w-5 h-5" aria-hidden="true" />
-                  <span className="font-medium">{businessPhone}</span>
+                  <span className="font-medium text-sm">{businessPhone}</span>
                 </a>
               )}
               <WhatsAppButton
                 size="md"
                 label="WhatsApp"
                 ariaLabel="Chat with Awan Rental Service on WhatsApp"
-                className="hidden sm:inline-flex"
+                className="hidden lg:inline-flex"
               />
-              <Button size="md" asChild className="hidden sm:inline-flex">
+              <Button variant="gold" size="md" asChild className="hidden lg:inline-flex">
                 <Link href="/booking">Book a Car</Link>
               </Button>
             </div>
@@ -134,7 +161,7 @@ export function Header({ businessInfo }: HeaderProps) {
               size="sm"
               iconOnly
               ariaLabel="Chat with Awan Rental Service on WhatsApp"
-              className="p-2 text-green-600"
+              className="p-2 text-accent"
             />
             <Button
               variant="ghost"
@@ -145,97 +172,116 @@ export function Header({ businessInfo }: HeaderProps) {
               aria-expanded={isMobileMenuOpen}
               aria-haspopup="dialog"
             >
-              <Menu className="w-6 h-6 text-gray-700 dark:text-gray-300" aria-hidden="true" />
+              <Menu className="w-6 h-6 text-foreground" aria-hidden="true" />
             </Button>
           </div>
         </div>
       </nav>
 
       {isMobileMenuOpen && (
-        <div className="lg:hidden fixed inset-0 z-50 bg-white dark:bg-gray-900 animate-slide-down">
-          <div className="flex flex-col h-full">
-            <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
-              <Link
-                href="/"
-                className="flex min-w-0 items-center gap-2"
-                aria-label="Awan Rental Service Home"
-              >
-                <BrandMark className="h-5 w-auto shrink-0 sm:h-8" />
-                <span className="min-w-0 truncate font-heading font-bold text-lg text-gray-900 dark:text-white sm:text-xl">
-                  Awan Rental Service
-                </span>
-              </Link>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setIsMobileMenuOpen(false)}
-                aria-label="Close navigation menu"
-              >
-                <X className="w-6 h-6 text-gray-700 dark:text-gray-300" aria-hidden="true" />
-              </Button>
-            </div>
-
-            <nav className="flex-1 overflow-y-auto p-4" role="navigation" aria-label="Mobile menu">
-              <div className="space-y-1 mb-6">
-                {navItems.map((item) => (
-                  <div key={item.href}>
-                    {item.children ? (
-                      <div className="space-y-1">
-                        <button className="w-full text-left px-4 py-3 rounded-xl font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center justify-between">
-                          {item.label}
-                          <span className="w-5 h-5">▼</span>
-                        </button>
-                        <div className="ml-4 space-y-1 mt-1">
-                          {item.children?.map((child) => (
-                            <Link
-                              key={child.href}
-                              href={child.href}
-                              className="block px-4 py-2.5 rounded-lg text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-100 dark:hover:bg-gray-800 text-sm"
-                              onClick={() => setIsMobileMenuOpen(false)}
-                            >
-                              {child.label}
-                            </Link>
-                          ))}
-                        </div>
-                      </div>
-                    ) : (
-                      <Link
-                        href={item.href}
-                        className="block px-4 py-3 rounded-xl font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
-                        onClick={() => setIsMobileMenuOpen(false)}
-                      >
-                        {item.label}
-                      </Link>
-                    )}
-                  </div>
-                ))}
-              </div>
-
-              <div className="border-t border-gray-200 dark:border-gray-700 pt-4 space-y-3">
-                {businessPhone && (
-                  <a
-                    href={`tel:${businessPhone}`}
-                    className="flex items-center gap-3 px-4 py-3 rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300"
-                  >
-                    <Phone className="w-6 h-6" aria-hidden="true" />
-                    <span className="font-medium">{businessPhone}</span>
-                  </a>
-                )}
-                <WhatsAppButton
-                  variant="whatsapp"
-                  size="lg"
-                  fullWidth
-                  label="WhatsApp Us"
-                  ariaLabel="Chat with Awan Rental Service on WhatsApp"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                />
-                <Button size="lg" fullWidth asChild>
-                  <Link href="/booking" onClick={() => setIsMobileMenuOpen(false)}>Book a Car</Link>
+        <AnimatePresence>
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            className="lg:hidden fixed inset-0 z-50 bg-card border-b border-border"
+            onClick={closeMenu}
+          >
+            {/* Close on backdrop click but not on inner content click */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0 z-0"
+              onClick={(e) => e.stopPropagation()}
+              aria-hidden="true"
+            />
+            <div className="relative flex flex-col h-full z-10">
+              <div className="flex items-center justify-between p-4 border-b border-border">
+                <Link
+                  href="/"
+                  className="flex min-w-0 items-center gap-2"
+                  aria-label="Awan Rental Service Home"
+                  onClick={closeMenu}
+                >
+                  <BrandMark className="h-5 w-auto shrink-0 sm:h-8" />
+                  <span className="min-w-0 truncate font-heading font-bold text-lg text-foreground sm:text-xl tracking-tight">
+                    Awan Rental Service
+                  </span>
+                </Link>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={closeMenu}
+                  aria-label="Close navigation menu"
+                >
+                  <X className="w-6 h-6 text-foreground" aria-hidden="true" />
                 </Button>
               </div>
-            </nav>
-          </div>
-        </div>
+
+              <nav className="flex-1 overflow-y-auto p-4" role="navigation" aria-label="Mobile menu">
+                <div className="space-y-1 mb-6">
+                  {navItems.map((item) => (
+                    <div key={item.href}>
+                      {item.children ? (
+                        <div className="space-y-1">
+                          <button className="w-full text-left px-4 py-3 rounded-xl font-medium text-foreground hover:bg-accent hover:text-accent-foreground flex items-center justify-between" onClick={closeMenu}>
+                            {item.label}
+                            <span className="w-5 h-5">▼</span>
+                          </button>
+                          <div className="ml-4 space-y-1 mt-1">
+                            {item.children?.map((child) => (
+                              <Link
+                                key={child.href}
+                                href={child.href}
+                                className="block px-4 py-2.5 rounded-lg text-muted-foreground hover:text-primary hover:bg-accent/50 text-sm"
+                                onClick={closeMenu}
+                              >
+                                {child.label}
+                              </Link>
+                            ))}
+                          </div>
+                        </div>
+                      ) : (
+                        <Link
+                          href={item.href}
+                          className="block px-4 py-3 rounded-xl font-medium text-foreground hover:bg-accent hover:text-accent-foreground"
+                          onClick={closeMenu}
+                        >
+                          {item.label}
+                        </Link>
+                      )}
+                    </div>
+                  ))}
+                </div>
+
+                <div className="border-t border-border pt-4 space-y-3">
+                  {businessPhone && (
+                    <a
+                      href={`tel:${businessPhone}`}
+                      className="flex items-center gap-3 px-4 py-3 rounded-xl bg-accent/5 text-accent-foreground"
+                      onClick={closeMenu}
+                    >
+                      <Phone className="w-6 h-6" aria-hidden="true" />
+                      <span className="font-medium">{businessPhone}</span>
+                    </a>
+                  )}
+                  <WhatsAppButton
+                    variant="whatsapp"
+                    size="lg"
+                    fullWidth
+                    label="WhatsApp Us"
+                    ariaLabel="Chat with Awan Rental Service on WhatsApp"
+                    onClick={closeMenu}
+                  />
+                  <Button variant="gold" size="lg" fullWidth asChild>
+                    <Link href="/booking" onClick={closeMenu}>Book a Car</Link>
+                  </Button>
+                </div>
+              </nav>
+            </div>
+          </motion.div>
+        </AnimatePresence>
       )}
     </header>
   );

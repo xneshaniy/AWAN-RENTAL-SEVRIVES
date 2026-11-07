@@ -97,7 +97,7 @@ export default async function ServicesPage() {
       />
 
       <section
-        className="relative py-16 sm:py-24 bg-gradient-to-b from-primary-600 via-primary-700 to-primary-900 text-white overflow-hidden"
+        className="relative py-16 sm:py-24 bg-gradient-to-b from-primary via-primary/90 to-secondary-900 text-white overflow-hidden"
         aria-labelledby="services-title"
       >
         <div className="absolute inset-0 bg-[url('/pattern.svg')] opacity-50" />
@@ -112,14 +112,14 @@ export default async function ServicesPage() {
           >
             Our Transportation Services
           </h1>
-          <p className="text-lg sm:text-xl text-primary-100 mb-8 max-w-3xl mx-auto leading-relaxed">
+          <p className="text-lg sm:text-xl text-secondary-200 mb-8 max-w-3xl mx-auto leading-relaxed">
             Choose from self-drive car rental, chauffeur service, airport transfers,
             corporate transportation, intercity travel, family travel, event
             transportation, and commercial vehicle rental — book online or contact
             our team to plan your trip.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="xl" variant="secondary" asChild className="group">
+            <Button size="xl" variant="gold" asChild className="group">
               <Link href="/vehicles">
                 Explore Vehicles
                 <ChevronRight
@@ -143,11 +143,11 @@ export default async function ServicesPage() {
           <div className="text-center max-w-3xl mx-auto mb-12">
             <h2
               id="services-grid-title"
-              className="font-heading font-bold text-3xl sm:text-4xl text-gray-900 dark:text-white mb-4"
+              className="font-heading font-bold text-3xl sm:text-4xl text-foreground mb-4"
             >
               Services We Offer
             </h2>
-            <p className="text-lg text-gray-600 dark:text-gray-400">
+            <p className="text-lg text-muted-foreground">
               Select a service to see the full details, vehicle options, and how to
               book it.
             </p>
@@ -155,16 +155,16 @@ export default async function ServicesPage() {
 
           {services.length === 0 ? (
             <div
-              className="rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-10 sm:p-14 text-center"
+              className="rounded-xl border border-border bg-card p-10 sm:p-14 text-center"
               role="status"
             >
-              <div className="w-14 h-14 bg-secondary-100 dark:bg-secondary-900/30 rounded-xl flex items-center justify-center mx-auto mb-5">
-                <ListChecks className="w-7 h-7 text-secondary-600 dark:text-secondary-400" aria-hidden="true" />
+              <div className="w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center mx-auto mb-5">
+                <ListChecks className="w-7 h-7 text-primary" aria-hidden="true" />
               </div>
-              <h3 className="font-heading font-semibold text-xl text-gray-900 dark:text-white mb-3">
+              <h3 className="font-heading font-semibold text-xl text-foreground mb-3">
                 Our service list is being updated
               </h3>
-              <p className="text-gray-600 dark:text-gray-400 mb-8 max-w-lg mx-auto">
+              <p className="text-muted-foreground mb-8 max-w-lg mx-auto">
                 Services are not listed right now. You can still browse the vehicles
                 available for rent, or contact our team directly to discuss your
                 transportation needs.
@@ -189,7 +189,7 @@ export default async function ServicesPage() {
               </div>
 
               <div className="mt-16 text-center">
-                <p className="text-gray-600 dark:text-gray-400 mb-6">
+                <p className="text-muted-foreground mb-6">
                   Need a custom transportation solution? Our team can tailor services
                   to your specific requirements.
                 </p>
@@ -206,14 +206,14 @@ export default async function ServicesPage() {
       </section>
 
       <section
-        className="py-16 sm:py-24 bg-cream-100 dark:bg-gray-900/50"
+        className="py-16 sm:py-24 bg-secondary-50 dark:bg-secondary-900/30"
         aria-labelledby="why-choose-title"
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto mb-16">
             <h2
               id="why-choose-title"
-              className="font-heading font-bold text-3xl sm:text-4xl text-gray-900 dark:text-white mb-4"
+              className="font-heading font-bold text-3xl sm:text-4xl text-foreground mb-4"
             >
               Why Choose Awan Rental Service?
             </h2>
@@ -221,13 +221,13 @@ export default async function ServicesPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {WHY_CHOOSE.map((item) => (
               <div key={item.title} className="text-center p-6">
-                <div className="w-16 h-16 bg-secondary-100 dark:bg-secondary-900/30 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                  <item.icon className="w-8 h-8 text-secondary-600 dark:text-secondary-400" aria-hidden="true" />
+                <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                  <item.icon className="w-8 h-8 text-primary" aria-hidden="true" />
                 </div>
-                <h3 className="font-heading font-semibold text-xl text-gray-900 dark:text-white mb-2">
+                <h3 className="font-heading font-semibold text-xl text-foreground mb-2">
                   {item.title}
                 </h3>
-                <p className="text-gray-600 dark:text-gray-400">{item.description}</p>
+                <p className="text-muted-foreground">{item.description}</p>
               </div>
             ))}
           </div>

@@ -4,7 +4,7 @@ import { HTMLAttributes, forwardRef } from 'react';
 import { cn } from '@/lib/utils';
 
 interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
-  variant?: 'default' | 'success' | 'warning' | 'danger' | 'info' | 'outline';
+  variant?: 'default' | 'secondary' | 'success' | 'warning' | 'danger' | 'info' | 'outline' | 'gold';
   size?: 'sm' | 'md' | 'lg';
   dot?: boolean;
 }
@@ -12,12 +12,14 @@ interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
 export const Badge = forwardRef<HTMLSpanElement, BadgeProps>(
   ({ className, variant = 'default', size = 'md', dot, children, ...props }, ref) => {
     const variants = {
-      default: 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200',
+      default: 'bg-muted text-muted-foreground',
+      secondary: 'bg-secondary text-secondary-foreground',
       success: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400',
-      warning: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400',
+      warning: 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400',
       danger: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400',
       info: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400',
-      outline: 'bg-transparent border border-gray-300 text-gray-700 dark:border-gray-600 dark:text-gray-300',
+      gold: 'bg-accent/10 text-accent-foreground border border-accent/20',
+      outline: 'border border-input bg-background text-foreground',
     };
 
     const sizes = {
@@ -30,14 +32,25 @@ export const Badge = forwardRef<HTMLSpanElement, BadgeProps>(
       <span
         ref={ref}
         className={cn(
-          'inline-flex items-center font-medium rounded-full',
+          'inline-flex items-center justify-center font-medium rounded-full border',
           variants[variant],
           sizes[size],
           className
         )}
         {...props}
       >
-        {dot && <span className={cn('w-1.5 h-1.5 rounded-full', variants[variant].replace('bg-', 'bg-').replace('text-', 'bg-'))} />}
+        {dot && (
+          <span
+            className={cn(
+              'h-1.5 w-1.5 rounded-full',
+              variant === 'success' ? 'bg-green-500' :
+              variant === 'warning' ? 'bg-amber-500' :
+              variant === 'danger' ? 'bg-red-500' :
+              variant === 'info' ? 'bg-blue-500' :
+              'bg-primary'
+            )}
+          />
+        )}
         {children}
       </span>
     );
@@ -50,7 +63,7 @@ export function StatusBadge({ status }: { status: string }) {
   const statusConfig: Record<string, { label: string; variant: BadgeProps['variant']; dot?: boolean }> = {
     PENDING: { label: 'Pending', variant: 'warning', dot: true },
     CONFIRMED: { label: 'Confirmed', variant: 'info', dot: true },
-    ACTIVE: { label: 'In Progress', variant: 'success', dot: true },
+    ACTIVE: { label: 'Active', variant: 'success', dot: true },
     COMPLETED: { label: 'Completed', variant: 'default', dot: true },
     CANCELLED: { label: 'Cancelled', variant: 'danger', dot: true },
     NO_SHOW: { label: 'No Show', variant: 'danger', dot: true },

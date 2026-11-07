@@ -10,21 +10,22 @@
     --card-foreground: 222.2 84% 4.9%;
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
-    /* Action green (#15803d = hsl(142.4 72.3% 29.2%)). White labels on it
-       reach 5.02:1, clearing the 4.5:1 WCAG AA minimum. */
-    --primary: 142.4 72.3% 29.2%;
-    --primary-foreground: 210 40% 98%;
+    /* Awan Navy (#1e3a8a = hsl(220 65% 19%)) - deep navy for trust & reliability */
+    --primary: 220 65% 19%;
+    --primary-foreground: 0 0% 100%;
+    /* Awan Charcoal (#334155 = hsl(217 33% 26%)) - professional neutral */
     --secondary: 210 40% 96.1%;
     --secondary-foreground: 222.2 47.4% 11.2%;
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96.1%;
+    /* Awan Elegant Gold (#d4af37 = hsl(45 70% 50%)) - premium accent */
+    --accent: 45 70% 50%;
     --accent-foreground: 222.2 47.4% 11.2%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 142.4 72.3% 29.2%;
+    --ring: 220 65% 19%;
     --radius: 0.75rem;
   }
 
@@ -35,20 +36,19 @@
     --card-foreground: 210 40% 98%;
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
-    /* Lifted to 55% so the near-black dark-mode label on it reaches 10.9:1. */
-    --primary: 142 72% 55%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    --primary: 220 65% 19%;
+    --primary-foreground: 210 40% 98%;
     --secondary: 217.2 32.6% 17.5%;
     --secondary-foreground: 210 40% 98%;
     --muted: 217.2 32.6% 17.5%;
     --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
+    --accent: 45 70% 50%;
     --accent-foreground: 210 40% 98%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
-    --ring: 142 72% 55%;
+    --ring: 220 65% 19%;
   }
 }
 
@@ -57,7 +57,7 @@
     border-color: hsl(var(--border));
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-sans antialiased;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
   html {
@@ -72,6 +72,62 @@
   .font-heading {
     font-family: var(--font-poppins), system-ui, sans-serif;
   }
+
+  .btn-primary {
+    @apply bg-primary text-primary-foreground hover:bg-primary/90 text-sm font-medium py-2.5 px-4 rounded-lg transition-all duration-200 touch-target;
+  }
+
+  .btn-secondary {
+    @apply bg-secondary text-secondary-foreground hover:bg-secondary/80 text-sm font-medium py-2.5 px-4 rounded-lg transition-all duration-200 touch-target;
+  }
+
+  .btn-outline {
+    @apply border border-input bg-background hover:bg-accent hover:text-accent-foreground text-sm font-medium py-2.5 px-4 rounded-lg transition-all duration-200 touch-target;
+  }
+
+  .btn-ghost {
+    @apply hover:bg-accent hover:text-accent-foreground text-sm font-medium py-2.5 px-4 rounded-lg transition-all duration-200 touch-target;
+  }
+
+  .btn-gold {
+    @apply bg-accent text-accent-foreground hover:bg-accent/90 text-sm font-medium py-2.5 px-4 rounded-lg transition-all duration-200 touch-target shadow-sm;
+  }
+
+  .card-shadow {
+    @apply shadow-sm hover:shadow-md transition-shadow duration-300;
+  }
+
+  .card-premium {
+    @apply shadow-xl hover:shadow-2xl transition-all duration-300 border border-border/50;
+  }
+
+  .input-field {
+    @apply w-full px-3 py-2.5 border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-transparent transition-all duration-200;
+  }
+
+  .label-field {
+    @apply block text-sm font-medium text-foreground mb-1.5;
+  }
+
+  .badge-pill {
+    @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium transition-colors;
+  }
+
+  .section-container {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  .section-header {
+    @apply mb-10 text-center;
+  }
+
+  .section-title {
+    @apply text-3xl md:text-4xl font-heading font-bold text-foreground mb-4 tracking-tight;
+  }
+
+  .section-subtitle {
+    @apply text-lg text-muted-foreground max-w-2xl mx-auto;
+  }
 }
 
 @layer utilities {
@@ -83,6 +139,18 @@
   }
   .animation-delay-400 {
     animation-delay: 400ms;
+  }
+  .animation-delay-600 {
+    animation-delay: 600ms;
+  }
+  .touch-target {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  .glass-panel {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
   }
 }
 
@@ -101,6 +169,21 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
+@keyframes slideIn {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
+}
+
+@keyframes pulseSoft {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-20px); }
+}
+
 .animate-fade-in {
   animation: fadeIn 0.5s ease-out both;
 }
@@ -113,36 +196,18 @@
   animation: slideDown 0.3s ease-out both;
 }
 
+.animate-slide-in {
+  animation: slideIn 0.3s ease-out both;
+}
+
 .animate-pulse-soft {
   animation: pulseSoft 2s infinite;
 }
 
-@keyframes pulseSoft {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.7; }
+.animate-float {
+  animation: float 6s ease-in-out infinite;
 }
 
-@keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(30px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.animate-fade-in-up {
-  animation: fadeInUp 0.7s ease-out both;
-}
-
-@keyframes pulseSubtle {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.8; }
-}
-
-.animate-pulse-subtle {
-  animation: pulseSubtle 2.5s infinite;
-}
-
-/* Booking confirmation: the checkmark pops in, and a single ring expands
-   outwards once. Both collapse to instant under prefers-reduced-motion
-   (see the media query at the end of this file). */
 @keyframes successPop {
   0%   { transform: scale(0); opacity: 0; }
   60%  { transform: scale(1.15); opacity: 1; }
@@ -176,7 +241,7 @@ body {
 }
 
 :focus-visible {
-  @apply outline-none ring-2 ring-primary-500 ring-offset-2 ring-offset-white dark:ring-offset-gray-900;
+  @apply outline-none ring-2 ring-primary ring-offset-2 ring-offset-white dark:ring-offset-gray-900;
 }
 
 input[type="date"]::-webkit-calendar-picker-indicator {
@@ -211,8 +276,6 @@ input[type="number"] {
   @apply text-lg font-bold !important;
 }
 
-/* Accessibility: honour the OS "reduce motion" preference - collapse every
-   animation and transition to effectively instant. */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

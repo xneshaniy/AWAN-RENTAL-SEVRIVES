@@ -80,7 +80,7 @@ export default async function AboutPage() {
     <Layout businessInfo={businessInfo}>
       {/* Hero: the approved company description, verbatim. */}
       <section
-        className="relative py-20 sm:py-32 bg-gradient-to-b from-gray-900 via-gray-800 to-gray-900 text-white overflow-hidden"
+        className="relative py-20 sm:py-32 bg-gradient-to-b from-primary via-primary/90 to-secondary-900 text-white overflow-hidden"
         aria-labelledby="about-title"
       >
         <div className="absolute inset-0 bg-[url('/pattern.svg')] opacity-50" />
@@ -97,27 +97,27 @@ export default async function AboutPage() {
               >
                 About Awan Rental Service
               </h1>
-              <div className="prose prose-invert max-w-none text-lg">
-                <p className="text-gray-300 mb-6 leading-relaxed">
+              <div className="max-w-lg text-lg">
+                <p className="text-secondary-200 mb-6 leading-relaxed">
                   Awan Rental Service is a rent-a-car service company and a proven leader in
                   Pakistan&apos;s ground transportation industry. Awan Rental provides car rental
                   and transportation solutions for executives, corporate travelers, tourists,
                   families, and customers across Pakistan.
                 </p>
-                <p className="text-gray-300 mb-6 leading-relaxed">
+                <p className="text-secondary-200 mb-6 leading-relaxed">
                   We offer a wide range of vehicles including cars, mini-vans, pickups, and
                   commercial vehicles for rent. Our high-quality service is specially tailored to
                   suit your specific travel needs, with dedicated reservations offering convenient
                   service anytime, anywhere in Pakistan.
                 </p>
-                <p className="text-gray-300 leading-relaxed">
+                <p className="text-secondary-200 leading-relaxed">
                   Awan Rental provides unique opportunities with innovative technology in car
                   rental services for executives and corporate travelers in Islamabad, Pakistan.
                 </p>
               </div>
             </div>
             <div className="relative">
-              <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-gray-800">
+              <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-secondary-800">
                 <Image
                   src="/hero.jpg"
                   alt="Awan Rental Service vehicle ready for a journey in Pakistan"
@@ -138,11 +138,11 @@ export default async function AboutPage() {
           <div className="text-center max-w-3xl mx-auto mb-16">
             <h2
               id="pillars-title"
-              className="font-heading font-bold text-3xl sm:text-4xl text-gray-900 dark:text-white mb-4"
+              className="font-heading font-bold text-3xl sm:text-4xl text-foreground mb-4"
             >
               What We Stand For
             </h2>
-            <p className="text-lg text-gray-600 dark:text-gray-400">
+            <p className="text-lg text-muted-foreground">
               The way we work, described in plain terms.
             </p>
           </div>
@@ -150,16 +150,16 @@ export default async function AboutPage() {
             {PILLARS.map((pillar) => (
               <Card key={pillar.title} variant="default" padding="lg" hover className="h-full">
                 <CardHeader>
-                  <div className="w-14 h-14 bg-secondary-100 dark:bg-secondary-900/30 rounded-xl flex items-center justify-center mb-4">
+                  <div className="w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center mb-4 group-hover:bg-accent group-hover:text-accent-foreground transition-colors">
                     <pillar.icon
-                      className="w-7 h-7 text-secondary-600 dark:text-secondary-400"
+                      className="w-7 h-7 text-primary group-hover:text-accent-foreground"
                       aria-hidden="true"
                     />
                   </div>
                   <CardTitle>{pillar.title}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-gray-600 dark:text-gray-400">{pillar.description}</p>
+                  <p className="text-muted-foreground">{pillar.description}</p>
                 </CardContent>
               </Card>
             ))}
@@ -169,7 +169,7 @@ export default async function AboutPage() {
 
       {/* Primary calls to action. */}
       <section
-        className="py-16 sm:py-24 bg-primary-600 text-white"
+        className="py-16 sm:py-24 bg-gradient-to-r from-primary to-accent text-white"
         aria-labelledby="about-cta-title"
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -185,7 +185,7 @@ export default async function AboutPage() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               href="/booking"
-              className="inline-flex items-center justify-center rounded-xl bg-white px-8 py-3.5 text-lg font-semibold text-primary-700 transition-colors hover:bg-gray-100"
+              className="inline-flex items-center justify-center rounded-xl bg-white px-8 py-3.5 text-lg font-semibold text-primary transition-colors hover:bg-primary/90"
             >
               Book a Car
             </Link>
