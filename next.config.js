@@ -28,6 +28,9 @@ const nextConfig = {
   // Disable SWC minification to reduce build resource usage on limited hosts
   experimental: {
     swcMinify: false,
+    serverActions: {
+      bodySizeLimit: '2mb',
+    },
   },
   // Emit .next/standalone/server.js so the host has a runnable entry point.
   // Without this, builds succeed but Hostinger has no runtime to route to and
@@ -52,11 +55,6 @@ const nextConfig = {
     // roughly half the bytes. Nothing is upscaled: sharp never enlarges past
     // the 1920px source.
     deviceSizes: [640, 750, 828, 1080, 1200, 1280, 1366, 1440, 1536, 1600, 1920, 2048, 3840],
-  },
-  experimental: {
-    serverActions: {
-      bodySizeLimit: '2mb',
-    },
   },
   // Don't advertise the framework version in responses.
   poweredByHeader: false,
