@@ -11,6 +11,10 @@ if (!process.env.SWEC_WORKER_THREADS) {
 if (!process.env.NEXT_SWEC_WORKER_THREADS) {
   process.env.NEXT_SWEC_WORKER_THREADS = '1';
 }
+// Limit Node.js heap memory for constrained hosts
+if (!process.env.NODE_OPTIONS) {
+  process.env.NODE_OPTIONS = '--max-old-space-size=512';
+}
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
