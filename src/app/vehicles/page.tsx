@@ -39,6 +39,8 @@ function first(value: string | string[] | undefined): string {
   return value ?? '';
 }
 
+export const dynamic = 'force-dynamic';
+
 /**
  * The list page owns its own Suspense boundary instead of using a route-level
  * `loading.tsx`. See `_components/VehiclesListSkeleton.tsx` for why: a segment
@@ -82,20 +84,32 @@ async function VehiclesResults({ searchParams }: { searchParams: SearchParams })
   const filters = { q, category, availability, featured, sort, page };
   const { sortBy, sortOrder } = SORT_OPTIONS[sort];
 
-  const [vehiclesData, facets] = await Promise.all([
-    getVehicles({
-      search: q || undefined,
-      category: category ? (category as VehicleCategory) : undefined,
-      isAvailable:
-        availability === 'available' ? true : availability === 'unavailable' ? false : undefined,
-      isFeatured: featured ? true : undefined,
-      sortBy,
-      sortOrder,
-      page,
-      limit: PAGE_SIZE,
-    }),
-    getVehicleFacets(),
-  ]);
+  const vehiclesData = await getVehicles({
+    search: q || undefined,
+    category: category ? (category as VehicleCategory) : undefined,
+    isAvailable:
+      availability === 'available' ? true : availability === 'unavailable' ? false : undefined,
+    isFeatured: featured ? true : undefined,
+    sortBy,
+    sortOrder,
+    page,
+    limit: PAGE_SIZE,
+  });
+
+  // Facets are non-critical: if they fail, render with empty facets so the
+  // page still loads with vehicle listings instead of a 500 error.
+  let facets: Awaited<ReturnType<typeof getVehicleFacets>>;
+  try {
+    facets = await getVehicleFacets();
+  } catch {
+    facets = {
+      categories: [],
+      totalCount: 0,
+      availableCount: 0,
+      unavailableCount: 0,
+      featuredCount: 0,
+    };
+  }
 
   return (
     <section className="py-16 sm:py-24 bg-secondary-50 dark:bg-secondary-900/30" aria-labelledby="vehicles-title">
