@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "NODE_OPTIONS=\"--max-old-space-size=256\" SWC_WORKER_THREADS=0 NEXT_SWEC_WORKER_THREADS=0 next build --no-lint --experimental-swc=false",
+    "build": "NODE_OPTIONS=\"--max-old-space-size=256\" next build --no-lint",
     "postbuild": "node scripts/copy-standalone.mjs",
     "start": "node .next/standalone/server.js",
     "lint": "next lint",

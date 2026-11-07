@@ -3,20 +3,10 @@
 // See that file for why both forms are emitted.
 const { getContentSecurityPolicy, LONG_LIVED_EXTENSIONS } = require('./src/config/security-headers');
 
-// Limit SWC worker threads for resource-constrained build environments
-// (prevents "OS can't spawn worker thread" panics on limited hosts)
-if (!process.env.SWEC_WORKER_THREADS) {
-  process.env.SWEC_WORKER_THREADS = '1';
-}
-if (!process.env.NEXT_SWEC_WORKER_THREADS) {
-  process.env.NEXT_SWEC_WORKER_THREADS = '1';
-}
 // Limit Node.js heap memory for constrained hosts
 if (!process.env.NODE_OPTIONS) {
   process.env.NODE_OPTIONS = '--max-old-space-size=192';
 }
-// Disable SWC entirely for build - use terser instead (less memory)
-process.env.SWC_DISABLE = '1';
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
