@@ -294,7 +294,6 @@ export async function getVehicleBySlug(slug: string) {
         select: { startDate: true, endDate: true },
         orderBy: { startDate: 'asc' },
       },
-      _count: { select: { bookings: true, reviews: true } },
     },
   });
 

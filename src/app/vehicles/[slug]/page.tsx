@@ -9,6 +9,8 @@ import { hasConfiguredPrice } from '@/lib/vehicles';
 import { getVehicleCategoryLabel } from '@/lib/utils';
 import { SITE_URL, SITE_NAME } from '@/config/site';
 
+export const dynamic = 'force-dynamic';
+
 interface Props {
   params: { slug: string };
 }
@@ -17,11 +19,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const vehicle = await getVehicleBySlug(params.slug);
 
   if (!vehicle) {
-    // The segment streams a loading shell before `notFound()` fires below, so
-    // the response status is already committed as 200 by the time Next renders
-    // the not-found boundary. Marking the URL noindex keeps those empty shells
-    // out of the search index - otherwise Google would index an unbounded
-    // number of "Vehicle Not Found" pages for every junk link.
     return { title: 'Vehicle Not Found', robots: { index: false, follow: false } };
   }
 
@@ -49,16 +46,27 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function VehicleDetailPage({ params }: Props) {
-  const vehicle = await getVehicleBySlug(params.slug);
+  let vehicle;
+  try {
+    vehicle = await getVehicleBySlug(params.slug);
+  } catch {
+    vehicle = null;
+  }
 
   if (!vehicle) {
     notFound();
   }
 
-  const [businessInfo, similarVehicles] = await Promise.all([
-    getBusinessInfo(),
-    getSimilarVehicles(vehicle.slug, vehicle.category, 4),
-  ]);
+  let businessInfo;
+  let similarVehicles = [];
+  try {
+    [businessInfo, similarVehicles] = await Promise.all([
+      getBusinessInfo(),
+      getSimilarVehicles(vehicle.slug, vehicle.category, 4),
+    ]);
+  } catch {
+    businessInfo = null;
+  }
 
   // Vehicle structured data for search engines (offers only when a real
   // price is configured in the database).
