@@ -1,5 +1,4 @@
 import { Metadata } from 'next';
-import { Inter, Poppins } from 'next/font/google';
 import './globals.css';
 import { Providers } from './providers';
 import { Toaster } from 'react-hot-toast';
@@ -12,9 +11,6 @@ import { GoogleAnalytics } from '@/components/common/GoogleAnalytics';
 // Render all pages at request time (not build time) so they don't require
 // DATABASE_URL during `next build`. Database-dependent data is fetched per-request.
 export const dynamic = 'force-dynamic';
-
-const inter = Inter({ subsets: ['latin'], display: 'swap', variable: '--font-inter' });
-const poppins = Poppins({ subsets: ['latin'], display: 'swap', variable: '--font-poppins', weight: ['400', '500', '600', '700'] });
 
 const GOOGLE_SITE_VERIFICATION = process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION;
 
@@ -84,7 +80,7 @@ export default async function RootLayout({
   const structuredData = buildStructuredDataGraph(businessInfo);
 
   return (
-    <html lang="en" className={`${inter.variable} ${poppins.variable} antialiased`}>
+    <html lang="en" className="antialiased">
       <head>
         {/*
           The same Content-Security-Policy that next.config.js puts on the
@@ -109,8 +105,22 @@ export default async function RootLayout({
           httpEquiv="Content-Security-Policy"
           content={getContentSecurityPolicy({ includeFrameAncestors: false })}
         />
-        {/* Fonts are self-hosted through next/font above - no runtime Google
-            Fonts requests, so no preconnects to fonts.googleapis.com. */}
+        {/* Google Fonts loaded via CSS @import - loads at runtime, not build time,
+            so no build-time network dependency on fonts.googleapis.com. */}
+        <link
+          rel="preconnect"
+          href="https://fonts.googleapis.com"
+          crossOrigin=""
+        />
+        <link
+          rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossOrigin=""
+        />
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap"
+        />
         <link rel="dns-prefetch" href="https://wa.me" />
         {/* gtag.js is the only third-party script on the page. Opening the
             connection while the head is still parsing means the analytics

@@ -27,6 +27,8 @@
     --input: 214.3 31.8% 91.4%;
     --ring: 220 65% 19%;
     --radius: 0.75rem;
+    --font-inter: 'Inter', sans-serif;
+    --font-poppins: 'Poppins', sans-serif;
   }
 
   .dark {
