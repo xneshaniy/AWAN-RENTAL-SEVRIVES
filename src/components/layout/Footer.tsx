@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Phone, Mail, MapPin, Clock, Facebook, Instagram, Linkedin, MessageCircle, Car } from 'lucide-react';
+import { Phone, Mail, MapPin, Clock, Facebook, Instagram, Linkedin, MessageCircle } from 'lucide-react';
 import { Logo } from '@/components/common/Logo';
 import { cn } from '@/lib/utils';
 import { WhatsAppButton } from '@/components/common/WhatsAppButton';
@@ -75,14 +75,12 @@ export function Footer({ businessInfo }: FooterProps) {
           <div className="lg:col-span-1">
             <Link
               href="/"
-              className="mb-4 inline-flex rounded-2xl bg-background p-1"
+              className="mb-4 inline-flex items-center gap-3 rounded-2xl bg-background p-1"
               aria-label={`${companyName} Home`}
             >
-              <div className="flex items-center gap-2 bg-primary p-2 rounded-xl">
-                <Car className="w-5 h-5 text-primary-foreground" />
-              </div>
-              <span className="font-heading font-bold text-xl text-foreground tracking-tight">
-                Awan Rental
+              <Logo className="h-10 w-auto" title={`${companyName} Logo`} />
+              <span className="font-heading font-bold text-xl text-foreground tracking-tight leading-tight">
+                {companyName}
               </span>
             </Link>
             <p className="text-muted-foreground text-sm leading-relaxed mb-6">

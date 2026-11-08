@@ -82,41 +82,27 @@ export function VehicleCard({
           </Link>
         </Button>
         <Button variant="primary" size="md" fullWidth asChild className="flex-1">
-          <Link
-            href={bookHref}
-            aria-label={
-              canBook ? `Book ${vehicle.name} online` : `Request a quote for ${vehicle.name}`
-            }
-          >
+          <Link href={bookHref} aria-label={canBook ? `Book ${vehicle.name} online` : `Request a quote for ${vehicle.name}`}>
             {canBook ? 'Book Now' : 'Request a Quote'}
           </Link>
         </Button>
       </div>
-      <WhatsAppButton
-        vehicleName={vehicle.name}
-        size="md"
-        fullWidth
-        ariaLabel={`Ask on WhatsApp about ${vehicle.name}`}
-        label="Ask on WhatsApp"
-      />
+      <WhatsAppButton vehicleName={vehicle.name} size="md" fullWidth ariaLabel={`Ask on WhatsApp about ${vehicle.name}`} label="Ask on WhatsApp" />
     </div>
   );
 
   return (
     <motion.article
-      whileHover={{ y: -5 }}
+      whileHover={{ y: -8 }}
       whileTap={{ y: 0 }}
       className={cn(
-        'group relative bg-card text-card-foreground rounded-xl overflow-hidden border border-border',
-        'shadow-sm hover:shadow-xl transition-all duration-300',
+        'group relative bg-card text-card-foreground rounded-2xl overflow-hidden border border-border',
+        'shadow-sm hover:shadow-2xl transition-all duration-300',
         isCompact ? 'flex' : 'flex-col',
         variant === 'featured' ? 'ring-2 ring-primary/20' : ''
       )}
     >
-      <div className={cn(
-        'relative overflow-hidden',
-        isCompact ? 'w-40 sm:w-48 h-48 flex-shrink-0' : 'h-56 sm:h-64'
-      )}>
+      <div className={cn('relative overflow-hidden', isCompact ? 'w-40 sm:w-48 h-48 flex-shrink-0' : 'h-56 sm:h-64')}>
         <Image
           src={thumbnail}
           alt={`${vehicle.brand} ${vehicle.model} ${vehicle.year}`}
@@ -125,33 +111,21 @@ export function VehicleCard({
           sizes={isCompact ? '192px' : '(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw'}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-
         <div className="absolute top-3 left-3 z-10 flex flex-col items-start gap-2">
           {vehicle.isFeatured && <Badge variant="gold" size="sm">Featured</Badge>}
           {vehicle.isDemo && <Badge variant="info" size="sm">Demo</Badge>}
         </div>
-
         <div className="absolute top-3 right-3 z-10">
-          <Badge variant={vehicle.isAvailable ? 'success' : 'danger'} size="sm">
-            {vehicle.isAvailable ? 'Available' : 'Unavailable'}
-          </Badge>
+          <Badge variant={vehicle.isAvailable ? 'success' : 'danger'} size="sm">{vehicle.isAvailable ? 'Available' : 'Unavailable'}</Badge>
         </div>
       </div>
-
       {!isCompact && (
         <div className="p-5 flex-1 flex flex-col">
           <div className="mb-3">
-            <p className="text-xs font-medium text-primary uppercase tracking-wide">
-              {getVehicleCategoryLabel(vehicle.category)}
-            </p>
-            <TitleTag className="font-heading font-semibold text-lg text-foreground mt-1 line-clamp-1">
-              {vehicle.name}
-            </TitleTag>
-            <p className="text-sm text-muted-foreground mt-0.5">
-              {vehicle.brand} {vehicle.model} · {vehicle.year}
-            </p>
+            <p className="text-xs font-medium text-primary uppercase tracking-wide">{getVehicleCategoryLabel(vehicle.category)}</p>
+            <TitleTag className="font-heading font-semibold text-lg text-foreground mt-1 line-clamp-1">{vehicle.name}</TitleTag>
+            <p className="text-sm text-muted-foreground mt-0.5">{vehicle.brand} {vehicle.model} · {vehicle.year}</p>
           </div>
-
           <div className="flex flex-wrap gap-3 mb-4" role="list" aria-label="Vehicle features">
             {features.map((feature, index) => (
               <div key={index} role="listitem" className="flex items-center gap-1.5 text-sm text-muted-foreground">
@@ -160,37 +134,25 @@ export function VehicleCard({
               </div>
             ))}
           </div>
-
           <div className="flex items-center gap-2 text-sm text-muted-foreground mb-4">
             <MapPin className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
             <span>{vehicle.location}</span>
-            <span aria-hidden="true">•</span>
-            <span>{vehicle.doors} Doors</span>
-            <span aria-hidden="true">•</span>
-            <span>{vehicle.luggageCapacity} Bags</span>
+            <span aria-hidden="true">•</span><span>{vehicle.doors} Doors</span>
+            <span aria-hidden="true">•</span><span>{vehicle.luggageCapacity} Bags</span>
           </div>
-
           <div className="mt-auto pt-4 border-t border-border">
             <div className="mb-3">{priceBlock}</div>
             {showBookingCTA && ctaButtons}
           </div>
         </div>
       )}
-
       {isCompact && (
         <div className="p-4 flex flex-col justify-between min-w-0">
           <div className="min-w-0">
-            <p className="text-xs font-medium text-primary uppercase tracking-wide mb-1">
-              {getVehicleCategoryLabel(vehicle.category)}
-            </p>
-            <TitleTag className="font-heading font-semibold text-base text-foreground truncate mb-1">
-              {vehicle.name}
-            </TitleTag>
-            <p className="text-xs text-muted-foreground truncate">
-              {vehicle.brand} {vehicle.model} · {vehicle.year}
-            </p>
+            <p className="text-xs font-medium text-primary uppercase tracking-wide mb-1">{getVehicleCategoryLabel(vehicle.category)}</p>
+            <TitleTag className="font-heading font-semibold text-base text-foreground truncate mb-1">{vehicle.name}</TitleTag>
+            <p className="text-xs text-muted-foreground truncate">{vehicle.brand} {vehicle.model} · {vehicle.year}</p>
           </div>
-
           <div className="flex flex-wrap gap-x-3 gap-y-1 my-2" role="list" aria-label="Vehicle features">
             {features.map((feature, index) => (
               <div key={index} role="listitem" className="flex items-center gap-1 text-xs text-muted-foreground">
@@ -199,7 +161,6 @@ export function VehicleCard({
               </div>
             ))}
           </div>
-
           <div className="mb-3">{priceBlock}</div>
           {showBookingCTA && ctaButtons}
         </div>
@@ -218,41 +179,24 @@ interface VehicleCarouselProps {
 
 export function VehicleCarousel({ vehicles, title, subtitle, showViewAll = true, viewAllHref = '/vehicles' }: VehicleCarouselProps) {
   if (vehicles.length === 0) return null;
-
   return (
     <section className="py-16 sm:py-24" aria-labelledby={title ? 'carousel-title' : undefined}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {(title || subtitle) && (
           <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-10">
             <div>
-              {subtitle && (
-                <p className="text-primary text-sm font-medium uppercase tracking-wide mb-1">
-                  {subtitle}
-                </p>
-              )}
-              {title && (
-                <h2 id="carousel-title" className="font-heading font-bold text-3xl sm:text-4xl text-foreground">
-                  {title}
-                </h2>
-              )}
+              {subtitle && <p className="text-primary text-sm font-medium uppercase tracking-wide mb-1">{subtitle}</p>}
+              {title && <h2 id="carousel-title" className="font-heading font-bold text-3xl sm:text-4xl text-foreground">{title}</h2>}
             </div>
             {showViewAll && (
               <Button variant="outline" size="md" asChild className="mt-4 sm:mt-0">
-                <Link href={viewAllHref}>
-                  View All
-                  <svg className="w-4 h-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-                </Link>
+                <Link href={viewAllHref}>View All<svg className="w-4 h-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg></Link>
               </Button>
             )}
           </div>
         )}
-
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {vehicles.map((vehicle) => (
-            <VehicleCard key={vehicle.id} vehicle={vehicle} />
-          ))}
+          {vehicles.map((vehicle) => <VehicleCard key={vehicle.id} vehicle={vehicle} />)}
         </div>
       </div>
     </section>

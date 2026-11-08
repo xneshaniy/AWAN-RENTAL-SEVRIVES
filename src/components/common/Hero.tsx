@@ -8,6 +8,7 @@ import { ChevronRight, MapPin, Calendar, Clock, Car, ChevronDown, Search } from 
 import { Button } from '@/components/ui/Button';
 import { Input, Select } from '@/components/ui/Input';
 import { WhatsAppButton } from '@/components/common/WhatsAppButton';
+import { motion } from 'framer-motion';
 
 interface HeroProps {
   businessInfo?: Awaited<ReturnType<typeof import('@/lib/settings').getBusinessInfo>>;
@@ -20,7 +21,7 @@ const RENTAL_TYPE_OPTIONS = [
   { value: 'CORPORATE', label: 'Corporate Travel' },
 ];
 
-export function Hero({ businessInfo: _businessInfo }: HeroProps) {
+export function Hero({ businessInfo }: HeroProps) {
   const router = useRouter();
   const [pickup, setPickup] = useState('');
   const [dropoff, setDropoff] = useState('');
@@ -38,8 +39,7 @@ export function Hero({ businessInfo: _businessInfo }: HeroProps) {
     if (pickupDate) params.set('date', pickupDate);
     if (pickupTime) params.set('time', pickupTime);
     if (rentalType) params.set('rentalType', rentalType);
-    const query = params.toString();
-    router.push(`/vehicles${query ? `?${query}` : ''}`);
+    router.push(`/vehicles${params.toString() ? `?${params.toString()}` : ''}`);
   };
 
   return (
@@ -58,14 +58,18 @@ export function Hero({ businessInfo: _businessInfo }: HeroProps) {
 
       <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-28">
         <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
-          <div className="animate-slide-up">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="animate-fade-in"
+          >
             <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm text-white text-sm font-medium mb-6">
               <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" aria-hidden="true" />
               Serving Islamabad, Rawalpindi, Lahore &amp; Nationwide
             </span>
             <h1 id="hero-title" className="font-heading font-bold text-4xl sm:text-5xl lg:text-6xl text-white leading-tight mb-6">
               Reliable Car Rental &amp;{' '}
-              <span className="text-yellow-400">Transportation</span> in Pakistan
+              <span className="text-accent">Transportation</span> in Pakistan
             </h1>
             <p className="text-lg sm:text-xl text-gray-300 leading-relaxed mb-8 max-w-xl">
               Comfortable vehicles, professional service, and flexible rental options for business travelers, tourists, families, and local customers.
@@ -79,12 +83,17 @@ export function Hero({ businessInfo: _businessInfo }: HeroProps) {
               </Button>
               <WhatsAppButton size="xl" label="Book on WhatsApp" />
             </div>
-          </div>
+          </motion.div>
 
-          <div className="animate-slide-up" style={{ animationDelay: '200ms' }}>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            style={{ animationDelay: '200ms' }}
+            className="animate-fade-in"
+          >
             <form
               onSubmit={handleBookingSearch}
-              className="bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl rounded-2xl p-6 shadow-2xl border border-white/20"
+              className="bg-white/95 backdrop-blur-xl rounded-2xl p-6 shadow-2xl border border-white/20"
               aria-labelledby="hero-search-title"
             >
               <h2 id="hero-search-title" className="font-heading font-semibold text-xl text-gray-900 dark:text-white mb-5">
@@ -162,7 +171,7 @@ export function Hero({ businessInfo: _businessInfo }: HeroProps) {
                 Check Vehicles
               </Button>
             </form>
-          </div>
+          </motion.div>
         </div>
       </div>
 

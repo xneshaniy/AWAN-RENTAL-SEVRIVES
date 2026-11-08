@@ -332,71 +332,75 @@ export function VehicleList({ vehicles, pagination, facets, filters }: VehicleLi
         </div>
 
         <div className="bg-card rounded-xl border border-border p-4 mb-6 shadow-sm">
-          <form onSubmit={handleSearchSubmit} role="search" className="mb-4">
-            <Input
-              type="search"
-              name="q"
-              value={query}
-              onChange={(event) => setQuery(event.target.value)}
-              placeholder="Search by name, brand or model..."
-              aria-label="Search vehicles"
-              icon={<Search className="w-4 h-4" aria-hidden="true" />}
-            />
-            <Button type="submit" variant="primary" className="mt-3 w-full">
-              <Search className="w-4 h-4 mr-2" aria-hidden="true" />
-              Search
-            </Button>
-          </form>
+          {showFilters && (
+            <>
+              <form onSubmit={handleSearchSubmit} role="search" className="mb-4">
+                <Input
+                  type="search"
+                  name="q"
+                  value={query}
+                  onChange={(event) => setQuery(event.target.value)}
+                  placeholder="Search by name, brand or model..."
+                  aria-label="Search vehicles"
+                  icon={<Search className="w-4 h-4" aria-hidden="true" />}
+                />
+                <Button type="submit" variant="primary" className="mt-3 w-full">
+                  <Search className="w-4 h-4 mr-2" aria-hidden="true" />
+                  Search
+                </Button>
+              </form>
 
-          <div className="space-y-3">
-            <div>
-              <label className="block text-xs font-medium text-foreground mb-1 uppercase tracking-wide">Category</label>
-              <Select
-                value={filters.category}
-                onChange={(event) => navigate({ category: event.target.value })}
-                options={categoryOptions}
-                label="Category"
-                aria-label="Filter by category"
-              />
-            </div>
-            <div>
-              <label className="block text-xs font-medium text-foreground mb-1 uppercase tracking-wide">Availability</label>
-              <Select
-                value={filters.availability}
-                onChange={(event) =>
-                  navigate({ availability: event.target.value as VehicleListingFilters['availability'] })
-                }
-                options={availabilityOptions}
-                label="Availability"
-                aria-label="Filter by availability"
-              />
-            </div>
-            <div>
-              <label className="block text-xs font-medium text-foreground mb-1 uppercase tracking-wide">Sort by</label>
-              <Select
-                value={filters.sort}
-                onChange={(event) =>
-                  navigate({ sort: event.target.value as VehicleListingFilters['sort'] })
-                }
-                options={SORT_LABELS}
-                label="Sort by"
-                aria-label="Sort vehicles"
-              />
-            </div>
-            <div>
-              <Button
-                type="button"
-                variant={filters.featured ? 'primary' : 'outline'}
-                size="md"
-                fullWidth
-                aria-pressed={filters.featured}
-                onClick={() => navigate({ featured: !filters.featured })}
-              >
-                <SlidersHorizontal className="w-4 h-4 mr-2" aria-hidden="true" />
-                Featured only ({facets.featuredCount})
-              </Button>
-            </div>
-          </div>
+              <div className="space-y-3">
+                <div>
+                  <label className="block text-xs font-medium text-foreground mb-1 uppercase tracking-wide">Category</label>
+                  <Select
+                    value={filters.category}
+                    onChange={(event) => navigate({ category: event.target.value })}
+                    options={categoryOptions}
+                    label="Category"
+                    aria-label="Filter by category"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-foreground mb-1 uppercase tracking-wide">Availability</label>
+                  <Select
+                    value={filters.availability}
+                    onChange={(event) =>
+                      navigate({ availability: event.target.value as VehicleListingFilters['availability'] })
+                    }
+                    options={availabilityOptions}
+                    label="Availability"
+                    aria-label="Filter by availability"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-foreground mb-1 uppercase tracking-wide">Sort by</label>
+                  <Select
+                    value={filters.sort}
+                    onChange={(event) =>
+                      navigate({ sort: event.target.value as VehicleListingFilters['sort'] })
+                    }
+                    options={SORT_LABELS}
+                    label="Sort by"
+                    aria-label="Sort vehicles"
+                  />
+                </div>
+                <div>
+                  <Button
+                    type="button"
+                    variant={filters.featured ? 'primary' : 'outline'}
+                    size="md"
+                    fullWidth
+                    aria-pressed={filters.featured}
+                    onClick={() => navigate({ featured: !filters.featured })}
+                  >
+                    <SlidersHorizontal className="w-4 h-4 mr-2" aria-hidden="true" />
+                    Featured only ({facets.featuredCount})
+                  </Button>
+                </div>
+              </div>
+            </>
+          )}
         </div>
 
         <div className="relative" aria-busy={isPending}>

@@ -27,7 +27,6 @@ export function Header({ businessInfo }: HeaderProps) {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Body scroll lock when mobile menu is open
   useEffect(() => {
     if (isMobileMenuOpen) {
       document.body.style.overflow = 'hidden';
@@ -39,7 +38,6 @@ export function Header({ businessInfo }: HeaderProps) {
     };
   }, [isMobileMenuOpen]);
 
-  // Escape key to close mobile menu
   const handleKeyDown = useCallback((event: KeyboardEvent) => {
     if (event.key === 'Escape' && isMobileMenuOpen) {
       setIsMobileMenuOpen(false);
@@ -66,15 +64,21 @@ export function Header({ businessInfo }: HeaderProps) {
     >
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" aria-label="Main navigation">
         <div className="flex items-center justify-between h-16 lg:h-20">
+          {/* Logo */}
           <Link
             href="/"
-            className="flex min-w-0 items-center gap-2"
+            className="flex min-w-0 items-center gap-3"
             aria-label="Awan Rental Service Home"
           >
-            <BrandMark className="h-5 w-auto shrink-0 sm:h-8" />
-            <span className="min-w-0 truncate font-heading font-bold text-lg text-foreground sm:text-xl tracking-tight">
-              Awan Rental Service
-            </span>
+            <BrandMark className="h-7 w-auto shrink-0 sm:h-10" />
+            <div className="flex flex-col min-w-0">
+              <span className="font-heading font-bold text-xl text-foreground sm:text-xl tracking-tight leading-tight">
+                Awan Rental Service
+              </span>
+              <span className="text-xs text-primary font-medium tracking-tight uppercase">
+                Car Rental Pakistan
+              </span>
+            </div>
           </Link>
 
           <div className="hidden lg:flex items-center gap-8">
@@ -185,9 +189,8 @@ export function Header({ businessInfo }: HeaderProps) {
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
             className="lg:hidden fixed inset-0 z-50 bg-card border-b border-border"
-            onClick={closeMenu}
+            onClick={() => setIsMobileMenuOpen(false)}
           >
-            {/* Close on backdrop click but not on inner content click */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -202,9 +205,9 @@ export function Header({ businessInfo }: HeaderProps) {
                   href="/"
                   className="flex min-w-0 items-center gap-2"
                   aria-label="Awan Rental Service Home"
-                  onClick={closeMenu}
+                  onClick={() => setIsMobileMenuOpen(false)}
                 >
-                  <BrandMark className="h-5 w-auto shrink-0 sm:h-8" />
+                  <BrandMark className="h-6 w-auto shrink-0 sm:h-8" />
                   <span className="min-w-0 truncate font-heading font-bold text-lg text-foreground sm:text-xl tracking-tight">
                     Awan Rental Service
                   </span>
@@ -225,7 +228,7 @@ export function Header({ businessInfo }: HeaderProps) {
                     <div key={item.href}>
                       {item.children ? (
                         <div className="space-y-1">
-                          <button className="w-full text-left px-4 py-3 rounded-xl font-medium text-foreground hover:bg-accent hover:text-accent-foreground flex items-center justify-between" onClick={closeMenu}>
+                          <button className="w-full text-left px-4 py-3 rounded-xl font-medium text-foreground hover:bg-accent hover:text-accent-foreground flex items-center justify-between" onClick={() => setIsMobileMenuOpen(false)}>
                             {item.label}
                             <span className="w-5 h-5">▼</span>
                           </button>
@@ -235,7 +238,7 @@ export function Header({ businessInfo }: HeaderProps) {
                                 key={child.href}
                                 href={child.href}
                                 className="block px-4 py-2.5 rounded-lg text-muted-foreground hover:text-primary hover:bg-accent/50 text-sm"
-                                onClick={closeMenu}
+                                onClick={() => setIsMobileMenuOpen(false)}
                               >
                                 {child.label}
                               </Link>
@@ -246,7 +249,7 @@ export function Header({ businessInfo }: HeaderProps) {
                         <Link
                           href={item.href}
                           className="block px-4 py-3 rounded-xl font-medium text-foreground hover:bg-accent hover:text-accent-foreground"
-                          onClick={closeMenu}
+                          onClick={() => setIsMobileMenuOpen(false)}
                         >
                           {item.label}
                         </Link>
@@ -260,7 +263,7 @@ export function Header({ businessInfo }: HeaderProps) {
                     <a
                       href={`tel:${businessPhone}`}
                       className="flex items-center gap-3 px-4 py-3 rounded-xl bg-accent/5 text-accent-foreground"
-                      onClick={closeMenu}
+                      onClick={() => setIsMobileMenuOpen(false)}
                     >
                       <Phone className="w-6 h-6" aria-hidden="true" />
                       <span className="font-medium">{businessPhone}</span>
@@ -272,10 +275,10 @@ export function Header({ businessInfo }: HeaderProps) {
                     fullWidth
                     label="WhatsApp Us"
                     ariaLabel="Chat with Awan Rental Service on WhatsApp"
-                    onClick={closeMenu}
+                    onClick={() => setIsMobileMenuOpen(false)}
                   />
                   <Button variant="gold" size="lg" fullWidth asChild>
-                    <Link href="/booking" onClick={closeMenu}>Book a Car</Link>
+                    <Link href="/booking" onClick={() => setIsMobileMenuOpen(false)}>Book a Car</Link>
                   </Button>
                 </div>
               </nav>

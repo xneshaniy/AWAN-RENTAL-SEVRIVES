@@ -104,7 +104,7 @@ export function BookingForm({
     register,
     handleSubmit,
     setError,
-    formState: { errors },
+    formState: { errors, values },
   } = useForm<BookingInput>({
     resolver: zodResolver(bookingSchema),
     defaultValues: {
@@ -593,38 +593,49 @@ export function BookingForm({
                         <div className="space-y-4">
                           <div className="flex items-center justify-between text-sm border-b border-border pb-2">
                             <span className="text-muted-foreground">Vehicle</span>
-                            <span className="text-foreground font-medium">{vehicleName || 'Selected vehicle'}</span>
+                            <span className="text-foreground font-medium">
+                              {values.vehicleId
+                                ? (vehicles ?? []).find((v) => v.id === values.vehicleId)?.name ||
+                                  'Selected vehicle'
+                                : 'Selected vehicle'}
+                            </span>
                           </div>
                           <div className="flex items-center justify-between text-sm border-b border-border pb-2">
                             <span className="text-muted-foreground">Rental Type</span>
                             <span className="text-foreground font-medium">
-                              {RENTAL_TYPES.find((t) => t.value === rentalType)?.label || rentalType}
+                              {RENTAL_TYPES.find((t) => t.value === values.rentalType)?.label ||
+                                values.rentalType ||
+                                '—'}
                             </span>
                           </div>
                           <div className="flex items-center justify-between text-sm border-b border-border pb-2">
                             <span className="text-muted-foreground">Pickup Location</span>
-                            <span className="text-foreground font-medium">{pickupLocation || '—'}</span>
+                            <span className="text-foreground font-medium">
+                              {values.pickupLocation || '—'}
+                            </span>
                           </div>
                           <div className="flex items-center justify-between text-sm border-b border-border pb-2">
                             <span className="text-muted-foreground">Drop-off Location</span>
-                            <span className="text-foreground font-medium">{dropoffLocation || '—'}</span>
+                            <span className="text-foreground font-medium">
+                              {values.dropoffLocation || '—'}
+                            </span>
                           </div>
                           <div className="flex items-center justify-between text-sm border-b border-border pb-2">
                             <span className="text-muted-foreground">Pickup Date &amp; Time</span>
                             <span className="text-foreground font-medium">
-                              {pickupDate || '—'} at {pickupTime || '—'}
+                              {values.pickupDate || '—'} at {values.pickupTime || '—'}
                             </span>
                           </div>
                           <div className="flex items-center justify-between text-sm border-b border-border pb-2">
                             <span className="text-muted-foreground">Return Date &amp; Time</span>
                             <span className="text-foreground font-medium">
-                              {returnDate || '—'} at {returnTime || '—'}
+                              {values.returnDate || '—'} at {values.returnTime || '—'}
                             </span>
                           </div>
                           <div className="flex items-center justify-between text-sm">
                             <span className="text-muted-foreground">Passengers</span>
                             <span className="text-foreground font-medium">
-                              {(typeof passengers === 'number' ? passengers : parseInt(passengers)) || 1}
+                              {values.passengers || 1}
                             </span>
                           </div>
                         </div>
