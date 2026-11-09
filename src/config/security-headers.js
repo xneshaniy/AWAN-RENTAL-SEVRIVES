@@ -83,12 +83,16 @@ function getContentSecurityPolicy(options) {
     "default-src 'self'",
     scriptSrc,
     // next/font injects a <style> block and several components use inline
-    // style attributes, so style-src must stay permissive.
-    "style-src 'self' 'unsafe-inline'",
+    // style attributes, so style-src must stay permissive. The root layout
+    // links Google Fonts directly (Inter + Poppins), so that stylesheet and
+    // the font files it points at need their own two origins - without them
+    // the browser blocks the request and the whole site silently falls back
+    // to system fonts.
+    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
     // Vehicle photos live on Cloudinary, demo photos on Unsplash, and admins
     // may point Site Settings at any https image.
     "img-src 'self' data: blob: https:",
-    "font-src 'self' data:",
+    "font-src 'self' data: https://fonts.gstatic.com",
     // GA4 beacons plus 'self' for the booking/admin API routes. Cloudinary
     // uploads run server-side inside /api/admin/upload, so no third-party
     // origin is needed here.

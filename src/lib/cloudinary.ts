@@ -274,6 +274,42 @@ export async function uploadVideo(
 }
 
 /**
+ * Delete an asset from Cloudinary (public destroy endpoint, signed).
+ *
+ * Best effort: this is only used to clean up after a gallery item is deleted
+ * or replaced. A failure here must never block the admin from managing the
+ * gallery, so it returns a boolean instead of throwing.
+ */
+export async function deleteCloudinaryAsset(
+  publicId: string | null | undefined,
+  resourceType: 'image' | 'video'
+): Promise<boolean> {
+  if (!publicId || !CLOUD_NAME || !API_KEY || !API_SECRET) return false;
+
+  const timestamp = Math.floor(Date.now() / 1000);
+  const signed: Record<string, string | number> = { public_id: publicId, timestamp };
+  const signature = cloudinarySignature(signed, API_SECRET);
+
+  try {
+    const form = new FormData();
+    form.append('public_id', publicId);
+    form.append('timestamp', String(timestamp));
+    form.append('api_key', API_KEY);
+    form.append('signature', signature);
+
+    const response = await fetch(
+      `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/${resourceType}/upload/destroy`,
+      { method: 'POST', body: form }
+    );
+    if (!response.ok) return false;
+    const body = (await response.json()) as { result?: string };
+    return body?.result === 'ok' || body?.result === 'not found';
+  } catch {
+    return false;
+  }
+}
+
+/**
  * Per-IP cap on uploads. Every vehicle photo costs a third-party round trip,
  * so an accidental loop (or a scripted abuse) must not turn into an
  * unbounded Cloudinary bill.

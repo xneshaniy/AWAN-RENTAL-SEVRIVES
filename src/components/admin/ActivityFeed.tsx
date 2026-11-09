@@ -1,5 +1,3 @@
-'use client';
-
 import Link from 'next/link';
 import { formatDate, formatDateTime } from '@/lib/utils';
 import { Clock, User, Car, MessageCircle, CheckCircle, XCircle, Calendar } from 'lucide-react';

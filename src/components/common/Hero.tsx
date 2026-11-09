@@ -17,8 +17,8 @@ interface HeroProps {
 const RENTAL_TYPE_OPTIONS = [
   { value: 'SELF_DRIVE', label: 'Self Drive' },
   { value: 'CHAUFFEUR', label: 'With Driver' },
-  { value: 'AIRPORT_TRANSFER', label: 'Airport Transfer' },
-  { value: 'CORPORATE', label: 'Corporate Travel' },
+  { value: 'AIRPORT_TRANSFER', label: 'Airport Ride' },
+  { value: 'CORPORATE', label: 'Business Travel' },
 ];
 
 export function Hero({ businessInfo }: HeroProps) {
@@ -65,19 +65,19 @@ export function Hero({ businessInfo }: HeroProps) {
           >
             <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm text-white text-sm font-medium mb-6">
               <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" aria-hidden="true" />
-              Serving Islamabad, Rawalpindi, Lahore &amp; Nationwide
+              Serving Islamabad, Rawalpindi, Lahore &amp; All Pakistan
             </span>
             <h1 id="hero-title" className="font-heading font-bold text-4xl sm:text-5xl lg:text-6xl text-white leading-tight mb-6">
-              Reliable Car Rental &amp;{' '}
-              <span className="text-accent">Transportation</span> in Pakistan
+              Rent a Car{' '}
+              <span className="text-accent">Anywhere in Pakistan</span>
             </h1>
             <p className="text-lg sm:text-xl text-gray-300 leading-relaxed mb-8 max-w-xl">
-              Comfortable vehicles, professional service, and flexible rental options for business travelers, tourists, families, and local customers.
+              Self-drive or with a driver. Good cars, simple prices, and quick booking — for business, family trips, airport rides, and more.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <Button size="xl" asChild className="group">
                 <Link href="/vehicles">
-                  Explore Vehicles
+                  See Our Cars
                   <ChevronRight className="w-5 h-5 transition-transform group-hover:translate-x-1" aria-hidden="true" />
                 </Link>
               </Button>
@@ -97,7 +97,7 @@ export function Hero({ businessInfo }: HeroProps) {
               aria-labelledby="hero-search-title"
             >
               <h2 id="hero-search-title" className="font-heading font-semibold text-xl text-gray-900 dark:text-white mb-5">
-                Find a Vehicle
+                Find Your Ride
               </h2>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

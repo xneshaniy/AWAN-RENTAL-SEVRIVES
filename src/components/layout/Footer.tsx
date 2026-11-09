@@ -75,13 +75,10 @@ export function Footer({ businessInfo }: FooterProps) {
           <div className="lg:col-span-1">
             <Link
               href="/"
-              className="mb-4 inline-flex items-center gap-3 rounded-2xl bg-background p-1"
+              className="mb-5 inline-flex rounded-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2 focus-visible:ring-offset-secondary-900"
               aria-label={`${companyName} Home`}
             >
-              <Logo className="h-10 w-auto" title={`${companyName} Logo`} />
-              <span className="font-heading font-bold text-xl text-foreground tracking-tight leading-tight">
-                {companyName}
-              </span>
+              <Logo tone="light" />
             </Link>
             <p className="text-muted-foreground text-sm leading-relaxed mb-6">
               Your trusted partner for car rental and ground transportation services across Pakistan.

@@ -22,17 +22,12 @@ export default async function NotFound() {
       >
         <div className="w-full max-w-md text-center">
           {/*
-            No card in light mode - the page is already light and the asset is
-            transparent, so nothing shows behind the artwork. Dark mode gets
-            one because the black wordmark would otherwise disappear into it.
+            No card: the mark is vector artwork and the wordmark uses the
+            page foreground, so the lockup sits directly on either theme.
           */}
-          <span className="mx-auto mb-6 flex w-fit rounded-2xl dark:bg-white">
-            <Logo
-              className="h-36 w-auto animate-fade-in"
-              title="Awan Rental Service"
-              priority
-            />
-          </span>
+          <div className="mb-8 flex justify-center">
+            <Logo size="lg" title="Awan Rental Service" className="animate-fade-in" />
+          </div>
 
           <p
             className="mb-2 animate-slide-up text-8xl font-bold leading-none text-primary-600/20 dark:text-primary-400/20"

@@ -13,6 +13,8 @@ const ROUTE_LABELS: Record<string, string> = {
   '/admin/vehicles/': 'Vehicles',
   '/admin/vehicles/create': 'Add Vehicle',
   '/admin/gallery': 'Gallery',
+  '/admin/self-drive-gallery': 'Self Drive Gallery',
+  '/admin/homepage-media': 'Homepage Showcase',
   '/admin/services': 'Services',
   '/admin/blog': 'Blog',
   '/admin/blog/new': 'New Post',

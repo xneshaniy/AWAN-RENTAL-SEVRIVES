@@ -39,31 +39,31 @@ const PILLARS = [
     icon: Users,
     title: 'Customer-Focused Service',
     description:
-      'Our high-quality service is specially tailored to suit your specific travel needs, so every journey is planned around the way you actually travel.',
+      'Cars and rides planned around how you actually travel — simple and hassle-free.',
   },
   {
     icon: Repeat,
     title: 'Flexible Rental Options',
     description:
-      'Dedicated reservations offer convenient service for the trip you have in mind - whether that is a short city run or a longer engagement across Pakistan.',
+      'Rent for a day, a week or a month — short city trips or long drives, your choice.',
   },
   {
     icon: Route,
     title: 'Ground Transportation',
     description:
-      "Awan Rental Service is a rent-a-car service company and a proven leader in Pakistan's ground transportation industry, moving people and plans forward on the ground.",
+      'Rent a car and move around Pakistan easily. That is what we do.',
   },
   {
     icon: Headphones,
-    title: 'Professional Support',
+    title: 'Friendly Support',
     description:
-      'Reservations and questions are handled by a professional team, offering convenient service anytime and anywhere in Pakistan.',
+      'Got a question? Call or WhatsApp us any time, anywhere in Pakistan.',
   },
   {
     icon: Car,
     title: 'Vehicle Variety',
     description:
-      'We offer a wide range of vehicles including cars, mini-vans, pickups, and commercial vehicles for rent, so the vehicle fits the purpose of your trip.',
+      'Cars, mini-vans, pickups and commercial vehicles — the right ride for your trip.',
   },
   {
     icon: Plane,
@@ -99,16 +99,13 @@ export default async function AboutPage() {
               </h1>
               <div className="max-w-lg text-lg">
                 <p className="text-secondary-200 mb-6 leading-relaxed">
-                  Awan Rental Service is a rent-a-car service company and a proven leader in
-                  Pakistan&apos;s ground transportation industry. Awan Rental provides car rental
-                  and transportation solutions for executives, corporate travelers, tourists,
-                  families, and customers across Pakistan.
+                  Awan Rental Service is a car-rental and transport company serving all of
+                  Pakistan. We help executives, tourists, families and businesses get the
+                  car they need — simply and quickly.
                 </p>
                 <p className="text-secondary-200 mb-6 leading-relaxed">
-                  We offer a wide range of vehicles including cars, mini-vans, pickups, and
-                  commercial vehicles for rent. Our high-quality service is specially tailored to
-                  suit your specific travel needs, with dedicated reservations offering convenient
-                  service anytime, anywhere in Pakistan.
+                  Cars, mini-vans, pickups and commercial vehicles — all available for rent,
+                  and we fit the car to your trip. Book online or just call us, anytime.
                 </p>
                 <p className="text-secondary-200 leading-relaxed">
                   Awan Rental provides unique opportunities with innovative technology in car

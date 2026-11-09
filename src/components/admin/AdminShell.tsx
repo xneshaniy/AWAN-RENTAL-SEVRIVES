@@ -23,6 +23,7 @@ import {
   ExternalLink,
   ChevronDown,
   ChevronRight,
+  Film,
   type LucideIcon,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -51,6 +52,8 @@ const ICONS_BY_HREF: Record<string, LucideIcon> = {
   '/admin/bookings': Calendar,
   '/admin/vehicles': Car,
   '/admin/gallery': Images,
+  '/admin/self-drive-gallery': Images,
+  '/admin/homepage-media': Film,
   '/admin/services': List,
   '/admin/blog': FileText,
   '/admin/faq': HelpCircle,
@@ -66,6 +69,8 @@ const ADMIN_NAV: NavEntry[] = [
   { label: 'Bookings', href: '/admin/bookings', icon: Calendar },
   { label: 'Vehicles', href: '/admin/vehicles', icon: Car },
   { label: 'Gallery', href: '/admin/gallery', icon: Images },
+  { label: 'Self Drive Gallery', href: '/admin/self-drive-gallery', icon: Images },
+  { label: 'Homepage Showcase', href: '/admin/homepage-media', icon: Film },
   { label: 'Services', href: '/admin/services', icon: List },
   { label: 'Blog', href: '/admin/blog', icon: FileText },
   { label: 'FAQ', href: '/admin/faq', icon: HelpCircle },

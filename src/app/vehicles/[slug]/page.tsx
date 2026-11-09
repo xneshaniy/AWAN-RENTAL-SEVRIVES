@@ -57,15 +57,15 @@ export default async function VehicleDetailPage({ params }: Props) {
     notFound();
   }
 
-  let businessInfo;
-  let similarVehicles = [];
+  let businessInfo: Awaited<ReturnType<typeof getBusinessInfo>> | undefined;
+  let similarVehicles: Awaited<ReturnType<typeof getSimilarVehicles>> = [];
   try {
     [businessInfo, similarVehicles] = await Promise.all([
       getBusinessInfo(),
       getSimilarVehicles(vehicle.slug, vehicle.category, 4),
     ]);
   } catch {
-    businessInfo = null;
+    businessInfo = undefined;
   }
 
   // Vehicle structured data for search engines (offers only when a real

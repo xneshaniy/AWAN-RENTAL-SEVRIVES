@@ -3,6 +3,7 @@ import { Header } from './Header';
 import { Footer } from './Footer';
 import { BackToTop } from '@/components/common/BackToTop';
 import { MobileBookBar } from '@/components/common/MobileBookBar';
+import { InstallAppBanner } from '@/components/common/InstallAppBanner';
 
 interface LayoutProps {
   children: ReactNode;
@@ -22,6 +23,7 @@ export function Layout({ children, businessInfo }: LayoutProps) {
           <main> and the footer carries matching bottom padding on mobile. */}
       <BackToTop />
       <MobileBookBar />
+      <InstallAppBanner />
     </div>
   );
 }

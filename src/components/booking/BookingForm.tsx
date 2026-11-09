@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { bookingSchema, BookingInput } from '@/lib/validations';
+import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/Button';
 import { Input, Textarea, Select } from '@/components/ui/Input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
@@ -104,7 +105,8 @@ export function BookingForm({
     register,
     handleSubmit,
     setError,
-    formState: { errors, values },
+    watch,
+    formState: { errors },
   } = useForm<BookingInput>({
     resolver: zodResolver(bookingSchema),
     defaultValues: {
@@ -128,6 +130,7 @@ export function BookingForm({
     },
   });
 
+  const values = watch();
   const minPickupDate = toLocalDate(new Date());
 
   const onSubmit = async (data: BookingInput) => {
@@ -661,7 +664,7 @@ export function BookingForm({
                       </Button>
                     )}
                     <div className="flex-1 px-4">
-                      <Badge variant={activeStep === 'summary' ? 'gold' : 'primary'}>
+                      <Badge variant={activeStep === 'summary' ? 'gold' : 'info'}>
                         Step {BOOKING_STEPS.findIndex((s) => s.id === activeStep) + 1} of {BOOKING_STEPS.length}
                       </Badge>
                     </div>

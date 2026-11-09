@@ -24,6 +24,7 @@ yarn-debug.log*
 yarn-error.log*
 
 # Local env files
+.env
 .env.local
 .env.production
 .env.development
@@ -97,6 +98,13 @@ jspm_packages/
 
 # next.js build output
 .next
+
+# Next.js generated manifests that were accidentally committed
+# (build output — safe to regenerate with `next build`)
+app-build-manifest.json
+build-manifest.json
+react-loadable-manifest.json
+server/
 
 # vuepress build output
 .vuepress/dist

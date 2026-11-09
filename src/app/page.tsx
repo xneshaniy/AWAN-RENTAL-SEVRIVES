@@ -8,7 +8,8 @@ import { VehicleCarousel } from '@/components/vehicles/VehicleCard';
 import { WhatsAppFloat } from '@/components/common/WhatsAppFloat';
 import { GoogleReviews } from '@/components/common/GoogleReviews';
 import { Layout } from '@/components/layout/Layout';
-import { SectionTrust, SectionServices, SectionHowItWorks, SectionPakistanVisitor, SectionCTA, SectionTestimonials } from './_components/HomeSections';
+import { getSiteMedia } from '@/lib/site-media';
+import { SectionTrust, SectionShowcase, SectionServices, SectionHowItWorks, SectionPakistanVisitor, SectionCTA, SectionTestimonials } from './_components/HomeSections';
 
 export const metadata: Metadata = {
   title: 'Car Rental & Transportation in Pakistan',
@@ -46,16 +47,20 @@ function FeaturedVehiclesFallback() {
 }
 
 export default async function HomePage() {
-  const [businessInfo, featuredVehicles] = await Promise.all([
+  const [businessInfo, featuredVehicles, showcaseMedia] = await Promise.all([
     getBusinessInfo(),
     getFeaturedVehicles(8),
+    getSiteMedia('homepage_showcase'),
   ]);
 
   return (
     <Layout businessInfo={businessInfo}>
       <Hero businessInfo={businessInfo} />
 
-      {/* 1. Trust */}
+      {/* 1. Auto-play showcase (admin-managed media, above the trust section) */}
+      <SectionShowcase media={showcaseMedia} />
+
+      {/* 2. Trust */}
       <SectionTrust />
 
       {/* 2. Featured vehicles (from database) */}

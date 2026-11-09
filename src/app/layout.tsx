@@ -12,6 +12,14 @@ import { GoogleAnalytics } from '@/components/common/GoogleAnalytics';
 // DATABASE_URL during `next build`. Database-dependent data is fetched per-request.
 export const dynamic = 'force-dynamic';
 
+// Mobile browser chrome and the installed PWA use the brand navy colour,
+// and Next.js emits the <meta name="viewport"> tag from this.
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  themeColor: '#1E3A8A',
+};
+
 const GOOGLE_SITE_VERIFICATION = process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION;
 
 /**
@@ -36,9 +44,13 @@ export async function generateMetadata(): Promise<Metadata> {
     creator: SITE_NAME,
     publisher: SITE_NAME,
     robots: 'index, follow',
-    // The PWA manifest was shipped in public/ but never linked, so installable
-    // metadata and the themed icons never reached the browser.
+    // The installable PWA for this site (see public/sw.js + public/site.webmanifest).
     manifest: '/site.webmanifest',
+    appleWebApp: {
+      capable: true,
+      statusBarStyle: 'default',
+      title: 'Awan Rental',
+    },
     openGraph: {
       type: 'website',
       locale: 'en_PK',

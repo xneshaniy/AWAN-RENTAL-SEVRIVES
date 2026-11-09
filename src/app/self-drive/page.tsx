@@ -8,6 +8,8 @@ import { Button } from '@/components/ui/Button';
 import { getBusinessInfo } from '@/lib/settings';
 import { getVehicles } from '@/actions/vehicle';
 import { getServiceBySlug, getFAQs } from '@/actions/settings';
+import { getSelfDriveGallery } from '@/lib/self-drive-gallery';
+import { SelfDriveGallery } from '@/components/common/SelfDriveGallery';
 import { FaqSection, buildFaqJsonLd } from '@/components/sections/FaqSection';
 import {
   generateServiceInquiryWhatsAppMessage,
@@ -99,11 +101,12 @@ const BOOKING_STEPS = [
 ];
 
 export default async function SelfDrivePage() {
-  const [businessInfo, service, vehiclesData, faqs] = await Promise.all([
+  const [businessInfo, service, vehiclesData, faqs, selfDriveGalleryItems] = await Promise.all([
     getBusinessInfo(),
     getServiceBySlug('self-drive'),
     getVehicles({ isAvailable: true, limit: 50 }),
     getFAQs(),
+    getSelfDriveGallery(),
   ]);
 
   // Prefer the database record so admins can edit it later; fall back to the
@@ -209,6 +212,9 @@ export default async function SelfDrivePage() {
           </div>
         </div>
       </section>
+
+      {/* 1. Media gallery (photo & video) */}
+      <SelfDriveGallery items={selfDriveGalleryItems} />
 
       {/* 1. Flexible rental periods */}
       <section className="py-16 sm:py-24" aria-labelledby="periods-title">

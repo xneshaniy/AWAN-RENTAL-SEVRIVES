@@ -1,6 +1,6 @@
 'use client';
 
-import { CN } from '@/lib/utils';
+import { cn } from '@/lib/utils';
 import Image from 'next/image';
 
 interface EmptyStateProps {
@@ -22,7 +22,7 @@ export function EmptyState({
 }: EmptyStateProps) {
   return (
     <div
-      className={CN(
+      className={cn(
         'flex flex-col items-center justify-center text-center py-16 px-4',
         className
       )}

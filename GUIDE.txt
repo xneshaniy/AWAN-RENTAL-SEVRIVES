@@ -1,0 +1,105 @@
+================================================================
+AWAN RENTAL SERVICE — SIMPLE GUIDE (Plain and Easy)
+================================================================
+
+This guide explains everything in easy words, for you and for
+your customers. Keep it handy.
+
+================================================================
+PART 1 — FOR YOUR CUSTOMERS (How to book a car)
+================================================================
+
+WAY 1 — BOOK BY WHATSAPP (Easiest)
+  1. Open the website on your phone or computer
+  2. Tap the green "Book on WhatsApp" button
+  3. Type your message: where, when, which car
+  4. We reply fast and confirm everything
+
+WAY 2 — BOOK ON THE WEBSITE FORM
+  1. Tap "Book a Car" or "Find Your Ride"
+  2. Choose: pickup place, drop place, date and time
+  3. Pick your car (see prices and photos)
+  4. Fill in your name and phone number
+  5. Tap Submit — we call you back to confirm
+
+WAY 3 — CALL US
+  Call: +92 305 6846811
+  Or WhatsApp: +92 305 6846811
+
+WHAT CUSTOMERS GET
+  - A clean car, ready to go
+  - Self-drive (you drive) or with our driver
+  - Airport pick-up and drop-off
+  - Daily, weekly or monthly rental — your choice
+
+QUESTIONS / ANSWERS (Common ones)
+  Q: What do I need to rent?
+  A: Your driving licence (for self-drive) and CNIC or passport.
+
+  Q: Can I get the car delivered?
+  A: Yes — in Islamabad, Rawalpindi and Lahore. Ask when booking.
+
+  Q: How do I pay?
+  A: No online payment needed. We arrange payment when we confirm
+     your booking — simple and easy.
+
+================================================================
+PART 2 — FOR YOU (The owner, how to run the site)
+================================================================
+
+ADMIN LOGIN (your private panel)
+  URL:      http://localhost:3000/admin/login  (local PC)
+  Live:     https://awanrentalservice.org/admin/login
+  Email:    info@awanrentalservice.org
+  Password: admin123   (change it in Settings later)
+
+WHAT YOU CAN DO IN THE ADMIN PANEL
+  Dashboard        See everything at a glance
+  Vehicles         Add your real cars (name, price, photos)
+  Bookings         See all booking requests, call customers
+  Self Drive Gallery     Upload your car photos and videos
+  Homepage Showcase      Upload photos/videos for the homepage
+  Site Settings    Phone, WhatsApp, hours, Facebook, etc.
+
+ADDING YOUR REAL CARS
+  1. Admin > Vehicles > "Add New Vehicle"
+  2. Enter: name, model, year, seats, daily price
+  3. Upload 2-5 photos (tap "Upload Photo")
+  4. Tap "Save Vehicle" — it appears on the website instantly
+
+ADDING PHOTOS AND VIDEOS
+  1. Admin > Self Drive Gallery  (for /self-drive page)
+     OR Admin > Homepage Showcase  (for homepage)
+  2. Tap "Upload from device" and pick your photos or videos
+  3. Or paste a link (https://...) for each item
+  4. They show on the website automatically
+
+INSTALL THE APP ON YOUR PHONE
+  - Open the website on your phone
+  - Android: tap "Install" banner (or menu > Add to Home Screen)
+  - iPhone: tap Share > Add to Home Screen > Add
+  - The "Awan Rental" app icon appears on your phone
+
+LOCAL COMPUTER (for you / developer)
+  1. Open the project folder
+  2. Run: npm run dev
+  3. Open: http://localhost:3000
+  4. Admin: http://localhost:3000/admin/login
+
+================================================================
+PART 3 — WHAT IS ALREADY ON THE WEBSITE
+================================================================
+  Homepage       Search box, car photos, "Your Journey, Our
+                 Responsibility", featured cars, services, FAQ
+  Vehicles page  All cars with filters
+  Self Drive     Gallery + self-drive cars
+  Services       Self Drive, With Driver, Airport Transfers,
+                 Corporate, Family, Event, Intercity, Commercial
+  Booking form   Customer fills details, you call to confirm
+  Admin login    Your private dashboard
+
+================================================================
+NEED HELP?
+================================================================
+Just say "help" or ask anything. It's that simple.
+================================================================
