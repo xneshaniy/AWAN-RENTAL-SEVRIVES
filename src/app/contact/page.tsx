@@ -44,8 +44,8 @@ export default async function ContactPage() {
             </p>
           </div>
 
-          <div className="grid lg:grid-cols-2 gap-12">
-            <div className="space-y-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+            <div className="space-y-8 min-w-0">
               <Card variant="default" padding="lg">
                 <CardHeader>
                   <CardTitle level={2} className="flex items-center gap-2">
@@ -123,7 +123,7 @@ export default async function ContactPage() {
               </Card>
             </div>
 
-            <div>
+            <div className="min-w-0">
               <Card variant="default" padding="lg">
                 <CardHeader>
                   <CardTitle level={2}>Send Us a Message</CardTitle>

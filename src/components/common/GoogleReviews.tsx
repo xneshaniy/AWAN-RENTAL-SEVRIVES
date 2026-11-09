@@ -156,7 +156,7 @@ function LiveReviews({
         )}
 
         {quotes.length > 0 && (
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {quotes.map((review, index) => (
               <ReviewCard key={`${review.author}-${index}`} review={review} />
             ))}

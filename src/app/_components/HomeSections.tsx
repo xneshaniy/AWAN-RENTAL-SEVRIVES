@@ -44,9 +44,9 @@ const SERVICES = [
 ];
 
 const TESTIMONIALS = [
-  { name: 'Ahmed Khan', role: 'Business Traveler', company: 'Lahore, Pakistan', rating: 5, content: 'Exceptional service from Awan Rental Service. The chauffeur was professional, punctual, and the vehicle was immaculate. Highly recommended for corporate travel in Pakistan.', image: 'https://images.unsplash.com/photo-1507003211169-0a1272a8e396?w=100&h=100&fit=crop&crop=face' },
-  { name: 'Sarah Malik', role: 'Tourist', company: 'Islamabad, Pakistan', rating: 5, content: 'Rented a self-drive SUV for our family trip to Murree. The booking process was seamless and the car was in perfect condition. Will definitely use again.', image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop&crop=face' },
-  { name: 'Mohammad Ali', role: 'Executive', company: 'Rawalpindi, Pakistan', rating: 5, content: 'Airport transfer service was outstanding. Driver met us on time, helped with luggage, and drove safely. The best rental experience in Pakistan.', image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop&crop=face' },
+  { name: 'Ahmed Khan', role: 'Business Traveler', company: 'Lahore, Pakistan', rating: 5, content: 'Exceptional service from Awan Rental Service. The chauffeur was professional, punctual, and the vehicle was immaculate. Highly recommended for corporate travel in Pakistan.', initials: 'AK' },
+  { name: 'Sarah Malik', role: 'Tourist', company: 'Islamabad, Pakistan', rating: 5, content: 'Rented a self-drive SUV for our family trip to Murree. The booking process was seamless and the car was in perfect condition. Will definitely use again.', initials: 'SM' },
+  { name: 'Mohammad Ali', role: 'Executive', company: 'Rawalpindi, Pakistan', rating: 5, content: 'Airport transfer service was outstanding. Driver met us on time, helped with luggage, and drove safely. The best rental experience in Pakistan.', initials: 'MA' },
 ];
 
 export function SectionServices() {
@@ -278,7 +278,7 @@ export function SectionPakistanVisitor({ businessInfo }: { businessInfo?: { comp
       <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl pointer-events-none" aria-hidden="true" />
       <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-accent/10 rounded-full blur-3xl pointer-events-none" aria-hidden="true" />
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid lg:grid-cols-2 gap-12 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
           <div className="relative z-10">
             <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm text-white text-sm font-medium mb-6">
               <PlaneIcon className="w-4 h-4" />
@@ -377,7 +377,9 @@ export function SectionTestimonials() {
           {TESTIMONIALS.map((testimonial, index) => (
             <Card key={index} variant="default" padding="lg" hover className="h-full flex flex-col group">
               <div className="flex items-center gap-3 mb-4">
-                <Image src={testimonial.image} alt={testimonial.name} width={40} height={40} className="w-10 h-10 rounded-full object-cover border-2 border-accent" priority={index === 0} />
+                <div className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-accent bg-primary-100 font-semibold text-primary-700 dark:bg-primary-900/40 dark:text-primary-300" aria-hidden="true">
+                  {testimonial.initials}
+                </div>
                 <div>
                   <h3 className="font-heading font-semibold text-lg text-foreground">{testimonial.name}</h3>
                   <p className="text-sm text-muted-foreground">{testimonial.role}, {testimonial.company}</p>

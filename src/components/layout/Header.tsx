@@ -72,7 +72,7 @@ export function Header({ businessInfo }: HeaderProps) {
           >
             <img
               src="/icon-192.png"
-              alt=""
+              alt="Awan Rental Service"
               width="192"
               height="192"
               className="h-12 w-auto shrink-0 sm:h-14 lg:h-16"
@@ -220,7 +220,7 @@ export function Header({ businessInfo }: HeaderProps) {
                 >
                   <img
                     src="/icon-192.png"
-                    alt=""
+                    alt="Awan Rental Service"
                     width="192"
                     height="192"
                     className="h-9 w-auto shrink-0 sm:h-10"

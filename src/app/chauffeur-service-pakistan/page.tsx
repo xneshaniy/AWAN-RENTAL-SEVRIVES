@@ -81,7 +81,7 @@ export default async function ChauffeurServicePakistanPage() {
       >
         <div className="absolute inset-0 bg-[url('/pattern.svg')] opacity-50" />
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div className="text-center lg:text-left">
               <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm text-white text-sm font-medium mb-6">
                 <User className="w-4 h-4" aria-hidden="true" />
@@ -170,7 +170,7 @@ export default async function ChauffeurServicePakistanPage() {
 
       <section className="py-16 sm:py-24 bg-cream-100 dark:bg-gray-900/50" aria-labelledby="chauffeur-why-title">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
               <h2 id="chauffeur-why-title" className="font-heading font-bold text-3xl sm:text-4xl text-gray-900 dark:text-white mb-6">
                 Sit Back and Travel

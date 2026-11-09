@@ -212,7 +212,7 @@ export function ServiceManager({ initialServices }: ServiceManagerProps) {
           <CardContent>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" aria-busy={isSubmitting}>
               <fieldset disabled={isSubmitting} className="space-y-4">
-                <div className="grid gap-4 sm:grid-cols-2">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <Input
                     label="Service Name"
                     {...register('name')}
@@ -235,7 +235,7 @@ export function ServiceManager({ initialServices }: ServiceManagerProps) {
                   error={errors.description?.message}
                   required
                 />
-                <div className="grid gap-4 sm:grid-cols-2">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <Input
                     label="Image URL"
                     {...register('image')}
@@ -250,7 +250,7 @@ export function ServiceManager({ initialServices }: ServiceManagerProps) {
                     error={errors.icon?.message}
                   />
                 </div>
-                <div className="grid gap-4 sm:grid-cols-3">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
                   <Input
                     label="Link"
                     {...register('href')}

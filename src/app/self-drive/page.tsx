@@ -355,7 +355,7 @@ export default async function SelfDrivePage() {
 
       {/* 3. Pickup options / 4. Delivery options */}
       <div className="py-16 sm:py-24">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-2 gap-12 items-start">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
           <section aria-labelledby="pickup-title">
             <div className="w-12 h-12 bg-secondary-100 dark:bg-secondary-900/30 rounded-xl flex items-center justify-center mb-4">
               <MapPin
@@ -432,7 +432,7 @@ export default async function SelfDrivePage() {
         className="py-16 sm:py-24 bg-cream-100 dark:bg-gray-900/50"
         aria-labelledby="requirements-title"
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-2 gap-12 items-start">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
           <div>
             <div className="w-12 h-12 bg-secondary-100 dark:bg-secondary-900/30 rounded-xl flex items-center justify-center mb-4">
               <ClipboardCheck

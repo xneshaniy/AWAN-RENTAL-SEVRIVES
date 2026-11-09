@@ -90,7 +90,7 @@ export default async function FaqPage() {
                 your trip.
               </p>
 
-              <div className="grid gap-4 sm:grid-cols-3">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
                 {CONTACT_OPTIONS.map((option) => {
                   // getWhatsAppUrl returns null until a number is configured;
                   // fall back to the contact page so the tile stays usable.

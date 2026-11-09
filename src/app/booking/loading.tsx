@@ -14,7 +14,7 @@ export default function BookingLoading() {
           className="py-16 sm:py-24 bg-gradient-to-b from-primary-600 via-primary-700 to-primary-900"
           aria-hidden="true"
         >
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-2 gap-12 items-center">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div className="space-y-5 text-center lg:text-left">
               <div className="h-8 w-36 bg-white/20 rounded-full mx-auto lg:mx-0" />
               <div className="h-12 w-full max-w-md bg-white/20 rounded-lg mx-auto lg:mx-0" />

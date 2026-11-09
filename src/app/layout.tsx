@@ -92,7 +92,7 @@ export default async function RootLayout({
   const structuredData = buildStructuredDataGraph(businessInfo);
 
   return (
-    <html lang="en" className="antialiased">
+    <html lang="en" className="antialiased" suppressHydrationWarning>
       <head>
         {/*
           The same Content-Security-Policy that next.config.js puts on the

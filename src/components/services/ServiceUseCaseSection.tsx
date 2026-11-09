@@ -47,7 +47,7 @@ export function ServiceUseCaseSection({
       className={cn('py-16 sm:py-24', tone === 'muted' && 'bg-cream-100 dark:bg-gray-900/50')}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
           <div className={reversed ? 'lg:order-2' : undefined}>
             <div className="w-12 h-12 bg-secondary-100 dark:bg-secondary-900/30 rounded-xl flex items-center justify-center mb-4">
               <Icon

@@ -199,7 +199,7 @@ export function FaqManager({ initialFaqs }: FaqManagerProps) {
                   error={errors.answer?.message}
                   required
                 />
-                <div className="grid gap-4 sm:grid-cols-3">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
                   <Input
                     label="Category"
                     list="faq-categories"

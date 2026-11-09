@@ -426,7 +426,7 @@ export function SettingsForm({ settings, sections }: SettingsFormProps) {
               <CardTitle>{section.title}</CardTitle>
               <p className="text-sm text-gray-500 dark:text-gray-400">{section.description}</p>
             </CardHeader>
-            <CardContent className="grid gap-4 sm:grid-cols-2">
+            <CardContent className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               {section.fields.map((field) =>
                 field.input === 'textarea' || field.input === 'checkbox' ? (
                   <div key={field.key} className="sm:col-span-2">

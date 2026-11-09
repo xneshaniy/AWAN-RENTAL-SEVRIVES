@@ -148,7 +148,7 @@ export default async function RawalpindiCarRentalPage() {
 
       <section className="py-16 sm:py-24 bg-cream-100 dark:bg-gray-900/50" aria-labelledby="rwp-areas-title">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-12">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
             <div>
               <h2 id="rwp-areas-title" className="font-heading font-bold text-3xl sm:text-4xl text-gray-900 dark:text-white mb-6">
                 {cityServed ? 'Areas We Serve in Rawalpindi' : 'Popular Areas in Rawalpindi'}

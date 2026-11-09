@@ -62,7 +62,7 @@ export default async function AdminMessageDetailPage({ params }: { params: { id:
         </CardContent>
       </Card>
 
-      <div className="grid gap-6 lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <Card variant="default" padding="md">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">

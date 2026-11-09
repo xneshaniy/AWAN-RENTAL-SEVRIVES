@@ -172,7 +172,7 @@ export async function ServiceLanding({
         aria-labelledby="checklist-title"
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-12 items-start">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
             <div>
               <h2
                 id="checklist-title"

@@ -95,7 +95,7 @@ export async function LegalLayout({
       </section>
 
       <section className="py-12 sm:py-16" aria-label={title}>
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 grid gap-10 lg:grid-cols-[220px_minmax(0,1fr)]">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 gap-10 lg:grid-cols-[220px_minmax(0,1fr)]">
           <nav
             aria-label="Sections on this page"
             className="lg:sticky lg:top-28 lg:self-start"
@@ -132,7 +132,7 @@ export async function LegalLayout({
           >
             All legal pages
           </h2>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
             {LEGAL_LINKS.map((link) => (
               <Link
                 key={link.href}

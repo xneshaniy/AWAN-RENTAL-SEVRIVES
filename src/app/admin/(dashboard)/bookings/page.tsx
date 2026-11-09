@@ -121,7 +121,7 @@ export default async function AdminBookingsPage({ searchParams }: BookingsPagePr
       {/* Filters */}
       <Card variant="default" padding="md">
         <CardContent>
-          <form action="/admin/bookings" method="get" className="grid gap-3 md:grid-cols-2 xl:grid-cols-6">
+          <form action="/admin/bookings" method="get" className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-6">
             <div className="xl:col-span-2">
               <label htmlFor="booking-search" className="sr-only">
                 Search bookings

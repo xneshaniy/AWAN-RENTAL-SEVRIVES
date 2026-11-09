@@ -1,0 +1,30 @@
+fix(a11y,security,layout): close audit findings; add audit and functional tooling
+
+CSP:
+- script-src: allow assets.apollo.io (Apollo website tracker was blocked on every page)
+- connect-src: allow *.apollo.io and aplo-evnt.com (the tracker's event collector)
+- Result: zero CSP console errors on all 30 audited pages
+
+Accessibility / SEO:
+- Header logo images get real alt text; ServiceCard image alt = service name
+- /vehicles results heading changed h1 -> h2 (single top-level heading per page)
+- layout: suppressHydrationWarning on <html> (next-themes class mismatch)
+- Testimonial faces replaced with initials avatars (no ORB network failures)
+- /contact: grid-cols-1 + min-w-0 fixes 6px horizontal overflow at 320px
+
+Systemic mobile-layout fix:
+- ~60 grids across 31 files used breakpoint-prefixed columns with no mobile
+  base, sizing implicit auto tracks to content min-width; added grid-cols-1
+  base to all of them (same defect class as the /contact overflow)
+
+Tooling (not deployed):
+- audit-site.cjs: 30 public pages x 9 viewports; console/network/overflow/SEO audit
+- functional-check.cjs: Playwright checks - header/nav/drawer, Self Drive lightbox,
+  3-step booking form end-to-end (against a local test DB, SMTP disabled),
+  admin login + bookings, WhatsApp links
+- package.json/package-lock: lighthouse devDependency for performance/a11y audits
+- .gitignore: audit-report/ generated artifacts
+
+Verified: tsc 0 errors; npm run build passes (standalone emitted, postbuild copies
+assets); 188/188 unit tests pass; functional check 16/16; Lighthouse a11y 97,
+best-practices 96, SEO 100 on all five audited pages.

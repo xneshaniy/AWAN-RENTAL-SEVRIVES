@@ -218,9 +218,9 @@ export function VehicleList({ vehicles, pagination, facets, filters }: VehicleLi
               <p className="text-primary text-sm font-medium uppercase tracking-wide mb-1">
                 Our Fleet
               </p>
-              <h1 className="font-heading font-bold text-3xl sm:text-4xl text-foreground">
+              <h2 className="font-heading font-bold text-3xl sm:text-4xl text-foreground">
                 {vehicles.length} Vehicles Available
-              </h1>
+              </h2>
             </div>
             {hasActiveFilters && (
               <Button

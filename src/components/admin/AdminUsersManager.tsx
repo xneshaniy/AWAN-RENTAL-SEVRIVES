@@ -179,11 +179,11 @@ export function AdminUsersManager({ initialUsers, currentUserEmail }: AdminUsers
           <CardContent>
             <form onSubmit={createForm.handleSubmit(onCreate)} className="space-y-4" aria-busy={isSubmitting}>
               <fieldset disabled={isSubmitting} className="space-y-4">
-                <div className="grid gap-4 sm:grid-cols-2">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <Input label="Full Name" {...createForm.register('name')} error={createForm.formState.errors.name?.message} />
                   <Input label="Email Address" type="email" {...createForm.register('email')} error={createForm.formState.errors.email?.message} />
                 </div>
-                <div className="grid gap-4 sm:grid-cols-2">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <Input
                     label="Password"
                     type="password"
@@ -236,11 +236,11 @@ export function AdminUsersManager({ initialUsers, currentUserEmail }: AdminUsers
           <CardContent>
             <form onSubmit={editForm.handleSubmit(onEdit)} className="space-y-4" aria-busy={isSubmitting}>
               <fieldset disabled={isSubmitting} className="space-y-4">
-                <div className="grid gap-4 sm:grid-cols-2">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <Input label="Full Name" {...editForm.register('name')} error={editForm.formState.errors.name?.message} />
                   <Input label="Email Address" type="email" {...editForm.register('email')} error={editForm.formState.errors.email?.message} />
                 </div>
-                <div className="grid gap-4 sm:grid-cols-2">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <Input
                     label="New Password"
                     type="password"

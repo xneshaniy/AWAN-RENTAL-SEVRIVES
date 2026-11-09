@@ -137,3 +137,6 @@ server/
 /playwright-report
 /playwright/.cache/
 tests/e2e/.data.json
+
+# Generated website-audit output (screenshots + report) — regenerate with `node audit-site.cjs`
+audit-report/

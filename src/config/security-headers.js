@@ -77,6 +77,7 @@ function getContentSecurityPolicy(options) {
     ...(process.env.NODE_ENV === 'production' ? [] : ["'unsafe-eval'"]),
     'https://www.googletagmanager.com',
     'https://www.google-analytics.com',
+    'https://assets.apollo.io',
   ].join(' ');
 
   const directives = [
@@ -103,6 +104,13 @@ function getContentSecurityPolicy(options) {
       'https://*.analytics.google.com',
       'https://www.googletagmanager.com',
       'https://*.googletagmanager.com',
+      // Apollo.io website tracker: the script posts visitor data to the
+      // tracker endpoint once it has loaded, so the origin must match.
+      // `*.apollo.io` covers the beacon host, `aplo-evnt.com` is Apollo's
+      // separate intent-pixel event collector used by the website tracker.
+      'https://*.apollo.io',
+      'https://aplo-evnt.com',
+      'https://*.aplo-evnt.com',
     ].join(' '),
     // Gallery videos come from Cloudinary (blob: while still previewing).
     "media-src 'self' blob: https:",
