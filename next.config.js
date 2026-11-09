@@ -30,7 +30,9 @@ const nextConfig = {
   // Emit .next/standalone/server.js so the host has a runnable entry point.
   // Without this, builds succeed but Hostinger has no runtime to route to and
   // answers 403 at the Apache layer instead of reaching Next.js.
-  // output: 'standalone',
+  // This is the exact artifact the production host boots — see README
+  // "## Deployment" (Hostinger Node.js app → .next/standalone/server.js).
+  output: 'standalone',
   images: {
     remotePatterns: [
       {
