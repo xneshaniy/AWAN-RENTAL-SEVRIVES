@@ -3,9 +3,14 @@
 // See that file for why both forms are emitted.
 const { getContentSecurityPolicy, LONG_LIVED_EXTENSIONS } = require('./src/config/security-headers');
 
-// Limit Node.js heap memory for constrained hosts
+// Hostinger's memory envelope is small, but 192 MB is not big enough to build
+// this app — it reliably dies with "heap out of memory" regardless of
+// available server RAM. The local build passes with 4096 MB. 1024 MB is a
+// generous-yet-conservative middle ground: comfortably enough for the
+// compiler while staying well inside constrained hosts.
+// If Hostinger sets NODE_OPTIONS itself, this stays out of the way.
 if (!process.env.NODE_OPTIONS) {
-  process.env.NODE_OPTIONS = '--max-old-space-size=192';
+  process.env.NODE_OPTIONS = '--max-old-space-size=1024';
 }
 
 /** @type {import('next').NextConfig} */

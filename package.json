@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "next build --no-lint",
     "postbuild": "node scripts/copy-standalone.mjs",
-    "start": "node .next/standalone/server.js",
+    "start": "next start",
     "lint": "next lint",
     "db:generate": "prisma generate",
     "db:push": "prisma db push",
