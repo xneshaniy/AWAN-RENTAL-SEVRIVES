@@ -57,13 +57,25 @@
 @layer base {
   * {
     border-color: hsl(var(--border));
+    box-sizing: border-box;
+  }
+  img, video, canvas, svg, iframe {
+    max-width: 100%;
+    height: auto;
   }
   body {
     @apply bg-background text-foreground font-sans antialiased;
     font-feature-settings: "rlig" 1, "calt" 1;
+    overflow-x: hidden;
   }
   html {
     scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+  /* Long words/URLs/email addresses never break the layout on small phones */
+  p, h1, h2, h3, h4, h5, h6, a, span, li, td, th, label, dd, dt {
+    overflow-wrap: break-word;
+    word-wrap: break-word;
   }
 }
 
