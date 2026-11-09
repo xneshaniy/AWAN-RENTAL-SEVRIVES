@@ -67,6 +67,13 @@ const config: Config = {
           DEFAULT: 'hsl(var(--muted))',
           foreground: 'hsl(var(--muted-foreground))',
         },
+        // Off-white / cream surfaces used for warm sections
+        cream: {
+          50: '#fdfcfb',
+          100: '#faf7f2',
+          200: '#f3efe8',
+          300: '#e8e2d6',
+        },
         destructive: {
           DEFAULT: 'hsl(var(--destructive))',
           foreground: 'hsl(var(--destructive-foreground))',

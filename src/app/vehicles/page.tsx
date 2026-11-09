@@ -12,6 +12,7 @@ import {
   type VehicleAvailabilityFilter,
   type VehicleSortOption,
 } from '@/types';
+import { Car } from 'lucide-react';
 
 export const metadata: Metadata = {
   title: 'Our Vehicles',
@@ -120,28 +121,47 @@ async function VehiclesResults({ searchParams }: { searchParams: SearchParams })
   }
 
   return (
-    <section className="py-16 sm:py-24 bg-secondary-50 dark:bg-secondary-900/30" aria-labelledby="vehicles-title">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center max-w-3xl mx-auto mb-12">
+    <>
+      <div
+        className="relative py-16 sm:py-24 overflow-hidden bg-gradient-to-br from-primary-900 via-primary-800 to-primary-950 text-white"
+        aria-labelledby="vehicles-title"
+      >
+        <div
+          className="pointer-events-none absolute -top-24 -right-24 h-96 w-96 rounded-full bg-accent/10 blur-3xl"
+          aria-hidden="true"
+        />
+        <div
+          className="pointer-events-none absolute bottom-0 -left-24 h-96 w-96 rounded-full bg-primary-600/20 blur-3xl"
+          aria-hidden="true"
+        />
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm text-white/90 text-xs sm:text-sm font-medium mb-6 border border-white/10">
+            <Car className="w-4 h-4" aria-hidden="true" />
+            Nationwide Coverage
+          </span>
           <h1
             id="vehicles-title"
-            className="font-heading font-bold text-3xl sm:text-4xl lg:text-5xl text-gray-900 dark:text-white mb-4"
+            className="font-heading font-bold text-4xl sm:text-5xl lg:text-6xl text-white mb-6 leading-tight"
           >
-            Explore Our Vehicles
+            Choose Your Ride
           </h1>
-          <p className="text-lg text-gray-600 dark:text-gray-400">
-            Choose the vehicle that fits your journey. Search the fleet, filter by category and
-            availability, and book online - every vehicle is available for self-drive or chauffeur
-            service.
+          <p className="text-lg text-primary-100 max-w-2xl mx-auto leading-relaxed">
+            Explore our fleet of well-maintained self-drive and chauffeur-driven vehicles.
+            Search, filter and book online — or message us on WhatsApp for a quick quote.
           </p>
         </div>
-        <VehicleList
-          vehicles={vehiclesData.data}
-          pagination={vehiclesData.pagination}
-          facets={facets}
-          filters={filters}
-        />
       </div>
-    </section>
+
+      <section className="py-12 sm:py-16 bg-secondary-50 dark:bg-secondary-900/30" aria-label="Vehicle results and filters">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <VehicleList
+            vehicles={vehiclesData.data}
+            pagination={vehiclesData.pagination}
+            facets={facets}
+            filters={filters}
+          />
+        </div>
+      </section>
+    </>
   );
 }
